@@ -64,10 +64,12 @@ services:
       - ./frontend:/app
       - /app/node_modules
     working_dir: /app
-    command: ["npm", "start"]
+    command: ["npm", "start", "start-watch"]
     depends_on:
       - backend
     environment:
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
       - REACT_APP_BACKEND_URL=http://localhost:8000/api
 
 volumes:
