@@ -73,8 +73,8 @@ nav ul {
 .footer {
   text-align: center;
   padding: 20px;
-  background: black;
-  color: white;
+  background: #ebf4f1;
+  color: black;
   margin-top: auto; 
 }
 
@@ -84,6 +84,8 @@ nav ul {
 }
 
 h3 {
-  margin-right: 1100px;
   font-family: 'Alex Brush', cursive;
+  position: absolute; 
+  margin-left:90px;
+  font-size:50px;
 }

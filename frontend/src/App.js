@@ -63,7 +63,7 @@ function App() {
       </section>
 
       <footer className="footer">
-        <p>&copy; 2025 Dans'Cook. All rights reserved.</p>
+        <p>&copy; 2025 Daws'Cook. All rights reserved.</p>
       </footer>
     </div>
   );
