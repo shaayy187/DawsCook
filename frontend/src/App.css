@@ -27,7 +27,16 @@ nav ul {
   display: flex;
   gap: 20px;
 }
+nav a {
+  text-decoration: none; 
+  color: black; 
+  font-weight: bold; 
+  padding: 8px 16px; 
+}
 
+nav a:hover {
+  color: gray; 
+}
 .categories {
   text-align: center;
   margin: 20px 0;
@@ -83,9 +92,34 @@ nav ul {
   width: 66px;
 }
 
-h3 {
+#home {
   font-family: 'Alex Brush', cursive;
   position: absolute; 
   margin-left:90px;
   font-size:50px;
+}
+#home a {
+  text-decoration: none; 
+  color: black; 
+  font-weight: bold; 
+  padding: 8px 16px; 
+}
+
+#home a:hover {
+  color: gray; 
+}
+
+.signin-form h2 {
+  text-align: center;
+  margin: 20px 0;
+  font-family: ABeeZee;
+}
+
+.signin-form span {
+  font-style: italic;
+  color: rgb(0, 0, 0);
+  font-family: Lucida Handwriting;  
+}
+.login-form h2{
+  text-align: left;
 }

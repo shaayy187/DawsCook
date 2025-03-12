@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import './App.css';
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,14 +29,18 @@ const SignIn = () => {
 
   return (
     <div className="signin-form">
-      <h2>Login</h2>
+      <h2>The secret ingredient is always <span>love</span> .</h2> 
+      <div className="login-form">
+      <h2>Sign In</h2>
       <form onSubmit={handleSubmit}>
+        <h4>Username</h4>
         <input
           type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
+        <h4>Password</h4>
         <input
           type="password"
           placeholder="Password"
@@ -46,6 +50,7 @@ const SignIn = () => {
         {error && <p className="error">{error}</p>}
         <button type="submit">Login</button>
       </form>
+      </div>
     </div>
   );
 };

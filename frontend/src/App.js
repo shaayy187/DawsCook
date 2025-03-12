@@ -32,7 +32,9 @@ function App() {
       <div className="app">
         <header className="header">
           <img src={logo} alt="Logo" className="logo" />
-          <h3> Daws'Cook</h3>
+          <div id="home">
+          <Link to="/">Daws'Cook</Link>
+          </div>
           <nav>
             <Link to="/signin">Login</Link>
             <Link to="/signup">Register</Link>
