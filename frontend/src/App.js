@@ -1,6 +1,10 @@
-import { useEffect, useState } from "react";
-import "./App.css";
-import logo from "./logo.png";  
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import logo from "./logo.png";
+import SignIn from './SignIn';
+import SignUp from './SignUp';
+import Home from './Home';
+import './App.css';
 
 function App() {
   const [recipes, setRecipes] = useState([]);
@@ -24,48 +28,28 @@ function App() {
   }, []);
 
   return (
-    <div className="app">
-      <header className="header">
-      <img src={logo} alt="Logo" className="logo" />
-      <h3> Daws'Cook</h3>
-        <nav>
-          <ul>
-            <li>Home</li>
-            <li>About Us</li>
-            <li>Recipes</li>
-            <li>Sign In</li>
-            <li>Sign Up</li>
-          </ul>
-        </nav>
-      </header>
+    <BrowserRouter>
+      <div className="app">
+        <header className="header">
+          <img src={logo} alt="Logo" className="logo" />
+          <h3> Daws'Cook</h3>
+          <nav>
+            <Link to="/signin">Login</Link>
+            <Link to="/signup">Register</Link>
+          </nav>
+        </header>
 
-      <section className="categories">
-        <h2>The secret ingredient is always <span>love</span> .</h2>
-        <div className="category-list">
-          <div className="category">Vegan</div>
-          <div className="category">Vegetarian</div>
-          <div className="category">Healthy</div>
-          <div className="category">Confectionery</div>
-          <div className="category">Most Popular</div>
-        </div>
-      </section>
+        <Routes>
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/" element={<Home recipes={recipes} />} />
+        </Routes>
 
-      <section className="latest-recipes">
-        <h2>Latest recipes</h2>
-        <div className="recipe-grid">
-          {recipes.slice(0, 6).map((recipe, index) => (
-            <div key={index} className="recipe-card">
-              <h4>{recipe.recipe}</h4>
-              <p>{recipe.difficulty}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <footer className="footer">
-        <p>&copy; 2025 Daws'Cook. All rights reserved.</p>
-      </footer>
-    </div>
+        <footer className="footer">
+          <p>&copy; 2025 Daws'Cook. All rights reserved.</p>
+        </footer>
+      </div>
+    </BrowserRouter>
   );
 }
 
