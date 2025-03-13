@@ -109,17 +109,87 @@ nav a:hover {
   color: gray; 
 }
 
+.signin-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .signin-form h2 {
   text-align: center;
-  margin: 20px 0;
-  font-family: ABeeZee;
+  margin-bottom: 10px;
+  font-family: Arial, sans-serif;
 }
 
 .signin-form span {
   font-style: italic;
-  color: rgb(0, 0, 0);
-  font-family: Lucida Handwriting;  
+  font-family: "Lucida Handwriting";
 }
-.login-form h2{
+
+.login-form {
+  width: 543px;
+  height: 490px; 
+  padding: 20px;
+  background: rgb(244, 252, 252);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 17px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom:62px;
+}
+
+.login-form h2 {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.username, .pass {
+  width: 100%;
   text-align: left;
+  margin: 10px 0 5px;
+  font-size: 14px;
+  color: gray;
+  margin-left:45px;
+}
+
+.login-form input {
+  width: 80%;  
+  height: 25px; 
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 16px;
+  outline: none;
+  text-align: left;  
+  margin-left:45px;
+  margin-bottom: 30px;
+}
+
+.login-form input:focus {
+  border: 1px solid rgba(0, 0, 0, 0.4);
+}
+
+button {
+  width: 84%;
+  height: 40px;
+  background: linear-gradient(0.40turn, #e1eaeb, #a8f1f8, #e1eaeb);
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  margin-top: 20px;
+  cursor: pointer;
+  margin-left:44px;
+}
+
+button:hover {
+  background: linear-gradient(to right,  #b6fcf8, #b5ffff);
+}
+
+.error{
+  text-align:center;
+}
+.register-route{
+  text-align:center;
+  margin-top:20px;
 }

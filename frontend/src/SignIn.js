@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import './App.css';
+import { Routes, Route, Link } from "react-router-dom";
+import SignUp from './SignUp';
 const SignIn = () => {
-  const [email, setEmail] = useState("");
+  const [email, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -10,7 +12,7 @@ const SignIn = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    fetch("http://localhost:8000/api/auth/login/", {
+    fetch("http://localhost:8000/api/users/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
@@ -33,22 +35,26 @@ const SignIn = () => {
       <div className="login-form">
       <h2>Sign In</h2>
       <form onSubmit={handleSubmit}>
-        <h4>Username</h4>
+      {error && <p className="error">{error}</p>}
+      <div className="username">Username</div>
         <input
-          type="email"
-          placeholder="Email"
+          type="username"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => setUsername(e.target.value)}
         />
-        <h4>Password</h4>
+        <div className="pass">Password</div>
         <input
           type="password"
-          placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        {error && <p className="error">{error}</p>}
-        <button type="submit">Login</button>
+        <button type="submit">SUBMIT</button>
+        <div className="register-route">
+        You don't have account? <Link to="/signup">Sign up now.</Link>
+        <Routes>
+          <Route path="/signup" element={<SignUp />} />
+        </Routes>
+        </div>
       </form>
       </div>
     </div>
