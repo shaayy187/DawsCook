@@ -181,7 +181,7 @@ button:hover {
   background: linear-gradient(to right,  #b6fcf8, #b5ffff);
 }
 
-.error{
+.error, .success{
   text-align:center;
   font-size: 10px;
 }

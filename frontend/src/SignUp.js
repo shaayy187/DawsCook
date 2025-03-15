@@ -1,35 +1,64 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Routes, Route, Link } from "react-router-dom";
 import SignIn from './SignIn';
+
 const SignUp = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [successmessage, setSuccessMessage] = useState("");
   const [confirmpassword, setConfirmPassword] = useState("");
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
-  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const validateEmail = (email) => {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email);
+};
 
-    fetch("http://localhost:8000/api/auth/register/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, email, password }),
+const handleSubmit = (e) => {
+  e.preventDefault();
+  setError(""); 
+  setSuccessMessage("");
+
+  if (!validateEmail(email)) {
+    setError("Invalid email address.");
+    return;
+  }
+
+  if (password.length < 8) {
+    setError("Password must be at least 8 characters long.");
+    return;
+  }
+
+  if (password !== confirmpassword) {
+    setError("Passwords do not match.");
+    return;
+  }
+
+  if (!privacyAccepted) {
+    setError("You must accept the privacy policy.");
+    return;
+  }
+
+  fetch("http://localhost:8000/api/register/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, email, password }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("Server response:", data);
+      if (data.success) {
+        setError("");
+        setSuccessMessage(data.message);
+      } else {
+        setError(data.error || "Error registering. Please try again.");
+      }
     })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.token) {
-          sessionStorage.setItem("token", data.token);
-          navigate("/");
-        } else {
-          setError("Error registering. Please try again.");
-        }
-      })
-      .catch(() => setError("An error occurred. Please try again."));
-  };
+    .catch(() => setError("An error occurred. Please try again."));
+};
+
 
   return (
     <div className="signup-form">
@@ -38,6 +67,7 @@ const SignUp = () => {
       <h2>Sign up</h2>
       <form onSubmit={handleSubmit}>
       {error && <p className="error">{error}</p>}
+      {successmessage && <div className="success">{successmessage}</div>}
       <div className="username">Username</div>
         <input
           type="text"
@@ -58,7 +88,7 @@ const SignUp = () => {
         />
          <div className="confirm-password">Confirm password</div>
         <input
-          type="confirmpassword"
+          type="password"
           className="confirm-password"
           value={confirmpassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
