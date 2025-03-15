@@ -191,3 +191,32 @@ button:hover {
 .register-form input{
   margin-bottom:15px;
 }
+.register-form button{
+  margin-top:25px;
+}
+
+label.privacyPolicy {
+  font-size: 14px; 
+  color: #666;
+}
+#privacy {
+  display: flex;
+  align-items: center; 
+  margin-left:48px;
+  width: 100%;
+  gap: 8px; 
+}
+
+#privacy input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  cursor: pointer;
+}
+
+#privacy label.privacyPolicy {
+  font-size: 14px;
+  color: #666;
+  font-weight: normal;
+}
+

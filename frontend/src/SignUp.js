@@ -8,6 +8,7 @@ const SignUp = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [confirmpassword, setConfirmPassword] = useState("");
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
@@ -57,10 +58,25 @@ const SignUp = () => {
         />
          <div className="confirm-password">Confirm password</div>
         <input
-          type="password"
+          type="confirmpassword"
+          className="confirm-password"
           value={confirmpassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
         />
+         <div id="privacy">
+                    <input
+                        type="checkbox"
+                        id="privacyPolicy"
+                        checked={privacyAccepted}
+                        onChange={(e) => setPrivacyAccepted(e.target.checked)}
+                    />
+                    <label htmlFor="privacyPolicy" className="privacyPolicy">
+                        Accept our {' '}
+                        <a href="https://www.w3schools.com" target="_blank" rel="noopener noreferrer">
+                            privacy policy.                  
+                        </a>
+                    </label>
+                </div>
         <button type="submit">SUBMIT</button>
       </form>
       </div>
