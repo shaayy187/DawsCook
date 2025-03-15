@@ -109,25 +109,25 @@ nav a:hover {
   color: gray; 
 }
 
-.signin-form {
+.signin-form, .signup-form {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 
-.signin-form h2 {
+.signin-form h2, .signup-form h2 {
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   font-family: Arial, sans-serif;
 }
 
-.signin-form span {
+.signin-form span, .signup-form span {
   font-style: italic;
   font-family: "Lucida Handwriting";
 }
 
-.login-form {
+.login-form, .register-form {
   width: 543px;
   height: 490px; 
   padding: 20px;
@@ -136,10 +136,10 @@ nav a:hover {
   border-radius: 17px;
   display: flex;
   flex-direction: column;
-  margin-bottom:62px;
+  margin-bottom:10px;
 }
 
-.username, .pass {
+.username, .pass, .email, .password, .confirm-password {
   width: 100%;
   text-align: left;
   margin: 10px 0 5px;
@@ -148,7 +148,7 @@ nav a:hover {
   margin-left:45px;
 }
 
-.login-form input {
+.login-form input, .register-form input {
   width: 80%;  
   height: 25px; 
   border: 1px solid rgba(0, 0, 0, 0.2);
@@ -165,14 +165,14 @@ nav a:hover {
   border: 1px solid rgba(0, 0, 0, 0.4);
 }
 
-button {
+.login-form button, .register-form button {
   width: 84%;
   height: 40px;
   background: linear-gradient(0.40turn, #e1eaeb, #a8f1f8, #e1eaeb);
   border: none;
   border-radius: 5px;
   font-size: 16px;
-  margin-top: 20px;
+  margin-top: 10px;
   cursor: pointer;
   margin-left:44px;
 }
@@ -184,34 +184,10 @@ button:hover {
 .error{
   text-align:center;
 }
-.register-route{
+.register-route, .login-route{
   text-align:center;
-  margin-top:20px;
+  margin-bottom:38px;
 }
-.signup-form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-.signup-form h2 {
-  text-align: center;
-  margin-bottom: 10px;
-  font-family: Arial, sans-serif;
-}
-
-.signup-form span {
-  font-style: italic;
-  font-family: "Lucida Handwriting";
-}
-.register-form {
-  width: 543px;
-  height: 490px; 
-  padding: 20px;
-  background: rgb(244, 252, 252);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  border-radius: 17px;
-  display: flex;
-  flex-direction: column;
-  margin-bottom:62px;
+.register-form input{
+  margin-bottom:15px;
 }

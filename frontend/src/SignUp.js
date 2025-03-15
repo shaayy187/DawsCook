@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { Routes, Route, Link } from "react-router-dom";
+import SignIn from './SignIn';
 const SignUp = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [confirmpassword, setConfirmPassword] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
@@ -35,27 +37,39 @@ const SignUp = () => {
       <h2>Sign up</h2>
       <form onSubmit={handleSubmit}>
       {error && <p className="error">{error}</p>}
+      <div className="username">Username</div>
         <input
           type="text"
-          placeholder="Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
+         <div className="email">Email</div>
         <input
           type="email"
-          placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
+        <div className="password">Password</div>
         <input
           type="password"
-          placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button type="submit">Register</button>
+         <div className="confirm-password">Confirm password</div>
+        <input
+          type="password"
+          value={confirmpassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+        />
+        <button type="submit">SUBMIT</button>
       </form>
       </div>
+      <div className="login-route">
+        You do have an account? <Link to="/signin">Sign in now.</Link>
+        <Routes>
+          <Route path="/signin" element={<SignIn />} />
+        </Routes>
+        </div>
     </div>
   );
 };

@@ -49,14 +49,14 @@ const SignIn = () => {
           onChange={(e) => setPassword(e.target.value)}
         />
         <button type="submit">SUBMIT</button>
-        <div className="register-route">
+      </form>
+      </div>
+      <div className="register-route">
         You don't have account? <Link to="/signup">Sign up now.</Link>
         <Routes>
           <Route path="/signup" element={<SignUp />} />
         </Routes>
         </div>
-      </form>
-      </div>
     </div>
   );
 };

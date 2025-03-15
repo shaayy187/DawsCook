@@ -36,8 +36,8 @@ function App() {
           <Link to="/">Daws'Cook</Link>
           </div>
           <nav>
-            <Link to="/signin">Login</Link>
-            <Link to="/signup">Register</Link>
+            <Link to="/signin">Sign in</Link>
+            <Link to="/signup">Sign up</Link>
           </nav>
         </header>
 
