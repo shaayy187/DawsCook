@@ -30,8 +30,11 @@ const SignUp = () => {
 
   return (
     <div className="signup-form">
-      <h2>Register</h2>
+       <h2>The secret ingredient is always <span>love</span> .</h2> 
+    <div className="register-form">
+      <h2>Sign up</h2>
       <form onSubmit={handleSubmit}>
+      {error && <p className="error">{error}</p>}
         <input
           type="text"
           placeholder="Username"
@@ -50,9 +53,9 @@ const SignUp = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        {error && <p className="error">{error}</p>}
         <button type="submit">Register</button>
       </form>
+      </div>
     </div>
   );
 };
