@@ -12,7 +12,16 @@ const SignIn = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setError(""); 
-  
+
+    if(username===""){
+      setError("Username can't be empty.");
+      return;
+    }
+
+    if(password===""){
+      setError("Password can't be empty.");
+      return;
+    }
     fetch("http://localhost:8000/api/login/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
