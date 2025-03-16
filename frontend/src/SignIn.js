@@ -4,7 +4,7 @@ import './App.css';
 import { Routes, Route, Link } from "react-router-dom";
 import SignUp from './SignUp';
 const SignIn = () => {
-  const [email, setUsername] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -12,15 +12,15 @@ const SignIn = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    fetch("http://localhost:8000/api/users/", {
+    fetch("http://localhost:8000/api/login/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ username, password }),
     })
       .then((response) => response.json())
       .then((data) => {
-        if (data.token) {
-          sessionStorage.setItem("token", data.token);
+        if (data.access) {
+          sessionStorage.setItem("token", data.access);
           navigate("/");
         } else {
           setError("Invalid credentials.");
@@ -39,7 +39,7 @@ const SignIn = () => {
       <div className="username">Username</div>
         <input
           type="username"
-          value={email}
+          value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
         <div className="pass">Password</div>

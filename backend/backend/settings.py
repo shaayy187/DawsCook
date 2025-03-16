@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
-
+from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     "corsheaders",
     'api',
+    'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [
@@ -55,8 +56,30 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication', #metoda autentykacji   
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',  #klasy uprawnień pod view, aby blokować innych
+    ],
+}
+#konfiguracja JWT
+SIMPLE_JWT = {
+   'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),    
+   'REFRESH_TOKEN_LIFETIME': timedelta(days=1),      
+   'ROTATE_REFRESH_TOKENS': False,                   
+   'BLACKLIST_AFTER_ROTATION': True,                
+   'ALGORITHM': 'HS256',                           
+   'SIGNING_KEY': SECRET_KEY,                        
+   'AUTH_HEADER_TYPES': ('Bearer',),                 
+}
 
-REST_FRAMEWORK={'DEFAULT_PERMISSION_CLASSES':['rest_framework.permissions.AllowAny']}
+AUTH_USER_MODEL = 'api.SystemUser'
 
 
 ROOT_URLCONF = 'backend.urls'
