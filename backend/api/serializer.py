@@ -14,8 +14,8 @@ class CategorySerializer(serializers.ModelSerializer):
     Serializer do kategorii kulinarnych.
     """
     class Meta:
-        model = Recipe
-        fields = ['id','recipe','difficulty']
+        model = Category
+        fields = ['id','name']
 
 class UserSerializer(serializers.ModelSerializer):
     """

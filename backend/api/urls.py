@@ -7,4 +7,5 @@ urlpatterns = [
     path('recipes/', RecipeView.as_view(), name='recipe'), 
     path('register/', Register.as_view(), name='register'),
     path('login/', TokenObtainPairView.as_view(), name='login'), 
+    path('category/<int:id>/',CategoryView.as_view(), name='category'),
 ]
