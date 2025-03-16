@@ -7,7 +7,15 @@ class RecipeSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Recipe
-        fields = ['recipe','difficulty']
+        fields = ['id','recipe','difficulty']
+
+class CategorySerializer(serializers.ModelSerializer):
+    """
+    Serializer do kategorii kulinarnych.
+    """
+    class Meta:
+        model = Recipe
+        fields = ['id','recipe','difficulty']
 
 class UserSerializer(serializers.ModelSerializer):
     """

@@ -6,6 +6,8 @@ class Recipe(models.Model):
     recipe = models.CharField(max_length=30)
     difficulty = models.CharField(max_length=30)
 
+class Category(models.Model):
+    name = models.CharField(max_length=30) 
 
 class SystemUser(AbstractUser):
     email = models.EmailField(unique=True)
