@@ -10,6 +10,9 @@ class Category(models.Model):
     name = models.CharField(max_length=30) 
     image = models.BinaryField(blank=True, null=True)
 
+    def __str__(self):
+        return self.name
+
 class SystemUser(AbstractUser):
     email = models.EmailField(unique=True)
     groups = models.ManyToManyField( 
