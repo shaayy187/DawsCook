@@ -1,16 +1,28 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import './Home.css';
 
 const Home = ({ recipes }) => {
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:8000/api/category/")
+      .then((response) => response.json())
+      .then((data) => setCategories(data))
+      .catch((error) => console.error("Błąd pobierania kategorii:", error));
+  }, []);
+
+
   return (
     <div className="home-container">
       <section className="categories">
-        <h2>The secret ingredient is always <span>love</span> .</h2>
+        <h2>The secret ingredient is always <span>love</span>.</h2>
         <div className="category-list">
-          <div className="category">Vegan</div>
-          <div className="category">Vegetarian</div>
-          <div className="category">Healthy</div>
-          <div className="category">Confectionery</div>
-          <div className="category">Most Popular</div>
+          {categories.map((category) => (
+            <div key={category.id} className="category">
+              <img src={`data:image/png;base64,${category.image}`} alt={category.name} className="category-image" />
+              <span>{category.name}</span>
+            </div>
+          ))}
         </div>
       </section>
 
