@@ -8,6 +8,7 @@ class Recipe(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=30) 
+    image = models.BinaryField(blank=True, null=True)
 
 class SystemUser(AbstractUser):
     email = models.EmailField(unique=True)
