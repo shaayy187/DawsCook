@@ -2,13 +2,31 @@ from rest_framework import serializers
 from . models import *
 import base64
 
-class RecipeSerializer(serializers.ModelSerializer):
+
+
+class AllergySerializer(serializers.ModelSerializer):
     """
-    Serializer do wrzucania przepisów.
+    Serializer dla alergenów.
     """
     class Meta:
+        model = Allergy
+        fields = ['id','name']
+
+class RecipeSerializer(serializers.ModelSerializer):
+    """
+    Serializer do wrzucania przepisów wraz z alergenami.
+    """
+    allergies = AllergySerializer(many=True, read_only=True) 
+    allergy_ids = serializers.PrimaryKeyRelatedField(
+        queryset=Allergy.objects.all(), 
+        source='allergies',  
+        many=True,
+        write_only=True
+    )
+
+    class Meta:
         model = Recipe
-        fields = ['id','recipe','difficulty']
+        fields = ['id', 'recipe', 'difficulty', 'allergies', 'allergy_ids']
 
 class CategorySerializer(serializers.ModelSerializer):
     """
