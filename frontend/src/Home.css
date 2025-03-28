@@ -1,17 +1,10 @@
-.category-list {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
-  
   .category {
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    width: 200px;
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    cursor: pointer;
   }
   
   .category:hover {
@@ -21,8 +14,8 @@
   
   .category img {
     width: 180px;
-    height: 180px;
-    object-fit: cover;
+    height: 250px; 
+    object-fit: cover; 
     border-radius: 12px;
   }
   
