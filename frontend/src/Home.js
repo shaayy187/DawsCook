@@ -29,12 +29,13 @@ const Home = ({ recipes }) => {
       <section className="latest-recipes">
         <h2>Latest recipes</h2>
         <div className="recipe-grid">
-          {recipes.slice(0, 6).map((recipe, index) => (
+          {recipes.slice(-5).reverse().map((recipe, index) => (
             <div key={index} className="recipe-card">
               <h4>{recipe.recipe}</h4>
               <p>{recipe.difficulty}</p>
             </div>
           ))}
+          
         </div>
       </section>
     </div>
