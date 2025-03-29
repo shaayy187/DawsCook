@@ -63,6 +63,11 @@ nav a:hover {
   flex-grow: 1; 
 }
 
+.latest-recipes a {
+  text-decoration: none;
+  color: Black; 
+}
+
 .recipe-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));

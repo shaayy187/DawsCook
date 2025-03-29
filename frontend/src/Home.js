@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import './Home.css';
 
 const Home = ({ recipes }) => {
@@ -10,7 +11,6 @@ const Home = ({ recipes }) => {
       .then((data) => setCategories(data))
       .catch((error) => console.error("Błąd pobierania kategorii:", error));
   }, []);
-
 
   return (
     <div className="home-container">
@@ -29,13 +29,12 @@ const Home = ({ recipes }) => {
       <section className="latest-recipes">
         <h2>Latest recipes</h2>
         <div className="recipe-grid">
-          {recipes.slice(-5).reverse().map((recipe, index) => (
-            <div key={index} className="recipe-card">
+          {recipes.slice(-5).reverse().map((recipe) => (
+            <Link to={`/recipe/${recipe.id}`} key={recipe.id} className="recipe-card">
               <h4>{recipe.recipe}</h4>
               <p>{recipe.difficulty}</p>
-            </div>
+            </Link>
           ))}
-          
         </div>
       </section>
     </div>

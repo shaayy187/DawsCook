@@ -5,6 +5,7 @@ import SignIn from './SignIn';
 import SignUp from './SignUp';
 import Home from './Home';
 import './App.css';
+import RecipeDetails from './Recipe';
 
 function App() {
   const [recipes, setRecipes] = useState([]);
@@ -45,6 +46,7 @@ function App() {
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/" element={<Home recipes={recipes} />} />
+          <Route path="/recipe/:id" element={<RecipeDetails />} />
         </Routes>
 
         <footer className="footer">
