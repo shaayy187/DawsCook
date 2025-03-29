@@ -12,21 +12,6 @@ class AllergySerializer(serializers.ModelSerializer):
         model = Allergy
         fields = ['id','name']
 
-class RecipeSerializer(serializers.ModelSerializer):
-    """
-    Serializer do wrzucania przepisów wraz z alergenami.
-    """
-    allergies = AllergySerializer(many=True, read_only=True) 
-    allergy_ids = serializers.PrimaryKeyRelatedField(
-        queryset=Allergy.objects.all(), 
-        source='allergies',  
-        many=True,
-        write_only=True
-    )
-
-    class Meta:
-        model = Recipe
-        fields = ['id', 'recipe', 'difficulty', 'allergies', 'allergy_ids']
 
 class CategorySerializer(serializers.ModelSerializer):
     """
@@ -68,3 +53,35 @@ class UserSerializer(serializers.ModelSerializer):
             password=validated_data['password']
         )
         return user
+    
+class CommentSerializer(serializers.ModelSerializer):
+    replies = serializers.SerializerMethodField() 
+
+    class Meta:
+        model = Comment
+        fields = ['id', 'recipe', 'user', 'text', 'parent', 'replies', 'created_at']
+        read_only_fields = ['user', 'created_at']
+
+    def get_replies(self, obj):
+        replies = obj.replies.all()
+        return CommentSerializer(replies, many=True).data
+
+    def create(self, validated_data):
+        request = self.context['request']
+        validated_data['user'] = request.user
+        return super().create(validated_data)
+    
+class RecipeSerializer(serializers.ModelSerializer):
+    allergies = AllergySerializer(many=True, read_only=True)
+    allergy_ids = serializers.PrimaryKeyRelatedField(
+        queryset=Allergy.objects.all(),
+        source='allergies',
+        many=True,
+        write_only=True
+    )
+    rating = serializers.FloatField(read_only=True)
+    comments = CommentSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Recipe
+        fields = ['id', 'recipe', 'difficulty', 'allergies', 'allergy_ids', 'rating', 'comments']

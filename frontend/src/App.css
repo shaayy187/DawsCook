@@ -79,10 +79,8 @@ nav a:hover {
 }
 .recipe-card:hover {
   transform: scale(1.05);
-  box-shadow: 0px 4px 15px rgba(56, 54, 54, 0.2);
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
 }
-
-
 .footer {
   text-align: center;
   padding: 20px;
