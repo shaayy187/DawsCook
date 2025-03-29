@@ -21,6 +21,13 @@ function App() {
     };
   }, []);
 
+  const fetchRecipes = () => {
+    fetch("http://localhost:8000/api/recipes/") 
+      .then(response => response.json())
+      .then(data => setRecipes(data.recipes))
+      .catch(error => console.error("Error:", error));
+  };
+  
   useEffect(() => {
     fetch("http://localhost:8000/api/recipes/") 
       .then(response => response.json())
@@ -34,7 +41,7 @@ function App() {
         <header className="header">
           <img src={logo} alt="Logo" className="logo" />
           <div id="home">
-          <Link to="/">Daws'Cook</Link>
+          <Link to="/" onClick={fetchRecipes}>Daws'Cook</Link>
           </div>
           <nav>
             <Link to="/signin">Sign in</Link>
