@@ -8,11 +8,19 @@ from rest_framework import status
 
 @permission_classes([AllowAny])
 class RecipeView(APIView):
-    def get(self, request):
+    def get(self, request, id=None): 
+        if id is not None:
+            try:
+                recipe = Recipe.objects.get(id=id)
+                serializer = RecipeSerializer(recipe)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            except Recipe.DoesNotExist:
+                return Response({'error': 'Recipe not found'}, status=status.HTTP_404_NOT_FOUND)
+
         recipes = Recipe.objects.all()
-        serializer = RecipeSerializer(recipes, many=True) 
-        return Response({"recipes": serializer.data})  
-    
+        serializer = RecipeSerializer(recipes, many=True)
+        return Response({"recipes": serializer.data}, status=status.HTTP_200_OK)
+
     def post(self, request):
         serializer = RecipeSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
