@@ -16,6 +16,11 @@ function App() {
     link.rel = 'stylesheet';
     document.head.appendChild(link);
 
+    fetch("http://localhost:8000/api/recipes/") 
+    .then(response => response.json())
+    .then(data => setRecipes(data.recipes))
+    .catch(error => console.error("Error:", error));
+
     return () => {
       document.head.removeChild(link); 
     };
@@ -28,12 +33,6 @@ function App() {
       .catch(error => console.error("Error:", error));
   };
   
-  useEffect(() => {
-    fetch("http://localhost:8000/api/recipes/") 
-      .then(response => response.json())
-      .then(data => setRecipes(data.recipes))
-      .catch(error => console.error("Error:", error));
-  }, []);
 
   return (
     <BrowserRouter>
