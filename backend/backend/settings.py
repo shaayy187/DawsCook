@@ -67,6 +67,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',  #klasy uprawnień pod view, aby blokować innych
     ],
+    'EXCEPTION_HANDLER': 'api.exceptions.custom_exception_handler'
 }
 #konfiguracja JWT
 SIMPLE_JWT = {
