@@ -15,7 +15,10 @@ class Register(APIView):
     @swagger_auto_schema(
         operation_description="Register a new user.",
         request_body=UserSerializer,
-        responses={201: openapi.Response("User registered successfully")}
+        responses={
+            201: openapi.Response("User registered successfully"),
+            400: "Validation error"
+        }
     )
     def post(self, request):
         result = user_service.register_user(request.data)

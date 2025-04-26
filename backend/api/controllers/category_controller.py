@@ -14,7 +14,11 @@ class CategoryView(APIView):
 
     @swagger_auto_schema(
         operation_description="Retrieve a category by ID or return all categories if no ID is provided.",
-        responses={200: CategorySerializer(many=True)},
+        responses={
+            200: CategorySerializer(many=True),
+            404: 'Category not found',
+            400: 'Bad request'
+        },
         manual_parameters=[
             openapi.Parameter(
                 'id', openapi.IN_QUERY, description="Optional category ID to retrieve a single category", type=openapi.TYPE_INTEGER
@@ -28,7 +32,10 @@ class CategoryView(APIView):
     @swagger_auto_schema(
         operation_description="Create a new category.",
         request_body=CategorySerializer,
-        responses={201: CategorySerializer}
+        responses={
+            201: CategorySerializer,
+            400: 'Validation error'
+        }
     )
     def post(self, request):
         category = category_service.create_category(request.data)

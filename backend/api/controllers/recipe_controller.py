@@ -14,7 +14,11 @@ class RecipeView(APIView):
 
     @swagger_auto_schema(
         operation_description="Retrieve a recipe by ID or return all recipes if no ID is provided.",
-        responses={200: RecipeSerializer(many=True)},
+        responses={
+            200: RecipeSerializer(many=True),
+            404: 'Recipe not found',
+            400: 'Bad request'
+        },
         manual_parameters=[
             openapi.Parameter(
                 'id', openapi.IN_QUERY, description="Optional recipe ID to retrieve a single recipe", type=openapi.TYPE_INTEGER
@@ -28,7 +32,10 @@ class RecipeView(APIView):
     @swagger_auto_schema(
         operation_description="Create a new recipe.",
         request_body=RecipeSerializer,
-        responses={201: RecipeSerializer}
+        responses={
+            201: RecipeSerializer,
+            400: 'Validation error'
+        }
     )
     def post(self, request):
         recipe = recipe_service.create_recipe(request.data)
