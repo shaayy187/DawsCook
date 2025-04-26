@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Home.css';
 
-const Home = ({ recipes }) => {
+const Home = ({ recipes = []}) => {
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {

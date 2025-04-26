@@ -1,6 +1,7 @@
 from django.urls import path
-from . import views
-from . views import *
+from .controllers.recipe_controller import RecipeView
+from .controllers.user_controller import Register
+from .controllers.category_controller import CategoryView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 

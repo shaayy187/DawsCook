@@ -1,17 +1,17 @@
-from .models import Recipe, Category, SystemUser
-from rest_framework.decorators import permission_classes
-from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
-from .serializer import RecipeSerializer, UserSerializer, CategorySerializer
-from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
+from rest_framework import status
+from rest_framework.decorators import permission_classes
+from rest_framework.permissions import AllowAny
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
+from .serializer import RecipeSerializer, UserSerializer, CategorySerializer
+from .services import recipe_service, user_service, category_service
+
+
 @permission_classes([AllowAny])
 class RecipeView(APIView):
-
 
     @swagger_auto_schema(
         operation_description="Retrieve a recipe by ID or return all recipes if no ID is provided.",
@@ -22,16 +22,9 @@ class RecipeView(APIView):
             )
         ]
     )
-    def get(self, request, id=None): 
-        if id is not None:
-            recipe = get_object_or_404(Recipe, id=id)
-            serializer = RecipeSerializer(recipe)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-
-        recipes = Recipe.objects.all()
-        serializer = RecipeSerializer(recipes, many=True)
-        return Response({"recipes": serializer.data}, status=status.HTTP_200_OK)
-    
+    def get(self, request, id=None):
+        recipes = recipe_service.get_recipes(id)
+        return Response(recipes, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
         operation_description="Create a new recipe.",
@@ -39,15 +32,12 @@ class RecipeView(APIView):
         responses={201: RecipeSerializer}
     )
     def post(self, request):
-        serializer = RecipeSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        recipe = recipe_service.create_recipe(request.data)
+        return Response(recipe, status=status.HTTP_201_CREATED)
 
 
 @permission_classes([AllowAny])
 class Register(APIView):
-
 
     @swagger_auto_schema(
         operation_description="Register a new user.",
@@ -55,13 +45,8 @@ class Register(APIView):
         responses={201: openapi.Response("User registered successfully")}
     )
     def post(self, request):
-        serializer = UserSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response({
-            "success": True,
-            "message": "User registered successfully"
-        }, status=status.HTTP_201_CREATED)
+        result = user_service.register_user(request.data)
+        return Response(result, status=status.HTTP_201_CREATED)
 
 
 @permission_classes([AllowAny])
@@ -77,25 +62,14 @@ class CategoryView(APIView):
         ]
     )
     def get(self, request, id=None):
-        if id:
-            category = get_object_or_404(Category, id=id)
-            serializer = CategorySerializer(category)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+        categories = category_service.get_categories(id)
+        return Response(categories, status=status.HTTP_200_OK)
 
-        categories = Category.objects.all()
-        serializer = CategorySerializer(categories, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    
-    
     @swagger_auto_schema(
         operation_description="Create a new category.",
         request_body=CategorySerializer,
         responses={201: CategorySerializer}
     )
     def post(self, request):
-        serializer = CategorySerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
+        category = category_service.create_category(request.data)
+        return Response(category, status=status.HTTP_201_CREATED)
