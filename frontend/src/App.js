@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import logo from "./logo.png";
 import SignIn from './SignIn';
 import SignUp from './SignUp';
+import AvatarDropdown from './AvatarDropdown';
 import Home from './Home';
 import AboutUs from './AboutUs';
 import './App.css';
@@ -43,6 +44,7 @@ function App() {
           <div id="home">
           <Link to="/" onClick={fetchRecipes}>Daws'Cook</Link>
           </div>
+          <div className="navigation-container"> 
           <nav>
             <Link to="/">Home</Link>
             <Link to="/aboutus">About us</Link>
@@ -50,6 +52,8 @@ function App() {
             <Link to="/signin">Sign in</Link>
             <Link to="/signup">Sign up</Link>
           </nav>
+          <AvatarDropdown />
+          </div>
         </header>
 
         <Routes>
