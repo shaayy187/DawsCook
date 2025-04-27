@@ -1,9 +1,18 @@
 from rest_framework import serializers
 from . models import *
 import base64
+from django.core.files.base import ContentFile
 
-
-
+def decode_base64(data):
+    if not data:
+        return None
+    try:
+        if ';base64,' in data:
+            _, data = data.split(';base64,')
+        return base64.b64decode(data)
+    except Exception:
+        raise serializers.ValidationError({"image_upload": "Invalid image data."})
+    
 class AllergySerializer(serializers.ModelSerializer):
     """
     Serializer dla alergenów.
@@ -32,9 +41,9 @@ class CategorySerializer(serializers.ModelSerializer):
 
     # dekodujemy obraz na postać binarną oraz tworzymy rekord
     def create(self, validated_data):
-        image_upload = validated_data.pop('image_upload', None)
-        if image_upload:
-            validated_data['image'] = base64.b64decode(image_upload)
+        image_data = validated_data.pop('image_upload', None)
+        if image_data:
+            validated_data['image'] = decode_base64(image_data)
         return super().create(validated_data)
 
 class UserSerializer(serializers.ModelSerializer):
@@ -42,17 +51,45 @@ class UserSerializer(serializers.ModelSerializer):
     Serializer do odczytu danych użytkownika systemowego.
     """
     password = serializers.CharField(write_only=True)
+    image = serializers.SerializerMethodField() # odczytuje obraz z bazy danych i koduje go w formacie Base64
+    image_upload = serializers.CharField(write_only=True, required=False, allow_blank=True)  # przyjmuje obraz w formacie Base64 i przekształca go do formatu binarnego i wrzuca do bazy
     class Meta:
         model = SystemUser
-        fields = ['id', 'username', 'email', 'password'] 
+        fields = ['id', 'username', 'email', 'password', 'image', 'image_upload'] 
+
+    def get_image(self, obj):
+        if obj.image:
+            return base64.b64encode(obj.image).decode('utf-8')
+        return None
 
     def create(self, validated_data):
-        user = SystemUser.objects.create_user(
-            username=validated_data['username'],
-            email=validated_data['email'],
-            password=validated_data['password']
+        image_data = validated_data.pop('image_upload', None)
+        password = validated_data.pop('password')
+
+        user = SystemUser(
+            username=validated_data.get('username'),
+            email=validated_data.get('email')
         )
+        user.set_password(password)
+
+        if image_data:
+            user.image = decode_base64(image_data)
+
+        user.save()
         return user
+
+    def update(self, instance, validated_data):
+        image_data = validated_data.pop('image_upload', None)
+
+        if image_data is not None:
+            instance.image = decode_base64(image_data) if image_data else None
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.save()
+        return instance
+
     
 class CommentSerializer(serializers.ModelSerializer):
     replies = serializers.SerializerMethodField() 

@@ -26,6 +26,7 @@ class Category(models.Model):
 
 class SystemUser(AbstractUser):
     email = models.EmailField(unique=True)
+    image = models.BinaryField(blank=True, null=True)
     groups = models.ManyToManyField( 
         Group,
         related_name="custom_user_set", 

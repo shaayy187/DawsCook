@@ -8,3 +8,13 @@ def register_user(data):
         "success": True,
         "message": "User registered successfully"
     }
+
+def get_user_profile(user):
+    serializer = UserSerializer(user)
+    return serializer.data
+
+def update_user_profile(user, data):
+    serializer = UserSerializer(user, data=data, partial=True)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    return UserSerializer(user).data

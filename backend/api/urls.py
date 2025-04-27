@@ -1,6 +1,6 @@
 from django.urls import path
 from .controllers.recipe_controller import RecipeView
-from .controllers.user_controller import Register
+from .controllers.user_controller import Register, UserProfile
 from .controllers.category_controller import CategoryView
 from rest_framework_simplejwt.views import TokenObtainPairView
 
@@ -12,4 +12,5 @@ urlpatterns = [
     path('login/', TokenObtainPairView.as_view(), name='login'), 
     path('category/<int:id>/', CategoryView.as_view(), name='category-detail'),
     path('category/', CategoryView.as_view(), name='category-list'),
+    path('user/', UserProfile.as_view(), name='user-profile'),
 ]
