@@ -1,20 +1,41 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 const RecipeDetails = () => {
   const { id } = useParams(); 
+  const navigate = useNavigate();
   const [recipe, setRecipe] = useState(null);
-  useEffect(() => {
-    fetch(`http://localhost:8000/api/recipes/${id}/`) 
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Nie można załadować danych');
-        }
-        return response.json();
-      })
-      .then((data) => setRecipe(data))
-  }, [id]);
+  const [error, setError] = useState("");
 
+  useEffect(() => {
+    const token = sessionStorage.getItem("token");
+
+    if (!token) {
+      navigate('/signin');
+      return;
+    }
+
+    fetch(`http://localhost:8000/api/recipes/${id}/`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    })
+    .then((response) => {
+      if (!response.ok) {
+        if (response.status === 401) {
+          navigate('/signin');
+        }
+        throw new Error('Nie można załadować danych');
+      }
+      return response.json();
+    })
+    .then((data) => setRecipe(data))
+    .catch((err) => setError(err.message));
+  }, [id, navigate]);
+
+  if (error) return <p>{error}</p>;
   if (!recipe) return <p>Ładowanie...</p>;
 
   return (

@@ -2,16 +2,15 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-
+from rest_framework.exceptions import AuthenticationFailed
 from ..serializer import RecipeSerializer
 from ..services import recipe_service
 
-@permission_classes([AllowAny])
 class RecipeView(APIView):
-
+    permission_classes = [IsAuthenticatedOrReadOnly]
     @swagger_auto_schema(
         operation_description="Retrieve a recipe by ID or return all recipes if no ID is provided.",
         responses={
@@ -26,8 +25,15 @@ class RecipeView(APIView):
         ]
     )
     def get(self, request, id=None):
-        recipes = recipe_service.get_recipes(id)
+        if id is not None:
+            if not request.user.is_authenticated: 
+                raise AuthenticationFailed("No Permissions")
+            recipe = recipe_service.get_recipes(id)
+            return Response(recipe, status=status.HTTP_200_OK)
+        
+        recipes = recipe_service.get_recipes()
         return Response(recipes, status=status.HTTP_200_OK)
+
 
     @swagger_auto_schema(
         operation_description="Create a new recipe.",
