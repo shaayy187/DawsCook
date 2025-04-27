@@ -242,10 +242,18 @@ label.privacyPolicy {
   cursor: pointer;
 }
 
-.default-avatar {
+.default-avatar svg {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-left:2px;
+}
+
+.user-avatar-img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 50%;
 }
 
 .dropdown-menu {
@@ -290,4 +298,52 @@ label.privacyPolicy {
 
 .dropdown-item:hover {
   background-color: #f0f0f0;
+}
+.profile-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.profile-picture-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-picture {
+  margin: 10px 0;
+}
+
+.avatar-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.avatar-placeholder {
+  width: 100px;
+  height: 100px;
+  background-color: #eee;
+  border-radius: 50%;
+}
+
+.avatar-edit {
+  margin: 5px 0;
+}
+
+.edit-button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.avatar-remove div {
+  margin-top: 5px;
+  color: red;
+  cursor: pointer;
 }

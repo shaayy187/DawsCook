@@ -13,6 +13,7 @@ import Settings from './Settings';
 
 function App() {
   const [recipes, setRecipes] = useState([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     const link = document.createElement('link');
@@ -25,6 +26,12 @@ function App() {
     .then(data => setRecipes(data.recipes))
     .catch(error => console.error("Error:", error));
 
+    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+
+    if (token) {
+      setIsLoggedIn(true);
+    }
+
     return () => {
       document.head.removeChild(link); 
     };
@@ -36,7 +43,17 @@ function App() {
       .then(data => setRecipes(data.recipes))
       .catch(error => console.error("Error:", error));
   };
-  
+
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+  };
+
+  const handleLogout = () => {
+    sessionStorage.removeItem("token");
+    localStorage.removeItem("token");
+    window.location.reload();
+    setIsLoggedIn(false);
+  };
 
   return (
     <BrowserRouter>
@@ -44,22 +61,26 @@ function App() {
         <header className="header">
           <img src={logo} alt="Logo" className="logo" />
           <div id="home">
-          <Link to="/" onClick={fetchRecipes}>Daws'Cook</Link>
+            <Link to="/" onClick={fetchRecipes}>Daws'Cook</Link>
           </div>
           <div className="navigation-container"> 
-          <nav>
-            <Link to="/">Home</Link>
-            <Link to="/aboutus">About us</Link>
-            <Link to="/">Recipes</Link>
-            <Link to="/signin">Sign in</Link>
-            <Link to="/signup">Sign up</Link>
-          </nav>
-          <AvatarDropdown />
+            <nav>
+              <Link to="/">Home</Link>
+              <Link to="/aboutus">About us</Link>
+              <Link to="/">Recipes</Link>
+              {!isLoggedIn && (
+                <>
+                  <Link to="/signin">Sign in</Link>
+                  <Link to="/signup">Sign up</Link>
+                </>
+              )}
+            </nav>
+            <AvatarDropdown isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
           </div>
         </header>
 
         <Routes>
-          <Route path="/signin" element={<SignIn />} />
+          <Route path="/signin" element={<SignIn onLogin={handleLogin} />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/aboutus" element={<AboutUs />} />
           <Route path="/" element={<Home recipes={recipes} />} />
@@ -75,5 +96,6 @@ function App() {
     </BrowserRouter>
   );
 }
+
 
 export default App;

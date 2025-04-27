@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import './App.css';
 import { Routes, Route, Link } from "react-router-dom";
 import SignUp from './SignUp';
-const SignIn = () => {
+const SignIn = ({onLogin}) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -31,7 +31,9 @@ const SignIn = () => {
       .then((data) => {
         if (data.access) {
           sessionStorage.setItem("token", data.access);
+          onLogin();
           navigate("/");
+          window.location.reload();
         } else {
           setError("Invalid credentials.");
         }
