@@ -10,6 +10,7 @@ import './App.css';
 import RecipeDetails from './Recipe';
 import Profile from './Profile';
 import Settings from './Settings';
+import SessionChecker from './Session'
 
 function App() {
   const [recipes, setRecipes] = useState([]);
@@ -57,6 +58,7 @@ function App() {
 
   return (
     <BrowserRouter>
+    <SessionChecker setIsLoggedIn={setIsLoggedIn} />
       <div className="app">
         <header className="header">
           <img src={logo} alt="Logo" className="logo" />
