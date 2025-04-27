@@ -8,6 +8,8 @@ import Home from './Home';
 import AboutUs from './AboutUs';
 import './App.css';
 import RecipeDetails from './Recipe';
+import Profile from './Profile';
+import Settings from './Settings';
 
 function App() {
   const [recipes, setRecipes] = useState([]);
@@ -62,6 +64,8 @@ function App() {
           <Route path="/aboutus" element={<AboutUs />} />
           <Route path="/" element={<Home recipes={recipes} />} />
           <Route path="/recipe/:id" element={<RecipeDetails />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/settings" element={<Settings />} />
         </Routes>
 
         <footer className="footer">

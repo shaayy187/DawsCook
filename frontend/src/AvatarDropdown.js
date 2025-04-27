@@ -22,7 +22,7 @@ function AvatarDropdown() {
   };
 
   return (
-    <div className="avatar-dropdown" onBlur={closeDropdown} tabIndex="0">
+    <div className="avatar-dropdown" tabIndex="0">
       {(
         <div className="default-avatar" onClick={toggleDropdown}>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="36" height="36">
