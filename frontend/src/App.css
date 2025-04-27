@@ -279,4 +279,15 @@ label.privacyPolicy {
   margin-right: 20px; 
 }
 
+ .dropdown-item {
+  display: block;
+  padding: 8px 16px;
+  color: #333;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 14px;
+}
 
+.dropdown-item:hover {
+  background-color: #f0f0f0;
+}

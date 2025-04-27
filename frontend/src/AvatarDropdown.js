@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import "./App.css";
+import { useNavigate } from "react-router-dom";
 
 function AvatarDropdown() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const navigate = useNavigate();
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -11,6 +13,12 @@ function AvatarDropdown() {
 
   const closeDropdown = () => {
     setDropdownOpen(false);
+  };
+
+  const handleLogout = () =>{
+    sessionStorage.removeItem("token");
+    closeDropdown();
+    navigate("/");
   };
 
   return (
@@ -27,7 +35,7 @@ function AvatarDropdown() {
         <div className="dropdown-menu">
           <Link to="/profile" onClick={closeDropdown}>Profile</Link>
           <Link to="/settings" onClick={closeDropdown}>Settings</Link>
-          <Link to="/logout" onClick={closeDropdown}>Log out</Link>
+          <div onClick={handleLogout} className="dropdown-item">Log out</div>
         </div>
       )}
     </div>
