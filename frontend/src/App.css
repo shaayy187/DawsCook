@@ -360,6 +360,9 @@ label.privacyPolicy {
   margin: 5px 0;
   border-bottom: 1px solid #ddd;
   height: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .save-changes,
@@ -428,5 +431,10 @@ label.privacyPolicy {
 .allergens-settings:hover,
 .sign-out:hover {
   color: #00bfa6;
+  cursor: pointer;
+}
+
+.data u{
+  font-size:small;
   cursor: pointer;
 }

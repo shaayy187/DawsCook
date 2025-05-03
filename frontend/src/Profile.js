@@ -123,12 +123,12 @@ const Profile = () => {
             </div>
     
             <div className="data">
-                <p><strong>Username</strong></p>
-                <p><strong>Email</strong></p>
-                <p><strong>Name</strong></p>
-                <p><strong>Surname</strong></p>
-                <p><strong>Age</strong></p>
-                <p><strong>Pronouns</strong></p>
+                <p><strong>Username</strong><u>Edit</u></p>
+                <p><strong>Email</strong><u>Edit</u></p>
+                <p><strong>Name</strong><u>Edit</u></p>
+                <p><strong>Surname</strong><u>Edit</u></p>
+                <p><strong>Age</strong><u>Edit</u></p>
+                <p><strong>Pronouns</strong><u>Edit</u></p>
                 <button className="save-changes" onClick={handleChangeEmail}>Save Changes</button>
                 <button className="cancel-changes">Cancel</button>
             </div>
