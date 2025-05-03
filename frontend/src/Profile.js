@@ -5,6 +5,7 @@ const Profile = () => {
     const [preview, setPreview] = useState(null);
     const [token, setToken] = useState(null);
     const [isAuthorized, setIsAuthorized] = useState(false);
+    const [userData, setUserData] = useState([]);
 
     useEffect(() => {
         const savedToken = localStorage.getItem("token") || sessionStorage.getItem("token");
@@ -28,6 +29,9 @@ const Profile = () => {
                 }
 
                 const data = await res.json();
+                if (data){
+                    setUserData(data);
+                }
                 if (data.image) {
                     setPreview(`data:image/jpeg;base64,${data.image}`);
                 }
@@ -123,14 +127,16 @@ const Profile = () => {
             </div>
     
             <div className="data">
-                <p><strong>Username</strong><u>Edit</u></p>
-                <p><strong>Email</strong><u>Edit</u></p>
-                <p><strong>Name</strong><u>Edit</u></p>
-                <p><strong>Surname</strong><u>Edit</u></p>
-                <p><strong>Age</strong><u>Edit</u></p>
-                <p><strong>Pronouns</strong><u>Edit</u></p>
-                <button className="save-changes" onClick={handleChangeEmail}>Save Changes</button>
-                <button className="cancel-changes">Cancel</button>
+                <div className="user-data">
+                    <p><strong>Username</strong>{userData.username}<u>Edit</u></p>
+                    <p><strong>Email</strong>{userData.email}<u>Edit</u></p>
+                    <p><strong>Name</strong>{userData.first_name}<u>Edit</u></p>
+                    <p><strong>Surname</strong>{userData.last_name}<u>Edit</u></p>
+                    <p><strong>Age</strong>{userData.age}<u>Edit</u></p>
+                    <p><strong>Pronouns</strong>{userData.pronouns}<u>Edit</u></p>
+                    <button className="save-changes" onClick={handleChangeEmail}>Save Changes</button>
+                    <button className="cancel-changes">Cancel</button>
+                </div>
             </div>
         </div>
     );

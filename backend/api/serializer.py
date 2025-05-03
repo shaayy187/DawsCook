@@ -55,7 +55,7 @@ class UserSerializer(serializers.ModelSerializer):
     image_upload = serializers.CharField(write_only=True, required=False, allow_blank=True)  # przyjmuje obraz w formacie Base64 i przekształca go do formatu binarnego i wrzuca do bazy
     class Meta:
         model = SystemUser
-        fields = ['id', 'username', 'email', 'password', 'image', 'image_upload'] 
+        fields = ['id', 'username', 'email', 'password', 'first_name', 'last_name','age','pronouns', 'image', 'image_upload'] 
 
     def get_image(self, obj):
         if obj.image:
