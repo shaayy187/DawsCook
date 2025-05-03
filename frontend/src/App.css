@@ -299,51 +299,134 @@ label.privacyPolicy {
 .dropdown-item:hover {
   background-color: #f0f0f0;
 }
-.profile-container {
+
+.main {
   display: flex;
+  flex-direction: row;
   justify-content: center;
+  padding: 40px;
+  gap: 40px;
+}
+
+.profile-container {
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  margin-top: 20px;
+  width: 300px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .profile-picture-text {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 16px;
 }
 
-.profile-picture {
-  margin: 10px 0;
-}
-
-.avatar-image {
-  width: 100px;
-  height: 100px;
+.avatar-image, .avatar-placeholder {
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
-  object-fit: cover;
-}
-
-.avatar-placeholder {
-  width: 100px;
-  height: 100px;
-  background-color: #eee;
-  border-radius: 50%;
-}
-
-.avatar-edit {
-  margin: 5px 0;
-}
-
-.edit-button {
-  background-color: #4CAF50;
-  color: white;
-  padding: 5px 10px;
-  border-radius: 5px;
-  cursor: pointer;
+  background-color: #f0f0f0;
+  border: 2px solid #ccc;
 }
 
 .avatar-remove div {
-  margin-top: 5px;
-  color: red;
+  color: #d32f2f;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 6px;
+  text-decoration: underline;
+}
+
+.data {
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.data p {
+  font-size: 16px;
+  margin: 5px 0;
+  border-bottom: 1px solid #ddd;
+  height: 30px;
+}
+
+.save-changes,
+.cancel-changes,
+.edit-button {
+  padding: 10px 10px;
+  font-size: 15px;
+  border-radius: 12px;
+  border: none;
+  transition: all 0.3s ease;
+  background: linear-gradient(to right, #00c6ff, #0072ff);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.save-changes:hover, .cancel-changes:hover, .edit-button:hover {
+  transform: scale(1.05);
+  background: linear-gradient(to right, #0072ff, #00c6ff);
+}
+
+.settings {
+  position: relative;
+  background-color: white;
+  padding: 20px;
+  border-radius: 16px;
+  height: fit-content;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.profile-container:hover,
+.data:hover,
+.settings:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
+
+.settings p {
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+.settings > div {
+  padding: 12px;
+  cursor: pointer;
+  border-radius: 10px;
+  font-size: 15px;
+  color: #555;
+  transition: background 0.3s ease;
+  border-bottom: 1px solid #ddd;
+}
+
+.settings > div:hover {
+  background-color: #f0f0f0;
+  color: #00bfa6;
+}
+
+.settings > div:last-child {
+  border-bottom: none;
+}
+
+.general-settings:hover,
+.password-settings:hover,
+.email-settings:hover,
+.allergens-settings:hover,
+.sign-out:hover {
+  color: #00bfa6;
   cursor: pointer;
 }

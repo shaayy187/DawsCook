@@ -83,35 +83,58 @@ const Profile = () => {
         await updateImage("");
         alert("Zdjęcie usunięte!");
     };
+    const handleChangeEmail = () => {
+
+    };
 
     if (!isAuthorized) {
         return null; 
-    }
+    };
 
     return (
-        <div className="profile-container">
-            <div className="profile-picture-text">
-                Profile picture
-
-                <div className="profile-picture">
-                    {preview ? (
-                        <img src={preview} alt="Avatar Preview" className="avatar-image" />
-                    ) : (
-                        <div className="avatar-placeholder" />
-                    )}
+        <div className="main">
+            <div className="settings">
+                <p>Account Settings</p>
+                <div className="general-settings">General</div>
+                <div className="password-settings">Password</div>
+                <div className="email-settings">Email</div>
+                <div className="allergens-settings">Allergens</div>
+                <div className="sign-out">Sign Out</div>
+            </div>
+    
+            <div className="profile-container">
+                <div className="profile-picture-text">
+                    <h3>Profile Picture</h3>
+                    <div className="profile-picture">
+                        {preview ? (
+                            <img src={preview} alt="Avatar" className="avatar-image" />
+                        ) : (
+                            <div className="avatar-placeholder" />
+                        )}
+                    </div>
+                    <div className="avatar-edit">
+                        <label htmlFor="avatar-upload" className="edit-button">Edit</label>
+                        <input id="avatar-upload" type="file" onChange={handleEdit} style={{ display: "none" }} />
+                    </div>
+                    <div className="avatar-remove">
+                        <div onClick={handleRemove}>Remove</div>
+                    </div>
                 </div>
-
-                <div className="avatar-edit">
-                    <label htmlFor="avatar-upload" className="edit-button">Edit</label>
-                    <input id="avatar-upload" type="file" onChange={handleEdit} style={{ display: "none" }} />
-                </div>
-
-                <div className="avatar-remove">
-                    <div onClick={handleRemove}>Remove</div>
-                </div>
+            </div>
+    
+            <div className="data">
+                <p><strong>Username</strong></p>
+                <p><strong>Email</strong></p>
+                <p><strong>Name</strong></p>
+                <p><strong>Surname</strong></p>
+                <p><strong>Age</strong></p>
+                <p><strong>Pronouns</strong></p>
+                <button className="save-changes" onClick={handleChangeEmail}>Save Changes</button>
+                <button className="cancel-changes">Cancel</button>
             </div>
         </div>
     );
+    
 };
 
 export default Profile;
