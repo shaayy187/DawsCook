@@ -78,6 +78,7 @@ const Profile = () => {
             setPreview(reader.result);
             await updateImage(base64String);
             alert("Zdjęcie zaktualizowane!");
+            window.location.replace("/profile");
         };
         reader.readAsDataURL(file);
     };
@@ -86,6 +87,7 @@ const Profile = () => {
         setPreview(null);
         await updateImage("");
         alert("Zdjęcie usunięte!");
+        window.location.replace("/profile");
     };
     const handleChangeEmail = () => {
 
