@@ -3,10 +3,12 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework.decorators import permission_classes
 from drf_yasg import openapi
 from rest_framework.exceptions import NotFound
 from ..serializer import RecipeSerializer
 from ..services import recipe_service
+
 
 class RecipeView(APIView):
     permission_classes = [AllowAny]
@@ -27,6 +29,7 @@ class RecipeView(APIView):
     def post(self, request):
         recipe = recipe_service.create_recipe(request.data)
         return Response(recipe, status=status.HTTP_201_CREATED)
+
 
 class RecipeDetailView(APIView):
     permission_classes = [IsAuthenticated]

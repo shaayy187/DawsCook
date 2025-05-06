@@ -10,11 +10,6 @@ const RecipeDetails = () => {
   useEffect(() => {
     const token = sessionStorage.getItem("token");
 
-    if (!token) {
-      navigate('/signin');
-      return;
-    }
-
     fetch(`http://localhost:8000/api/recipes/${id}/`, {
       method: "GET",
       headers: {
