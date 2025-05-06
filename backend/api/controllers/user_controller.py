@@ -9,14 +9,15 @@ from drf_yasg import openapi
 from ..serializer import UserSerializer
 from ..services import user_service
 
-@permission_classes([AllowAny])
+
 class Register(APIView):
+    permission_classes = [AllowAny]
 
     @swagger_auto_schema(
         operation_description="Register a new user.",
         request_body=UserSerializer,
         responses={
-            201: openapi.Response("User registered successfully"),
+            201: UserSerializer(),
             400: "Validation error"
         }
     )
@@ -29,22 +30,20 @@ class UserProfile(APIView):
     permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
-        operation_description="Receive information about exact user.",
-        request_body=UserSerializer,
+        operation_description="Get the authenticated user's profile.",
         responses={
-            201: openapi.Response("User found."),
-            400: "Validation error"
+            200: UserSerializer()
         }
     )
     def get(self, request):
         user_data = user_service.get_user_profile(request.user)
         return Response(user_data)
-    
+
     @swagger_auto_schema(
-        operation_description="Update information about user.",
+        operation_description="Update the authenticated user's profile.",
         request_body=UserSerializer,
         responses={
-            201: openapi.Response("Process successful!."),
+            200: UserSerializer(),
             400: "Validation error"
         }
     )

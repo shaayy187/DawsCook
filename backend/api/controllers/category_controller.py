@@ -9,21 +9,18 @@ from drf_yasg import openapi
 from ..serializer import CategorySerializer
 from ..services import category_service
 
-@permission_classes([AllowAny])
 class CategoryView(APIView):
+    permission_classes = [AllowAny]
 
     @swagger_auto_schema(
-        operation_description="Retrieve a category by ID or return all categories if no ID is provided.",
+        operation_description="Retrieve a list of all categories or a specific category by ID.",
+        manual_parameters=[
+            openapi.Parameter('id', openapi.IN_QUERY, description="Category ID", type=openapi.TYPE_INTEGER)
+        ],
         responses={
             200: CategorySerializer(many=True),
-            404: 'Category not found',
-            400: 'Bad request'
-        },
-        manual_parameters=[
-            openapi.Parameter(
-                'id', openapi.IN_QUERY, description="Optional category ID to retrieve a single category", type=openapi.TYPE_INTEGER
-            )
-        ]
+            404: "Category not found"
+        }
     )
     def get(self, request, id=None):
         categories = category_service.get_categories(id)
@@ -33,10 +30,12 @@ class CategoryView(APIView):
         operation_description="Create a new category.",
         request_body=CategorySerializer,
         responses={
-            201: CategorySerializer,
-            400: 'Validation error'
+            201: CategorySerializer(),
+            400: "Validation error"
         }
     )
     def post(self, request):
-        category = category_service.create_category(request.data)
-        return Response(category, status=status.HTTP_201_CREATED)
+        serializer = CategorySerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
