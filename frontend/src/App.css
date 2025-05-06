@@ -280,6 +280,7 @@ label.privacyPolicy {
 .dropdown-menu a:hover {
   background-color: #f2f2f2;
 }
+
 .navigation-container {
   display: flex;
   align-items: center;
@@ -312,11 +313,11 @@ label.privacyPolicy {
   background-color: white;
   border-radius: 16px;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-  padding: 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 300px;
+  width: 440px; 
+  padding: 32px; 
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -347,22 +348,12 @@ label.privacyPolicy {
   background-color: white;
   border-radius: 16px;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-  padding: 24px;
-  width: 400px;
+  width: 440px; 
+  padding: 32px; 
   display: flex;
   flex-direction: column;
   gap: 10px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.data p {
-  font-size: 16px;
-  margin: 5px 0;
-  border-bottom: 1px solid #ddd;
-  height: 30px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
 
 .save-changes,
@@ -387,7 +378,8 @@ label.privacyPolicy {
 .settings {
   position: relative;
   background-color: white;
-  padding: 20px;
+  width: 440px; 
+  padding: 32px; 
   border-radius: 16px;
   height: fit-content;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
@@ -437,4 +429,46 @@ label.privacyPolicy {
 .data u{
   font-size:small;
   cursor: pointer;
+}
+
+.user-data-buttons {
+  display: flex;
+  padding-top: 16px;
+}
+
+.cancel-changes{
+  margin-left: 10px;
+}
+
+.user-data-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #ddd;
+  font-size: 16px;
+}
+
+.user-data-label {
+  width: 30%;
+  font-weight: bold;
+  color: #333;
+}
+
+.user-data-value {
+  width: 50%;
+  color: #555;
+}
+
+.user-data-edit {
+  width: 20%;
+  color: #0072ff;
+  cursor: pointer;
+  text-align: right;
+  font-size: 14px;
+  text-decoration: underline;
+}
+
+.user-data-edit:hover {
+  color: #005bb5;
 }

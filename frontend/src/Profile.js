@@ -128,14 +128,24 @@ const Profile = () => {
     
             <div className="data">
                 <div className="user-data">
-                    <p><strong>Username</strong>{userData.username}<u>Edit</u></p>
-                    <p><strong>Email</strong>{userData.email}<u>Edit</u></p>
-                    <p><strong>Name</strong>{userData.first_name}<u>Edit</u></p>
-                    <p><strong>Surname</strong>{userData.last_name}<u>Edit</u></p>
-                    <p><strong>Age</strong>{userData.age}<u>Edit</u></p>
-                    <p><strong>Pronouns</strong>{userData.pronouns}<u>Edit</u></p>
-                    <button className="save-changes" onClick={handleChangeEmail}>Save Changes</button>
-                    <button className="cancel-changes">Cancel</button>
+                {[
+                    { label: "Username", value: userData.username },
+                    { label: "Email", value: userData.email },
+                    { label: "Name", value: userData.first_name },
+                    { label: "Surname", value: userData.last_name },
+                    { label: "Age", value: userData.age },
+                    { label: "Pronouns", value: userData.pronouns }
+                ].map((field, index) => (
+                    <div className="user-data-row" key={index}>
+                        <span className="user-data-label">{field.label}</span>
+                        <span className="user-data-value">{field.value}</span>
+                        <u className="user-data-edit">Edit</u>
+                    </div>
+                ))}
+                <div className="user-data-buttons">
+                <button className="save-changes" onClick={handleChangeEmail}>Save Changes</button>
+                <button className="cancel-changes">Cancel</button>
+                </div>
                 </div>
             </div>
         </div>
