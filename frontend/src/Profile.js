@@ -127,7 +127,7 @@ const Profile = () => {
                 </span>
             </div>
         </div>
-        <button>Submit</button>
+        <button type="submit">Submit</button>
         </motion.div>
         </div>
       );
@@ -138,7 +138,11 @@ const Profile = () => {
             <div className="settings">
                 <p>Account Settings</p>
                 <div className="general-settings">General</div>
-                <div className="password-settings" onClick={() => setActiveTab("password")}>Password</div>
+                <div
+                    className={`password-settings ${activeTab === "password" ? "active-tab" : ""}`}
+                    onClick={() => setActiveTab("password")}>
+                    Password
+                </div>
                 <div className="email-settings">Email</div>
                 <div className="allergens-settings">Allergens</div>
                 <div className="sign-out">Sign Out</div>

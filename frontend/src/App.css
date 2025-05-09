@@ -364,7 +364,7 @@ label.privacyPolicy {
   border-radius: 16px;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
   width: 440px; 
-  padding: 32px; 
+  padding: 34px; 
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -394,7 +394,7 @@ label.privacyPolicy {
   position: relative;
   background-color: white;
   width: 440px; 
-  padding: 32px; 
+  padding: 38px; 
   border-radius: 16px;
   height: fit-content;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
@@ -546,3 +546,48 @@ label.privacyPolicy {
   margin-top: 10px;
 }
 
+.input-passwords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.input-passwords input {
+  flex: 1 1 250px;
+  padding: 10px 16px;
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background: white;
+  outline: none;
+  transition: border-color 0.2s ease;
+  font-size: 14px;
+}
+
+.input-passwords input:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 114, 255, 0.3);
+}
+
+.password-settings-animation button {
+  margin-top: 16px;
+  padding: 10px 20px;
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-image: linear-gradient(to right, #00c6ff, #0072ff);
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 114, 255, 0.2);
+}
+
+.password-settings-animation button:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
+}
+
+.active-tab {
+  background-color: #70b9fd;
+}
