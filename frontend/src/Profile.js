@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
+import { AnimatePresence, motion } from "framer-motion";
 
 const Profile = () => {
     const [preview, setPreview] = useState(null);
     const [token, setToken] = useState(null);
     const [isAuthorized, setIsAuthorized] = useState(false);
     const [userData, setUserData] = useState([]);
+    const [activeTab, setActiveTab] = useState("general");
 
     useEffect(() => {
         const savedToken = localStorage.getItem("token") || sessionStorage.getItem("token");
@@ -97,12 +99,46 @@ const Profile = () => {
         return null; 
     };
 
+    const PasswordSettings = () => (
+        <div className="password-settings-animation">
+        <motion.div
+          key="password"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.3 }}
+        >
+        <h3>Change Password</h3>
+        <div className="input-passwords">
+            <div className="password-top">
+                    <span className="gradient-input">
+                        <input type="password" placeholder="Old Password" />
+                        <span></span>
+                    </span>
+            </div>
+            <div className="password-bottom">
+                <span className="gradient-input">
+                    <input type="password" placeholder="New Password" />
+                    <span></span>
+                </span>
+                <span className="gradient-input">
+                    <input type="password" placeholder="Confirm new password" />
+                <span></span>
+                </span>
+            </div>
+        </div>
+        <button>Submit</button>
+        </motion.div>
+        </div>
+      );
+
     return (
         <div className="main">
+            <div className="top-row">
             <div className="settings">
                 <p>Account Settings</p>
                 <div className="general-settings">General</div>
-                <div className="password-settings">Password</div>
+                <div className="password-settings" onClick={() => setActiveTab("password")}>Password</div>
                 <div className="email-settings">Email</div>
                 <div className="allergens-settings">Allergens</div>
                 <div className="sign-out">Sign Out</div>
@@ -150,6 +186,10 @@ const Profile = () => {
                 </div>
                 </div>
             </div>
+            </div>
+            <AnimatePresence mode="wait">
+                {activeTab === "password" && <div className="bottom-row"><PasswordSettings /></div>}
+            </AnimatePresence>
         </div>
     );
     

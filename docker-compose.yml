@@ -70,6 +70,7 @@ services:
     environment:
       - CHOKIDAR_USEPOLLING=true
       - WATCHPACK_POLLING=true
+      - NODE_OPTIONS=--openssl-legacy-provider
       - REACT_APP_BACKEND_URL=http://localhost:8000/api
 
 volumes:
