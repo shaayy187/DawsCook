@@ -74,18 +74,6 @@ nav a:hover {
   gap: 20px;
 }
 
-.recipe-card {
-  background: white;
-  padding: 15px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-  cursor: pointer;
-}
-.recipe-card:hover {
-  transform: scale(1.05);
-  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
-}
 .footer {
   text-align: center;
   padding: 20px;
@@ -580,5 +568,124 @@ label.privacyPolicy {
 }
 
 .active-tab {
-  background-color: #70b9fd;
+  background-color: #dbdfdf;
+}
+
+.details-container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 20px;
+  box-sizing: border-box;
+  background-color: #ebf4f1;
+  border-radius: 15px;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 0.3rem;
+}
+
+.date {
+  text-align: center;
+  color: #777;
+  margin-bottom: 1rem;
+}
+
+.recipe-photo {
+  max-width: 250px;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+}
+
+.description {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  color: #444;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.info-line {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 2rem;
+}
+
+.columns {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.column {
+  flex: 1;
+  background: #fff;
+  border-radius: 10px;
+  padding: 1rem;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+.column h3 {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.column ul {
+  list-style: none;
+  padding: 0;
+}
+
+.column li {
+  padding: 0.3rem 0;
+  border-bottom: 1px solid #eee;
+  font-size: 0.95rem;
+}
+
+.top-section {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 20px;
+}
+
+.top-left {
+  flex: 0 0 160px;
+}
+
+.top-right {
+  flex: 1;
+  text-align: left;
+}
+
+.recipe-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  padding: 12px;
+  border-radius: 10px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease-in-out;
+}
+
+.recipe-card:hover {
+  transform: scale(1.03);
+}
+
+.recipe-thumb {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.recipe-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }

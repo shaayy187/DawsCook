@@ -30,9 +30,16 @@ const Home = ({ recipes = []}) => {
         <h2>Latest recipes</h2>
         <div className="recipe-grid">
           {recipes.slice(-5).reverse().map((recipe) => (
-            <Link to={`/recipe/${recipe.id}`} key={recipe.id} className="recipe-card">
-              <h4>{recipe.recipe}</h4>
-              <p>{recipe.difficulty}</p>
+           <Link to={`/recipe/${recipe.id}`} key={recipe.id} className="recipe-card">
+              <img
+                src={`data:image/png;base64,${recipe.image}`}
+                alt={recipe.recipe}
+                className="recipe-thumb"
+              />
+              <div className="recipe-info">
+                <h4>{recipe.recipe}</h4>
+                <p>{recipe.difficulty}</p>
+              </div>
             </Link>
           ))}
         </div>
