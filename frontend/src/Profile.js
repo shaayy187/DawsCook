@@ -181,7 +181,7 @@ const Profile = () => {
                     <div className="user-data-row" key={index}>
                         <span className="user-data-label">{field.label}</span>
                         <span className="user-data-value">{field.value}</span>
-                        <u className="user-data-edit">Edit</u>
+                        <input type="text" className="user-input-data"></input>
                     </div>
                 ))}
                 <div className="user-data-buttons">
