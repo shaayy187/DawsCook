@@ -119,6 +119,36 @@ class RecipeSerializer(serializers.ModelSerializer):
     rating = serializers.FloatField(read_only=True)
     comments = CommentSerializer(many=True, read_only=True)
 
+    image = serializers.SerializerMethodField()
+    image_upload = serializers.CharField(write_only=True, required=False)
+
     class Meta:
         model = Recipe
-        fields = ['id', 'recipe', 'difficulty', 'allergies', 'allergy_ids', 'rating', 'comments']
+        fields = [
+            'id', 'recipe', 'difficulty',
+            'allergies', 'allergy_ids',
+            'rating', 'comments',
+            'image', 'image_upload'
+        ]
+
+    def get_image(self, obj):
+        if obj.image:
+            return base64.b64encode(obj.image).decode('utf-8')
+        return None
+
+    def create(self, validated_data):
+        image_data = validated_data.pop('image_upload', None)
+        if image_data:
+            validated_data['image'] = decode_base64(image_data)
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        image_data = validated_data.pop('image_upload', None)
+        if image_data is not None:
+            instance.image = decode_base64(image_data) if image_data else None
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.save()
+        return instance
