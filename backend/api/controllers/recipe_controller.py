@@ -61,7 +61,7 @@ class RecipeDetailView(APIView):
     def patch(self, request, id):
         from ..models import Recipe 
         try:
-            recipe = Recipe.objects.get(id=id)
+            recipe = recipe_service.get_recipes(id)
         except Recipe.DoesNotExist:
             raise NotFound("Recipe not found")
 
