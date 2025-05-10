@@ -56,3 +56,16 @@ class RecipeDetailView(APIView):
         if not recipe:
             raise NotFound("Recipe not found")
         return Response(recipe, status=status.HTTP_200_OK)
+    
+    
+    def patch(self, request, id):
+        from ..models import Recipe 
+        try:
+            recipe = Recipe.objects.get(id=id)
+        except Recipe.DoesNotExist:
+            raise NotFound("Recipe not found")
+
+        serializer = RecipeSerializer(recipe, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
