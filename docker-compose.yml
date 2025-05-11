@@ -18,6 +18,8 @@ services:
       postgres:
         #próbuje wywołać czy postgres już wstał komendą shelową.
         condition: service_healthy
+      rabbitmq:
+        condition: service_started
     environment:
       - DB_NAME=postgres
       - DB_USER=postgres
@@ -72,6 +74,16 @@ services:
       - WATCHPACK_POLLING=true
       - NODE_OPTIONS=--openssl-legacy-provider
       - REACT_APP_BACKEND_URL=http://localhost:8000/api
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"  
+      - "15672:15672"  
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
 
 volumes:
   postgres_data:
