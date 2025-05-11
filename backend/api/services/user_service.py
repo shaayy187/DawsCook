@@ -1,9 +1,11 @@
 from ..serializer import UserSerializer
+from ..messaging.publish import send_user_registered
 
 def register_user(data):
     serializer = UserSerializer(data=data)
     serializer.is_valid(raise_exception=True)
-    serializer.save()
+    user = serializer.save()
+    send_user_registered(serializer.validated_data.get("username"), serializer.validated_data.get("email"))
     return {
         "success": True,
         "message": "User registered successfully"
