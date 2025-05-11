@@ -29,7 +29,7 @@ function AvatarDropdown({ isLoggedIn, handleLogout }) {
     try {
       const token = localStorage.getItem("token") || sessionStorage.getItem("token");
       if (!token) {
-        console.error("Brak tokenu. Użytkownik nie jest zalogowany.");
+        console.error("No token - user not logged in.");
         return;
       }
   
@@ -44,7 +44,7 @@ function AvatarDropdown({ isLoggedIn, handleLogout }) {
       if (!response.ok) {
         console.error(`Błąd odpowiedzi: ${response.status} ${response.statusText}`);
         if (response.status === 401) {
-          console.error("Brak autoryzacji - użytkownik nie jest zalogowany");
+          console.error("No authorization - user not logged in.");
         }
         return;
       }
@@ -56,7 +56,7 @@ function AvatarDropdown({ isLoggedIn, handleLogout }) {
         setUserImage(null);
       }
     } catch (error) {
-      console.error("Błąd podczas pobierania obrazu użytkownika:", error);
+      console.error("Couldn't load the profile picture.", error);
     }
   };
   

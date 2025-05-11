@@ -39,7 +39,7 @@ const Profile = () => {
                 }
                 setIsAuthorized(true);
             } catch (error) {
-                console.error("Błąd pobierania użytkownika:", error);
+                console.error("Fetch user error.", error);
                 window.location.replace("/signin");
             }
         };
@@ -63,10 +63,10 @@ const Profile = () => {
                 return;
             }
 
-            if (!res.ok) throw new Error("Błąd aktualizacji zdjęcia");
+            if (!res.ok) throw new Error("Update photo error.");
         } catch (error) {
             console.error(error);
-            alert("Coś poszło nie tak...");
+            alert("Fatal error.");
         }
     };
 
@@ -79,7 +79,7 @@ const Profile = () => {
             const base64String = reader.result.split(",")[1];
             setPreview(reader.result);
             await updateImage(base64String);
-            alert("Zdjęcie zaktualizowane!");
+            alert("Photo updated.");
             window.location.replace("/profile");
         };
         reader.readAsDataURL(file);
@@ -88,7 +88,7 @@ const Profile = () => {
     const handleRemove = async () => {
         setPreview(null);
         await updateImage("");
-        alert("Zdjęcie usunięte!");
+        alert("Photo removed.");
         window.location.replace("/profile");
     };
     const handleChangeEmail = () => {

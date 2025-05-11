@@ -59,7 +59,7 @@ const RecipeDetails = () => {
       }),
     })
       .then((res) => {
-        if (!res.ok) throw new Error("Nie udało się zaktualizować zdjęcia");
+        if (!res.ok) throw new Error("Couldn't load the picture.");
         return res.json();
       })
       .then((updatedRecipe) => {
