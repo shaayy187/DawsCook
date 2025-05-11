@@ -9,7 +9,7 @@ const Home = ({ recipes = []}) => {
     fetch("http://localhost:8000/api/category/")
       .then((response) => response.json())
       .then((data) => setCategories(data))
-      .catch((error) => console.error("Błąd pobierania kategorii:", error));
+      .catch((error) => console.error("Couldn't download categories.", error));
   }, []);
 
   return (
@@ -43,6 +43,46 @@ const Home = ({ recipes = []}) => {
             </Link>
           ))}
         </div>
+      </section>
+
+      <section className="featured-recipes">
+        {recipes.length >= 3 &&
+          [...recipes]
+            .sort(() => 0.5 - Math.random())
+            .slice(0, 3)
+            .map((recipe) => (
+              <Link to={`/recipe/${recipe.id}`} key={recipe.id} className="featured-recipe-link">
+              <div key={recipe.id} className="featured-recipe">
+                <img
+                  src={`data:image/png;base64,${recipe.image}`}
+                  alt={recipe.recipe}
+                  className="featured-image"
+                />
+                <div className="featured-content">
+                  <h3>{recipe.recipe}</h3>
+                  <p className="featured-date">
+                    {new Date(recipe.created).toLocaleDateString('en-GB', {
+                      day: '2-digit',
+                      month: 'long',
+                      year: 'numeric',
+                    })}
+                  </p>
+                  <p className="featured-description">{recipe.description}</p>
+
+                  <div className="icons-line">
+                    <span>♡</span>
+                    <span>🛒</span>
+                    <span>⭐</span>
+                    <span>⭐</span>
+                    <span>⭐</span>
+                    <span>⭐</span>
+                    <span>⭐</span>
+                    <span>({recipe.rating || 0})</span>
+                  </div>
+                </div>
+              </div>
+              </Link>
+            ))}
       </section>
     </div>
   );
