@@ -8,6 +8,13 @@ class Allergy(models.Model):
     def __str__(self):
         return self.name
 
+class Category(models.Model):
+    name = models.CharField(max_length=30) 
+    image = models.BinaryField(blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+    
 class Recipe(models.Model):
     recipe = models.CharField(max_length=30)
     difficulty = models.CharField(max_length=30)
@@ -15,16 +22,10 @@ class Recipe(models.Model):
     rating = models.FloatField(default=0, blank=True)
     image = models.BinaryField(blank=True, null=True)
     description = models.CharField(max_length=600, blank=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='recipes', blank=True, null=True)
 
     def __str__(self):
         return self.recipe
-    
-class Category(models.Model):
-    name = models.CharField(max_length=30) 
-    image = models.BinaryField(blank=True, null=True)
-
-    def __str__(self):
-        return self.name
 
 class SystemUser(AbstractUser):
     email = models.EmailField(unique=True)

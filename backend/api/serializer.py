@@ -116,6 +116,10 @@ class RecipeSerializer(serializers.ModelSerializer):
         many=True,
         write_only=True
     )
+    category = CategorySerializer(read_only=True)
+    category_id = serializers.PrimaryKeyRelatedField(
+        queryset=Category.objects.all(), source='category', write_only=True
+    )
     rating = serializers.FloatField(read_only=True)
     comments = CommentSerializer(many=True, read_only=True)
 
@@ -127,7 +131,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'recipe', 'difficulty','description',
             'allergies', 'allergy_ids',
-            'rating', 'comments',
+            'rating', 'comments','category','category_id',
             'image', 'image_upload'
         ]
 
