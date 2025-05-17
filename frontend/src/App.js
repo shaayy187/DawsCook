@@ -11,6 +11,7 @@ import RecipeDetails from './Recipe';
 import Profile from './Profile';
 import Settings from './Settings';
 import SessionChecker from './Session'
+import CategoryRecipesPage from './CategoryRecipesPage';
 
 function App() {
   const [recipes, setRecipes] = useState([]);
@@ -69,7 +70,7 @@ function App() {
             <nav>
               <Link to="/">Home</Link>
               <Link to="/aboutus">About us</Link>
-              <Link to="/">Recipes</Link>
+              <Link to="/categories">Recipes</Link>
               {!isLoggedIn && (
                 <>
                   <Link to="/signin">Sign in</Link>
@@ -89,6 +90,7 @@ function App() {
           <Route path="/recipe/:id" element={<RecipeDetails />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/categories" element={<CategoryRecipesPage />} />
         </Routes>
 
         <footer className="footer">
