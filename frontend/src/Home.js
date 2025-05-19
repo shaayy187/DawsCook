@@ -18,10 +18,12 @@ const Home = ({ recipes = []}) => {
         <h2>The secret ingredient is always <span>love</span>.</h2>
         <div className="category-list">
           {categories.map((category) => (
+             <Link to={`/choosen-category/${category.id}`} key={category.id} className="category-card">
             <div key={category.id} className="category">
               <img src={`data:image/png;base64,${category.image}`} alt={category.name} className="category-image" />
               <span>{category.name}</span>
             </div>
+            </Link>
           ))}
         </div>
       </section>
