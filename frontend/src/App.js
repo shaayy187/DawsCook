@@ -12,6 +12,7 @@ import Profile from './Profile';
 import Settings from './Settings';
 import SessionChecker from './Session'
 import CategoryRecipesPage from './CategoryRecipesPage';
+import ChoosenCategoryRecipes from './ChoosenCategoryRecipes'
 
 function App() {
   const [recipes, setRecipes] = useState([]);
@@ -91,6 +92,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/categories" element={<CategoryRecipesPage />} />
+          <Route path="/choosen-category/:id" element={<ChoosenCategoryRecipes/>}/>
         </Routes>
 
         <footer className="footer">
