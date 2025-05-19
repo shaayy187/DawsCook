@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import './App.css';
 
 const CategoryRecipesPage = () => {
@@ -11,17 +12,10 @@ const CategoryRecipesPage = () => {
       .then((data) => setCategories(data))
       .catch((error) => console.error("Error with fetching categories", error));
 
-    fetch('http://localhost:8000/api/recipes/')
-      .then((res) => res.json())
-      .then((data) => {
-       console.log("RECEIVED recipes:", data);
-        if (Array.isArray(data.recipes)) {
-        setRecipes(data.recipes);
-        } else {
-        console.error("Niepoprawny format danych:", data);
-        }
-      })
-      .catch((error) => console.error("Error with fetching recipes", error));
+     fetch(`http://localhost:8000/api/recipes/`)
+        .then((res)=> res.json())
+        .then((data)=>setRecipes(data.recipes))
+        .catch((error => console.error("Error witch fetching recipes for exact category",error)));
   }, []);
 
   const getRecipesForCategory = (categoryId) => {
@@ -37,6 +31,7 @@ const CategoryRecipesPage = () => {
           <h3 className="category-title">{category.name}</h3>
           <div className="recipe-row">
             {getRecipesForCategory(category.id).map((recipe) => (
+              <Link to={`/recipe/${recipe.id}`} key={recipe.id} className="category-recipe-link">
               <div key={recipe.id} className="recipe-tile">
                 <img
                   src={`data:image/png;base64,${recipe.image}`}
@@ -48,6 +43,7 @@ const CategoryRecipesPage = () => {
                   {'⭐'.repeat(Math.round(recipe.rating || 0))} ({recipe.rating || 0})
                 </div>
               </div>
+              </Link>
             ))}
           </div>
           <button className="see-more-btn">See more »</button>
