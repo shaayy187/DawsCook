@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y \
 
 # Install Python dependencies
 COPY requirements.txt .
+COPY consumer.py message.py ./
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
 # Copy the project files to the container
