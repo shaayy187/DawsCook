@@ -3,9 +3,9 @@ FROM python:3.9-slim
 
 # Set environment variables
 #przyspiesza uruchamianie, blokuje tworzenie pewnych plikow automatycznie
-ENV PYTHONDONTWRITEBYTECODE 1 
+ENV PYTHONDONTWRITEBYTECODE=1 
 #brak buforowania dla logów
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONUNBUFFERED=1
 
 # Set the working directory inside the container
 WORKDIR /app
