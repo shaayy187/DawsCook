@@ -52,3 +52,23 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"{self.user.username}: {self.text[:30]}"
+
+class Ingredient(models.Model):
+    name = models.CharField(max_length=100)
+    quantity = models.CharField(max_length=50)
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='ingredients')
+
+    def __str__(self):
+        return f"{self.quantity} {self.name}"
+
+
+class Nutrition(models.Model):
+    recipe = models.OneToOneField(Recipe, on_delete=models.CASCADE, related_name='nutrition')
+    kcal = models.FloatField(default=0)
+    fat = models.FloatField(default=0)
+    saturates = models.FloatField(default=0)
+    carbs = models.FloatField(default=0)
+    sugars = models.FloatField(default=0)
+    fibre = models.FloatField(default=0)
+    protein = models.FloatField(default=0)
+    salt = models.FloatField(default=0)
