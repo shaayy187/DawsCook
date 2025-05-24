@@ -72,3 +72,12 @@ class Nutrition(models.Model):
     fibre = models.FloatField(default=0)
     protein = models.FloatField(default=0)
     salt = models.FloatField(default=0)
+
+class Step(models.Model):
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name="steps")
+    step_number = models.PositiveIntegerField()
+    instruction = models.TextField()
+    image = models.BinaryField(blank=True, null=True)
+
+    class Meta:
+        ordering = ['step_number']
