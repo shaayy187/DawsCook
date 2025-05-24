@@ -57,15 +57,15 @@ class RecipeDetailView(APIView):
             raise NotFound("Recipe not found")
         return Response(recipe, status=status.HTTP_200_OK)
     
-    
+    @swagger_auto_schema(
+    operation_description="Update a recipe by ID.",
+    request_body=RecipeSerializer,
+    responses={
+        200: RecipeSerializer(),
+        400: "Validation error",
+        404: "Recipe not found"
+        }
+    )   
     def patch(self, request, id):
-        from ..models import Recipe 
-        try:
-            recipe = recipe_service.get_recipes(id)
-        except Recipe.DoesNotExist:
-            raise NotFound("Recipe not found")
-
-        serializer = RecipeSerializer(recipe, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        updated_recipe = recipe_service.update_recipe(id, request.data)
+        return Response(updated_recipe, status=status.HTTP_200_OK)

@@ -14,9 +14,18 @@ def get_recipes(recipe_id=None):
         serializer = RecipeSerializer(recipes, many=True)
         return {"recipes": serializer.data}
 
-
 def create_recipe(data):
     serializer = RecipeSerializer(data=data)
     serializer.is_valid(raise_exception=True)
     recipe = serializer.save()
     return RecipeSerializer(recipe).data
+
+def update_recipe(recipe_id, data):
+    recipe = recipe_repository.get_recipe_by_id(recipe_id)
+    if not recipe:
+        raise NotFound("Recipe not found")
+
+    serializer = RecipeSerializer(recipe, data=data, partial=True)
+    serializer.is_valid(raise_exception=True)
+    updated_recipe = serializer.save()
+    return RecipeSerializer(updated_recipe).data
