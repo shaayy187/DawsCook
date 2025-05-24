@@ -80,11 +80,28 @@ services:
     container_name: rabbitmq
     ports:
       - "5672:5672"  
-      - "15672:15672"  
+      - "15672:15672" 
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     environment:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
-
+  consumer:
+    build: ./backend
+    command: python consumer.py
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      - EMAIL_HOST=smtp.gmail.com
+      - EMAIL_PORT=587
+      - EMAIL_HOST_USER=noreply.dawscook@gmail.com
+      - EMAIL_HOST_PASSWORD=yesx ukug mpkk neui
+    restart: always
+ 
 volumes:
   postgres_data:
   pgadmin_data:

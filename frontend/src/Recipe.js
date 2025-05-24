@@ -130,14 +130,14 @@ const RecipeDetails = () => {
         <div className="column">
           <h3>Nutrition</h3>
           <ul>
-            <li>kcal {recipe.kcal || 0}</li>
-            <li>fat {recipe.fat || 0}g</li>
-            <li>saturates {recipe.saturates || 0}g</li>
-            <li>carbs {recipe.carbs || 0}g</li>
-            <li>sugars {recipe.sugars || 0}g</li>
-            <li>fibre {recipe.fibre || 0}g</li>
-            <li>protein {recipe.protein || 0}g</li>
-            <li>salt {recipe.salt || 0}g</li>
+            <li>kcal {recipe.nutrition?.kcal || 0}</li>
+            <li>fat {recipe.nutrition?.fat || 0}g</li>
+            <li>saturates {recipe.nutrition?.saturates || 0}g</li>
+            <li>carbs {recipe.nutrition?.carbs || 0}g</li>
+            <li>sugars {recipe.nutrition?.sugars || 0}g</li>
+            <li>fibre {recipe.nutrition?.fibre || 0}g</li>
+            <li>protein {recipe.nutrition?.protein || 0}g</li>
+            <li>salt {recipe.nutrition?.salt || 0}g</li>
           </ul>
         </div>
       </div>
