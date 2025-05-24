@@ -21,3 +21,13 @@ def create_category(data):
     serializer.is_valid(raise_exception=True)
     category = serializer.save()
     return CategorySerializer(category).data
+
+def update_category(category_id, data):
+    category = category_repository.get_category_by_id(category_id)
+    if not category:
+        raise NotFound("Category not found")
+
+    serializer = CategorySerializer(category, data=data, partial=True)
+    serializer.is_valid(raise_exception=True)
+    updated_category = serializer.save()
+    return CategorySerializer(updated_category).data

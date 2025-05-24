@@ -41,33 +41,22 @@ class CategoryView(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
     @swagger_auto_schema(
-        operation_description="Update a category by ID.",
-        request_body=CategorySerializer,
-        manual_parameters=[
-            openapi.Parameter('id', openapi.IN_PATH, description="Category ID", type=openapi.TYPE_INTEGER)
-        ],
-        responses={
-            200: CategorySerializer(),
-            400: "Validation error",
-            404: "Category not found"
+    operation_description="Update a category by ID.",
+    request_body=CategorySerializer,
+    manual_parameters=[
+        openapi.Parameter('id', openapi.IN_PATH, description="Category ID", type=openapi.TYPE_INTEGER)
+    ],
+    responses={
+        200: CategorySerializer(),
+        400: "Validation error",
+        404: "Category not found"
         }
     )
     def put(self, request, id):
-        from ..models import Category 
-
+        from rest_framework.exceptions import NotFound
         try:
-            category = category_service.get_categories(id)
-        except:
+            updated_category = category_service.update_category(id, request.data)
+            return Response(updated_category, status=status.HTTP_200_OK)
+        except NotFound:
             return Response({"detail": "Category not found"}, status=status.HTTP_404_NOT_FOUND)
-
-        from ..repositories import category_repository
-        instance = category_repository.get_category_by_id(id)
-        if not instance:
-            return Response({"detail": "Category not found"}, status=status.HTTP_404_NOT_FOUND)
-
-        serializer = CategorySerializer(instance, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    
+        

@@ -8,3 +8,9 @@ def get_category_by_id(category_id):
 
 def create_category(validated_data):
     return Category.objects.create(**validated_data)
+
+def update_category(instance, validated_data):
+    for attr, value in validated_data.items():
+        setattr(instance, attr, value)
+    instance.save()
+    return instance
