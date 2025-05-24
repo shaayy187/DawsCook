@@ -45,6 +45,18 @@ class CategorySerializer(serializers.ModelSerializer):
         if image_data:
             validated_data['image'] = decode_base64(image_data)
         return super().create(validated_data)
+    
+    def update(self, instance, validated_data):
+        image_data = validated_data.pop('image_upload', None)
+        if image_data is not None:
+            instance.image = decode_base64(image_data)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.save()
+        return instance
+
 
 class UserSerializer(serializers.ModelSerializer):
     """
@@ -107,7 +119,20 @@ class CommentSerializer(serializers.ModelSerializer):
         request = self.context['request']
         validated_data['user'] = request.user
         return super().create(validated_data)
-    
+
+class IngredientSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ingredient
+        fields = ['id', 'name', 'quantity']
+
+class NutritionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Nutrition
+        fields = [
+            'kcal', 'fat', 'saturates', 'carbs', 'sugars',
+            'fibre', 'protein', 'salt'
+        ]
+   
 class RecipeSerializer(serializers.ModelSerializer):
     allergies = AllergySerializer(many=True, read_only=True)
     allergy_ids = serializers.PrimaryKeyRelatedField(
@@ -122,9 +147,10 @@ class RecipeSerializer(serializers.ModelSerializer):
     )
     rating = serializers.FloatField(read_only=True)
     comments = CommentSerializer(many=True, read_only=True)
-
     image = serializers.SerializerMethodField()
     image_upload = serializers.CharField(write_only=True, required=False)
+    ingredients = IngredientSerializer(many=True, read_only=True)
+    nutrition = NutritionSerializer(read_only=True)
 
     class Meta:
         model = Recipe
@@ -132,6 +158,7 @@ class RecipeSerializer(serializers.ModelSerializer):
             'id', 'recipe', 'difficulty','description',
             'allergies', 'allergy_ids',
             'rating', 'comments','category','category_id',
+            'ingredients', 'nutrition',
             'image', 'image_upload'
         ]
 
