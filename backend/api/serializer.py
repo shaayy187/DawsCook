@@ -67,7 +67,7 @@ class UserSerializer(serializers.ModelSerializer):
     image_upload = serializers.CharField(write_only=True, required=False, allow_blank=True)  # przyjmuje obraz w formacie Base64 i przekształca go do formatu binarnego i wrzuca do bazy
     class Meta:
         model = SystemUser
-        fields = ['id', 'username', 'email', 'password', 'first_name', 'last_name','age','pronouns', 'image', 'image_upload'] 
+        fields = ['id', 'username', 'email', 'password', 'first_name', 'last_name','age','pronouns', 'is_superuser', 'image', 'image_upload'] 
 
     def get_image(self, obj):
         if obj.image:
@@ -132,6 +132,36 @@ class NutritionSerializer(serializers.ModelSerializer):
             'kcal', 'fat', 'saturates', 'carbs', 'sugars',
             'fibre', 'protein', 'salt'
         ]
+
+class StepSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+    image_upload = serializers.CharField(write_only=True, required=False)
+
+    class Meta:
+        model = Step
+        fields = ['id', 'step_number', 'instruction','image', 'image_upload']
+    
+    def get_image(self, obj):
+        if obj.image:
+            return base64.b64encode(obj.image).decode('utf-8')
+        return None
+
+    def create(self, validated_data):
+        image_data = validated_data.pop('image_upload', None)
+        if image_data:
+            validated_data['image'] = decode_base64(image_data)
+        return super().create(validated_data)
+    
+    def update(self, instance, validated_data):
+        image_data = validated_data.pop('image_upload', None)
+        if image_data is not None:
+            instance.image = decode_base64(image_data)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.save()
+        return instance
    
 class RecipeSerializer(serializers.ModelSerializer):
     allergies = AllergySerializer(many=True, read_only=True)
@@ -151,6 +181,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     image_upload = serializers.CharField(write_only=True, required=False)
     ingredients = IngredientSerializer(many=True, read_only=True)
     nutrition = NutritionSerializer(read_only=True)
+    steps = StepSerializer(many=True, read_only=True)
 
     class Meta:
         model = Recipe
@@ -158,7 +189,7 @@ class RecipeSerializer(serializers.ModelSerializer):
             'id', 'recipe', 'difficulty','description',
             'allergies', 'allergy_ids',
             'rating', 'comments','category','category_id',
-            'ingredients', 'nutrition',
+            'ingredients', 'nutrition', 'steps',
             'image', 'image_upload'
         ]
 
