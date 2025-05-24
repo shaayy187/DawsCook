@@ -7,6 +7,7 @@ const ChoosenCategoryRecipes = () => {
     const [category, setCategory] = useState({});
     const [recipes, setRecipes] = useState([]);
     const [selectedImage, setSelectedImage] = useState(null);
+    const [isAdmin, setIsAdmin] = useState(false);
 
     useEffect(() => {
         fetch(`http://localhost:8000/api/category/${id}/`)
@@ -18,6 +19,18 @@ const ChoosenCategoryRecipes = () => {
             .then((res) => res.json())
             .then((data) => setRecipes(data.recipes))
             .catch((error) => console.error("Error with fetching recipes for exact category", error));
+
+        const token = sessionStorage.getItem("token");
+        if (token) {
+            fetch(`http://localhost:8000/api/user/`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+                .then(res => res.json())
+                .then(data => setIsAdmin(data.is_superuser))
+                .catch(() => setIsAdmin(false));
+        }
     }, [id]);
 
     const getRecipesForCategory = (categoryId) => {
@@ -78,10 +91,12 @@ const ChoosenCategoryRecipes = () => {
                 />
             )}
 
-            <div style={{ marginTop: "20px" }}>
-                <input type="file" accept="image/*" onChange={handleImageChange} />
-                <button onClick={handleImageUpload}>Update Image</button>
-            </div>
+            {isAdmin && (
+                <div style={{ marginTop: "20px" }}>
+                    <input type="file" accept="image/*" onChange={handleImageChange} />
+                    <button onClick={handleImageUpload}>Update Image</button>
+                </div>
+            )}
 
             <div className="exact-category-recipe-grid">
                 {getRecipesForCategory(category.id).map((recipe) => (
