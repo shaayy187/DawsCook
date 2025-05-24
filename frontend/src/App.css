@@ -902,3 +902,40 @@ h2 {
   color: #f5b301;
   margin-top: 4px;
 }
+
+.steps-section {
+  margin-top: 40px;
+  padding: 20px;
+  background-color: #f8fdf8;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.steps-section h3 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #8bc34a;
+  padding-bottom: 5px;
+  text-align:center;
+}
+
+.steps-section div {
+  margin-bottom: 20px;
+  padding: 10px;
+  border-left: 4px solid #8bc34a;
+  background-color: #ffffff;
+  border-radius: 8px;
+}
+
+.steps-section p {
+  margin: 5px 0;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.steps-section img {
+  max-width: 100%;
+  margin-top: 10px;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}

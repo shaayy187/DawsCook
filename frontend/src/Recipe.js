@@ -8,6 +8,8 @@ const RecipeDetails = () => {
   const [recipe, setRecipe] = useState(null);
   const [error, setError] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [stepImages, setStepImages] = useState({});
 
   useEffect(() => {
     const token = sessionStorage.getItem("token");
@@ -30,6 +32,21 @@ const RecipeDetails = () => {
     .catch((err) => setError(err.message));
   }, [id, navigate]);
 
+  useEffect(() => {
+    const token = sessionStorage.getItem("token");
+
+    fetch("http://localhost:8000/api/user/", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then(res => res.json())
+    .then(data => {
+      setIsAdmin(data.is_superuser);
+    })
+    .catch(() => setIsAdmin(false));
+  }, []);
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -44,7 +61,7 @@ const RecipeDetails = () => {
   const uploadImage = () => {
     const token = sessionStorage.getItem("token");
     if (!selectedImage) {
-      alert("Haven't choosen file.");
+      alert("No file selected.");
       return;
     }
 
@@ -59,7 +76,7 @@ const RecipeDetails = () => {
       }),
     })
       .then((res) => {
-        if (!res.ok) throw new Error("Couldn't load the picture.");
+        if (!res.ok) throw new Error("Couldn't upload the image.");
         return res.json();
       })
       .then((updatedRecipe) => {
@@ -69,13 +86,58 @@ const RecipeDetails = () => {
       .catch((err) => setError(err.message));
   };
 
+  const handleStepImageChange = (e, stepId) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setStepImages(prev => ({
+          ...prev,
+          [stepId]: reader.result.split(',')[1]
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const uploadStepImage = (stepId) => {
+    const token = sessionStorage.getItem("token");
+    const image = stepImages[stepId];
+
+    if (!image) {
+      alert("No image selected for this step.");
+      return;
+    }
+
+    fetch(`http://localhost:8000/api/steps/${stepId}/`, {
+      method: "PATCH",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ image_upload: image }),
+    })
+      .then(res => {
+        if (!res.ok) throw new Error("Failed to upload step image.");
+        return res.json();
+      })
+      .then((updatedStep) => {
+        setRecipe(prev => ({
+          ...prev,
+          steps: prev.steps.map(s => s.id === updatedStep.id ? updatedStep : s)
+        }));
+        setStepImages(prev => ({ ...prev, [stepId]: null }));
+      })
+      .catch(err => setError(err.message));
+  };
+
   if (error){
     return <p>{error}</p>;
-  }; 
+  } 
 
   if (!recipe){
-    return <p></p>;
-  };
+    return <p>Loading...</p>;
+  }
 
   return (
     <div className="details-container">
@@ -101,8 +163,13 @@ const RecipeDetails = () => {
             <span> | </span>
             <span>Time: {Math.round(recipe.cooking_time / 60) || 1}h</span>
           </div>
-          <input type="file" accept="image/*" onChange={handleImageChange} />
-          <button onClick={uploadImage}>Wyślij zdjęcie</button>
+
+          {isAdmin && (
+            <>
+              <input type="file" accept="image/*" onChange={handleImageChange} />
+              <button onClick={uploadImage}>Wyślij zdjęcie</button>
+            </>
+          )}
         </div>
       </div>
 
@@ -140,6 +207,30 @@ const RecipeDetails = () => {
             <li>salt {recipe.nutrition?.salt || 0}g</li>
           </ul>
         </div>
+      </div>
+
+      <div className="steps-section">
+        <h3>Directions</h3>
+        {recipe.steps.map((step) => (
+          <div key={step.id}>
+            <p><strong>Step {step.step_number}</strong></p>
+            <p>{step.instruction}</p>
+            {step.image && (
+              <img src={`data:image/jpeg;base64,${step.image}`} alt={`Step ${step.step_number}`} />
+            )}
+
+            {isAdmin && (
+              <>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleStepImageChange(e, step.id)}
+                />
+                <button onClick={() => uploadStepImage(step.id)}>Upload Step Image</button>
+              </>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );
