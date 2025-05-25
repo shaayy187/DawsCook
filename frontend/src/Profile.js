@@ -6,7 +6,8 @@ const Profile = () => {
     const [preview, setPreview] = useState(null);
     const [token, setToken] = useState(null);
     const [isAuthorized, setIsAuthorized] = useState(false);
-    const [userData, setUserData] = useState([]);
+    const [userData, setUserData] = useState({});
+    const [editData, setEditData] = useState({});
     const [activeTab, setActiveTab] = useState("general");
 
     useEffect(() => {
@@ -31,8 +32,9 @@ const Profile = () => {
                 }
 
                 const data = await res.json();
-                if (data){
+                if (data) {
                     setUserData(data);
+                    setEditData({}); // Leave input fields empty
                 }
                 if (data.image) {
                     setPreview(`data:image/jpeg;base64,${data.image}`);
@@ -91,12 +93,30 @@ const Profile = () => {
         alert("Photo removed.");
         window.location.replace("/profile");
     };
-    const handleChangeEmail = () => {
 
+    const handleInputChange = (e, field) => {
+        setEditData({ ...editData, [field]: e.target.value });
     };
 
-    if (!isAuthorized) {
-        return null; 
+    const handleSaveChanges = async () => {
+        try {
+            const res = await fetch('http://localhost:8000/api/user/', {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify(editData),
+            });
+
+            if (!res.ok) throw new Error("Update error");
+
+            alert("User data updated successfully.");
+            window.location.reload();
+        } catch (error) {
+            console.error("Update failed", error);
+            alert("Failed to update user data.");
+        }
     };
 
     const PasswordSettings = () => (
@@ -132,6 +152,8 @@ const Profile = () => {
         </div>
       );
 
+    if (!isAuthorized) return null;
+
     return (
         <div className="main">
             <div className="top-row">
@@ -147,7 +169,7 @@ const Profile = () => {
                 <div className="allergens-settings">Allergens</div>
                 <div className="sign-out">Sign Out</div>
             </div>
-    
+
             <div className="profile-container">
                 <div className="profile-picture-text">
                     <h3>Profile Picture</h3>
@@ -167,26 +189,32 @@ const Profile = () => {
                     </div>
                 </div>
             </div>
-    
+
             <div className="data">
                 <div className="user-data">
                 {[
-                    { label: "Username", value: userData.username },
-                    { label: "Email", value: userData.email },
-                    { label: "Name", value: userData.first_name },
-                    { label: "Surname", value: userData.last_name },
-                    { label: "Age", value: userData.age },
-                    { label: "Pronouns", value: userData.pronouns }
+                    { label: "Username", field: "username" },
+                    { label: "Email", field: "email" },
+                    { label: "Name", field: "first_name" },
+                    { label: "Surname", field: "last_name" },
+                    { label: "Age", field: "age" },
+                    { label: "Pronouns", field: "pronouns" }
                 ].map((field, index) => (
                     <div className="user-data-row" key={index}>
                         <span className="user-data-label">{field.label}</span>
-                        <span className="user-data-value">{field.value}</span>
-                        <input type="text" className="user-input-data"></input>
+                        <span className="user-data-value">{userData[field.field]}</span>
+                        <input
+                            type="text"
+                            className="user-input-data"
+                            placeholder={`Enter new ${field.label.toLowerCase()}`}
+                            value={editData[field.field] || ''}
+                            onChange={(e) => handleInputChange(e, field.field)}
+                        />
                     </div>
                 ))}
                 <div className="user-data-buttons">
-                <button className="save-changes" onClick={handleChangeEmail}>Save Changes</button>
-                <button className="cancel-changes">Cancel</button>
+                    <button className="save-changes" onClick={handleSaveChanges}>Save Changes</button>
+                    <button className="cancel-changes" onClick={() => setEditData({})}>Cancel</button>
                 </div>
                 </div>
             </div>
@@ -196,7 +224,6 @@ const Profile = () => {
             </AnimatePresence>
         </div>
     );
-    
 };
 
 export default Profile;
