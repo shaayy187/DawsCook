@@ -2,6 +2,53 @@ import React, { useEffect, useState } from "react";
 import "./App.css";
 import { AnimatePresence, motion } from "framer-motion";
 
+const PasswordSettings = ({ passwordData, setPasswordData, handlePasswordChange }) => (
+    <div className="password-settings-animation">
+        <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+        >
+            <h3>Change Password</h3>
+            <div className="input-passwords">
+                <div className="password-top">
+                    <span className="gradient-input">
+                        <input
+                            type="password"
+                            placeholder="Old Password"
+                            value={passwordData.old_password}
+                            onChange={(e) => setPasswordData(prev => ({ ...prev, old_password: e.target.value }))}
+                        />
+                        <span></span>
+                    </span>
+                </div>
+                <div className="password-bottom">
+                    <span className="gradient-input">
+                        <input
+                            type="password"
+                            placeholder="New Password"
+                            value={passwordData.new_password}
+                            onChange={(e) => setPasswordData(prev => ({ ...prev, new_password: e.target.value }))}
+                        />
+                        <span></span>
+                    </span>
+                    <span className="gradient-input">
+                        <input
+                            type="password"
+                            placeholder="Confirm new password"
+                            value={passwordData.confirm_password}
+                            onChange={(e) => setPasswordData(prev => ({ ...prev, confirm_password: e.target.value }))}
+                        />
+                        <span></span>
+                    </span>
+                </div>
+            </div>
+            <button onClick={handlePasswordChange}>Submit</button>
+        </motion.div>
+    </div>
+);
+
 const Profile = () => {
     const [preview, setPreview] = useState(null);
     const [token, setToken] = useState(null);
@@ -9,6 +56,7 @@ const Profile = () => {
     const [userData, setUserData] = useState({});
     const [editData, setEditData] = useState({});
     const [activeTab, setActiveTab] = useState("general");
+    const [passwordData, setPasswordData] = useState({ old_password: '', new_password: '', confirm_password: '' });
 
     useEffect(() => {
         const savedToken = localStorage.getItem("token") || sessionStorage.getItem("token");
@@ -119,108 +167,113 @@ const Profile = () => {
         }
     };
 
-    const PasswordSettings = () => (
-        <div className="password-settings-animation">
-        <motion.div
-          key="password"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.3 }}
-        >
-        <h3>Change Password</h3>
-        <div className="input-passwords">
-            <div className="password-top">
-                    <span className="gradient-input">
-                        <input type="password" placeholder="Old Password" />
-                        <span></span>
-                    </span>
-            </div>
-            <div className="password-bottom">
-                <span className="gradient-input">
-                    <input type="password" placeholder="New Password" />
-                    <span></span>
-                </span>
-                <span className="gradient-input">
-                    <input type="password" placeholder="Confirm new password" />
-                <span></span>
-                </span>
-            </div>
-        </div>
-        <button type="submit">Submit</button>
-        </motion.div>
-        </div>
-      );
+    const handlePasswordChange = async () => {
+        if (passwordData.new_password !== passwordData.confirm_password) {
+            alert("Passwords do not match.");
+            return;
+        }
+
+        try {
+            const res = await fetch('http://localhost:8000/api/user/change-password/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    old_password: passwordData.old_password,
+                    new_password: passwordData.new_password
+                }),
+            });
+
+            if (!res.ok) throw new Error("Password update failed");
+
+            alert("Password updated successfully.");
+            setPasswordData({ old_password: '', new_password: '', confirm_password: '' });
+        } catch (error) {
+            console.error(error);
+            alert("Failed to update password.");
+        }
+    };
 
     if (!isAuthorized) return null;
 
     return (
         <div className="main">
             <div className="top-row">
-            <div className="settings">
-                <p>Account Settings</p>
-                <div className="general-settings">General</div>
-                <div
-                    className={`password-settings ${activeTab === "password" ? "active-tab" : ""}`}
-                    onClick={() => setActiveTab("password")}>
-                    Password
+                <div className="settings">
+                    <p>Account Settings</p>
+                    <div className="general-settings" onClick={() => setActiveTab("general")}>General</div>
+                    <div
+                        className={`password-settings ${activeTab === "password" ? "active-tab" : ""}`}
+                        onClick={() => setActiveTab("password")}
+                    >
+                        Password
+                    </div>
+                    <div className="email-settings">Email</div>
+                    <div className="allergens-settings">Allergens</div>
+                    <div className="sign-out">Sign Out</div>
                 </div>
-                <div className="email-settings">Email</div>
-                <div className="allergens-settings">Allergens</div>
-                <div className="sign-out">Sign Out</div>
-            </div>
 
-            <div className="profile-container">
-                <div className="profile-picture-text">
-                    <h3>Profile Picture</h3>
-                    <div className="profile-picture">
-                        {preview ? (
-                            <img src={preview} alt="Avatar" className="avatar-image" />
-                        ) : (
-                            <div className="avatar-placeholder" />
-                        )}
-                    </div>
-                    <div className="avatar-edit">
-                        <label htmlFor="avatar-upload" className="edit-button">Edit</label>
-                        <input id="avatar-upload" type="file" onChange={handleEdit} style={{ display: "none" }} />
-                    </div>
-                    <div className="avatar-remove">
-                        <div onClick={handleRemove}>Remove</div>
+                <div className="profile-container">
+                    <div className="profile-picture-text">
+                        <h3>Profile Picture</h3>
+                        <div className="profile-picture">
+                            {preview ? (
+                                <img src={preview} alt="Avatar" className="avatar-image" />
+                            ) : (
+                                <div className="avatar-placeholder" />
+                            )}
+                        </div>
+                        <div className="avatar-edit">
+                            <label htmlFor="avatar-upload" className="edit-button">Edit</label>
+                            <input id="avatar-upload" type="file" onChange={handleEdit} style={{ display: "none" }} />
+                        </div>
+                        <div className="avatar-remove">
+                            <div onClick={handleRemove}>Remove</div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div className="data">
-                <div className="user-data">
-                {[
-                    { label: "Username", field: "username" },
-                    { label: "Email", field: "email" },
-                    { label: "Name", field: "first_name" },
-                    { label: "Surname", field: "last_name" },
-                    { label: "Age", field: "age" },
-                    { label: "Pronouns", field: "pronouns" }
-                ].map((field, index) => (
-                    <div className="user-data-row" key={index}>
-                        <span className="user-data-label">{field.label}</span>
-                        <span className="user-data-value">{userData[field.field]}</span>
-                        <input
-                            type="text"
-                            className="user-input-data"
-                            placeholder={`Enter new ${field.label.toLowerCase()}`}
-                            value={editData[field.field] || ''}
-                            onChange={(e) => handleInputChange(e, field.field)}
-                        />
+                <div className="data">
+                    <div className="user-data">
+                        {["username", "email", "first_name", "last_name", "age", "pronouns"].map((field, index) => (
+                            <div className="user-data-row" key={index}>
+                                <span className="user-data-label">{field.charAt(0).toUpperCase() + field.slice(1)}</span>
+                                <span className="user-data-value">{userData[field]}</span>
+                                <input
+                                    type="text"
+                                    className="user-input-data"
+                                    placeholder={`Enter new ${field.replace("_", " ")}`}
+                                    value={editData[field] || ''}
+                                    onChange={(e) => handleInputChange(e, field)}
+                                />
+                            </div>
+                        ))}
+                        <div className="user-data-buttons">
+                            <button className="save-changes" onClick={handleSaveChanges}>Save Changes</button>
+                            <button className="cancel-changes" onClick={() => setEditData({})}>Cancel</button>
+                        </div>
                     </div>
-                ))}
-                <div className="user-data-buttons">
-                    <button className="save-changes" onClick={handleSaveChanges}>Save Changes</button>
-                    <button className="cancel-changes" onClick={() => setEditData({})}>Cancel</button>
                 </div>
-                </div>
-            </div>
             </div>
             <AnimatePresence mode="wait">
-                {activeTab === "password" && <div className="bottom-row"><PasswordSettings /></div>}
+                {activeTab === "password" && (
+                    <motion.div
+                        key="password-tab"
+                        className="bottom-row"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.3 }}
+                    >
+                        <PasswordSettings
+                            passwordData={passwordData}
+                            setPasswordData={setPasswordData}
+                            handlePasswordChange={handlePasswordChange}
+                        />
+                    </motion.div>
+                )}
             </AnimatePresence>
         </div>
     );
