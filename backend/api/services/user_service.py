@@ -1,5 +1,6 @@
 from ..serializer import UserSerializer
 from ..messaging.publish import send_user_registered
+from ..repositories import user_repository
 
 def register_user(data):
     serializer = UserSerializer(data=data)
@@ -20,3 +21,13 @@ def update_user_profile(user, data):
     serializer.is_valid(raise_exception=True)
     serializer.save()
     return UserSerializer(user).data
+
+def change_password(user, data):
+    old_password = data.get("old_password")
+    new_password = data.get("new_password")
+
+    if not user.check_password(old_password):
+        return {"success": False, "message": "Old password is incorrect."}
+
+    user_repository.update_password(user, new_password)
+    return {"success": True, "message": "Password updated successfully."}

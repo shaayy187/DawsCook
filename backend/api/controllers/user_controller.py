@@ -9,6 +9,30 @@ from drf_yasg import openapi
 from ..serializer import UserSerializer
 from ..services import user_service
 
+class ChangePasswordView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+    operation_description="Change the authenticated user's password.",
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        required=["old_password", "new_password"],
+        properties={
+            "old_password": openapi.Schema(type=openapi.TYPE_STRING, description="Current password"),
+            "new_password": openapi.Schema(type=openapi.TYPE_STRING, description="New password")
+        },
+    ),
+    responses={
+        200: openapi.Response(description="Password changed successfully."),
+        400: openapi.Response(description="Password change failed. Invalid credentials or validation error.")
+    }
+    )
+    def post(self, request):
+        result = user_service.change_password(request.user, request.data)
+        if result["success"]:
+            return Response({"detail": result["message"]}, status=status.HTTP_200_OK)
+        else:
+            return Response({"detail": result["message"]}, status=status.HTTP_400_BAD_REQUEST)
 
 class Register(APIView):
     permission_classes = [AllowAny]
