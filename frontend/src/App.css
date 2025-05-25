@@ -701,6 +701,7 @@ h2 {
   display: flex;
   flex-direction: column;
   gap: 30px;
+  margin-bottom: 15px;
 }
 
 .featured-recipe {

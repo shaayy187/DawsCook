@@ -57,7 +57,7 @@ const ChoosenCategoryRecipes = () => {
             return;
         }
 
-        fetch(`http://localhost:8000/api/category/${id}/`, {
+        fetch(`http://localhost:8000/api/category/admin/${id}/`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
