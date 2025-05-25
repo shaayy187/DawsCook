@@ -34,7 +34,7 @@ const Profile = () => {
                 const data = await res.json();
                 if (data) {
                     setUserData(data);
-                    setEditData({}); // Leave input fields empty
+                    setEditData({});
                 }
                 if (data.image) {
                     setPreview(`data:image/jpeg;base64,${data.image}`);
