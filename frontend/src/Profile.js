@@ -203,7 +203,12 @@ const Profile = () => {
             <div className="top-row">
                 <div className="settings">
                     <p>Account Settings</p>
-                    <div className="general-settings" onClick={() => setActiveTab("general")}>General</div>
+                    <div
+                        className={`general-settings ${activeTab === "general" ? "active-tab" : ""}`}
+                        onClick={() => setActiveTab("general")}
+                    >
+                        General
+                    </div>
                     <div
                         className={`password-settings ${activeTab === "password" ? "active-tab" : ""}`}
                         onClick={() => setActiveTab("password")}
