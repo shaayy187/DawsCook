@@ -967,3 +967,149 @@ h2 {
 .password-submit:hover {
   background: linear-gradient(to right, #0072ff, #00c6ff);
 }
+
+.email-settings-box {
+    background-color: white;
+    border-radius: 16px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    width: 92%;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; 
+    gap: 10px;
+}
+
+.input-emails {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    margin-top: 10px;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+.gradient-input-email {
+    position: relative;
+    font-size: 1em;
+    background: linear-gradient(to right, #0072ff, #00c6ff);
+    padding: 3px;
+    display: inline-block;
+    border-radius: 9999em;
+}
+
+.gradient-input-email *:not(span) {
+    position: relative;
+    display: inherit;
+    border-radius: inherit;
+    margin: 0;
+    border: none;
+    outline: none;
+    padding: 0.325em 0.9em;
+    z-index: 1;
+    background-color: white;
+}
+
+.gradient-input-email span {
+    opacity: 1;
+    position: absolute;
+    z-index: 0;
+    margin: 4px;
+}
+
+.email-settings-box button {
+    margin-top: 16px;
+    padding: 10px 20px;
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-image: linear-gradient(to right, #00c6ff, #0072ff);
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 114, 255, 0.2);
+}
+
+.email-settings-box button:hover {
+    opacity: 0.95;
+    transform: translateY(-1px);
+}
+
+@media screen and (max-width: 1024px) {
+  .top-row {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .data, .profile-container, .settings {
+    width: 90%;
+  }
+
+  .recipe-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+
+  .login-form, .register-form {
+    width: 90%;
+    height: auto;
+  }
+
+  .login-form input, .register-form input {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  #privacy {
+    margin-left: 0;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px;
+  }
+
+  .navigation-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .category-section, .category-page {
+    padding: 10px;
+  }
+
+  .recipe-tile {
+    width: 100%;
+  }
+
+  .see-more-btn {
+    position: static;
+    margin-top: 20px;
+  }
+
+  .columns {
+    flex-direction: column;
+  }
+
+  .column {
+    width: 100%;
+  }
+
+  .recipe-photo {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .steps-section img {
+    width: 100%;
+    height: auto;
+  }
+
+  .choosen-category-photo {
+    height: auto;
+  }
+}
