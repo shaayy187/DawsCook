@@ -30,7 +30,8 @@ const SignIn = ({onLogin}) => {
       .then((response) => response.json())
       .then((data) => {
         if (data.access) {
-          sessionStorage.setItem("token", data.access);
+          sessionStorage.setItem("access", data.access);
+          sessionStorage.setItem("refresh", data.refresh);
           onLogin();
           navigate("/");
           window.location.reload();

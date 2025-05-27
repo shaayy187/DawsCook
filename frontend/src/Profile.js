@@ -55,11 +55,13 @@ const Profile = () => {
     const [isAuthorized, setIsAuthorized] = useState(false);
     const [userData, setUserData] = useState({});
     const [editData, setEditData] = useState({});
-    const [activeTab, setActiveTab] = useState("general");
+    const [activeTab, setActiveTab] = useState(null);
     const [passwordData, setPasswordData] = useState({ old_password: '', new_password: '', confirm_password: '' });
+    const [emailData, setEmailData] = useState({ email: '' });
+    
 
     useEffect(() => {
-        const savedToken = localStorage.getItem("token") || sessionStorage.getItem("token");
+        const savedToken = localStorage.getItem("access") || sessionStorage.getItem("access");
 
         if (!savedToken) {
             window.location.replace("/signin");
@@ -196,6 +198,57 @@ const Profile = () => {
         }
     };
 
+    const handleEmailChange = async () => {
+    try {
+        const res = await fetch('http://localhost:8000/api/user/change-email/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify(emailData),
+        });
+
+        if (!res.ok) throw new Error("Email update failed");
+
+        alert("Email updated successfully.");
+        setEmailData({ email: '' });
+    } catch (error) {
+        console.error(error);
+        alert("Failed to update email.");
+    }
+    };
+
+    const EmailSettings = ({ emailData, setEmailData, handleEmailChange }) => (
+    <div className="email-settings-box">
+        <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+            style={{ width: "100%" }}
+        >
+            <h3 style={{ textAlign: "right" }}>Change Email</h3>
+            <div className="input-emails">
+                <span className="gradient-input-email">
+                    <input
+                        type="email"
+                        placeholder="New Email"
+                        value={emailData.email || ""}
+                        onChange={(e) => setEmailData({ email: e.target.value })}
+                    />
+                    <span></span>
+                </span>
+            </div>
+            <button onClick={handleEmailChange}>Submit</button>
+        </motion.div>
+    </div>
+    );
+
+    const handleTabClick = (tab) => {
+        setActiveTab(prev => (prev === tab ? null : tab));
+    };
+
     if (!isAuthorized) return null;
 
     return (
@@ -211,11 +264,16 @@ const Profile = () => {
                     </div>
                     <div
                         className={`password-settings ${activeTab === "password" ? "active-tab" : ""}`}
-                        onClick={() => setActiveTab("password")}
+                        onClick={() => handleTabClick("password")}
                     >
                         Password
                     </div>
-                    <div className="email-settings">Email</div>
+                    <div
+                        className={`email-settings ${activeTab === "email" ? "active-tab" : ""}`}
+                        onClick={() => handleTabClick("email")}
+                    >
+                        Email
+                    </div>
                     <div className="allergens-settings">Allergens</div>
                     <div className="sign-out">Sign Out</div>
                 </div>
@@ -262,24 +320,47 @@ const Profile = () => {
                     </div>
                 </div>
             </div>
-            <AnimatePresence mode="wait">
-                {activeTab === "password" && (
-                    <motion.div
-                        key="password-tab"
-                        className="bottom-row"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.3 }}
-                    >
-                        <PasswordSettings
-                            passwordData={passwordData}
-                            setPasswordData={setPasswordData}
-                            handlePasswordChange={handlePasswordChange}
-                        />
-                    </motion.div>
-                )}
-            </AnimatePresence>
+       <div className="bottom-row" style={{ display: "flex", justifyContent: "space-between", gap: "2rem" }}>
+    <div style={{ flex: 1 }}>
+        <AnimatePresence mode="wait">
+            {activeTab === "password" && (
+                <motion.div
+                    key="password-settings"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.3 }}
+                >
+                    <PasswordSettings
+                        passwordData={passwordData}
+                        setPasswordData={setPasswordData}
+                        handlePasswordChange={handlePasswordChange}
+                    />
+                </motion.div>
+            )}
+        </AnimatePresence>
+    </div>
+
+    <div style={{ flex: 1 }}>
+        <AnimatePresence mode="wait">
+            {activeTab === "email" && (
+                <motion.div
+                    key="email-settings"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.3 }}
+                >
+                    <EmailSettings
+                        emailData={emailData}
+                        setEmailData={setEmailData}
+                        handleEmailChange={handleEmailChange}
+                    />
+                </motion.div>
+            )}
+        </AnimatePresence>
+    </div>
+</div>
         </div>
     );
 };

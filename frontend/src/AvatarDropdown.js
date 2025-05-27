@@ -27,7 +27,7 @@ function AvatarDropdown({ isLoggedIn, handleLogout }) {
 
   const fetchUserImage = async () => {
     try {
-      const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+      const token = localStorage.getItem("access") || sessionStorage.getItem("access");
       if (!token) {
         console.error("No token - user not logged in.");
         return;

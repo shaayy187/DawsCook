@@ -12,7 +12,7 @@ const RecipeDetails = () => {
   const [stepImages, setStepImages] = useState({});
 
   useEffect(() => {
-    const token = sessionStorage.getItem("token");
+    const token = sessionStorage.getItem("access");
 
     fetch(`http://localhost:8000/api/recipes/${id}/`, {
       method: "GET",
@@ -33,7 +33,7 @@ const RecipeDetails = () => {
   }, [id, navigate]);
 
   useEffect(() => {
-    const token = sessionStorage.getItem("token");
+    const token = sessionStorage.getItem("access");
 
     fetch("http://localhost:8000/api/user/", {
       headers: {
@@ -59,7 +59,7 @@ const RecipeDetails = () => {
   };
 
   const uploadImage = () => {
-    const token = sessionStorage.getItem("token");
+    const token = sessionStorage.getItem("access");
     if (!selectedImage) {
       alert("No file selected.");
       return;
@@ -101,7 +101,7 @@ const RecipeDetails = () => {
   };
 
   const uploadStepImage = (stepId) => {
-    const token = sessionStorage.getItem("token");
+    const token = sessionStorage.getItem("access");
     const image = stepImages[stepId];
 
     if (!image) {
