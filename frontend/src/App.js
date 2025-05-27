@@ -26,7 +26,7 @@ function App() {
 
     fetch("http://localhost:8000/api/recipes/") 
     .then(response => response.json())
-    .then(data => setRecipes(data.recipes))
+    .then(data => setRecipes(data.results))
     .catch(error => console.error("Error:", error));
 
     const token = localStorage.getItem("token") || sessionStorage.getItem("token");
@@ -43,7 +43,7 @@ function App() {
   const fetchRecipes = () => {
     fetch("http://localhost:8000/api/recipes/") 
       .then(response => response.json())
-      .then(data => setRecipes(data.recipes))
+      .then(data => setRecipes(data.results))
       .catch(error => console.error("Error:", error));
   };
 
