@@ -4,12 +4,21 @@ import './Home.css';
 
 const Home = ({ recipes = []}) => {
   const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetch("http://localhost:8000/api/category/")
       .then((response) => response.json())
-      .then((data) => setCategories(data))
-      .catch((error) => console.error("Couldn't download categories.", error));
+      .then((data) => {
+        setCategories(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Couldn't download categories.", error);
+        setError("Couldn't load categories. Please try again later.");
+        setLoading(false);
+      });
   }, []);
 
   return (
@@ -17,6 +26,9 @@ const Home = ({ recipes = []}) => {
       <section className="categories">
         <h2>The secret ingredient is always <span>love</span>.</h2>
         <div className="category-list">
+          {loading && <p>Loading categories...</p>}
+          {error && <p className="error-message">{error}</p>}
+          {!loading && !error && categories.length === 0 && <p>No categories found.</p>}
           {categories.map((category) => (
              <Link to={`/choosen-category/${category.id}`} key={category.id} className="category-card">
             <div key={category.id} className="category">
@@ -30,21 +42,25 @@ const Home = ({ recipes = []}) => {
 
       <section className="latest-recipes">
         <h2>Latest recipes</h2>
-        <div className="recipe-grid">
-          {recipes.slice(-5).reverse().map((recipe) => (
-           <Link to={`/recipe/${recipe.id}`} key={recipe.id} className="recipe-card">
-              <img
-                src={`data:image/png;base64,${recipe.image}`}
-                alt={recipe.recipe}
-                className="recipe-thumb"
-              />
-              <div className="recipe-info">
-                <h4>{recipe.recipe}</h4>
-                <p>{recipe.difficulty}</p>
-              </div>
-            </Link>
-          ))}
-        </div>
+        {recipes.length === 0 ? (
+          <p>No recipes found.</p>
+        ) : (
+          <div className="recipe-grid">
+            {recipes.slice(-5).reverse().map((recipe) => (
+              <Link to={`/recipe/${recipe.id}`} key={recipe.id} className="recipe-card">
+                <img
+                  src={`data:image/png;base64,${recipe.image}`}
+                  alt={recipe.recipe}
+                  className="recipe-thumb"
+                />
+                <div className="recipe-info">
+                  <h4>{recipe.recipe}</h4>
+                  <p>{recipe.difficulty}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </section>
 
       <section className="featured-recipes">
