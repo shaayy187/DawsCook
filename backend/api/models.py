@@ -16,10 +16,10 @@ class Category(models.Model):
         return self.name
     
 class Recipe(models.Model):
-    recipe = models.CharField(max_length=30)
+    recipe = models.CharField(max_length=30, db_index=True)
     difficulty = models.CharField(max_length=30)
     allergies = models.ManyToManyField(Allergy, related_name="recipes", blank=True)
-    rating = models.FloatField(default=0, blank=True)
+    rating = models.FloatField(default=0, blank=True, db_index=True)
     image = models.BinaryField(blank=True, null=True)
     description = models.CharField(max_length=600, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='recipes', blank=True, null=True)
@@ -48,13 +48,13 @@ class Comment(models.Model):
     user = models.ForeignKey(SystemUser, on_delete=models.CASCADE)
     text = models.TextField()
     parent = models.ForeignKey("self", null=True, blank=True, on_delete=models.CASCADE, related_name="replies")
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
 
     def __str__(self):
         return f"{self.user.username}: {self.text[:30]}"
 
 class Ingredient(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, db_index=True)
     quantity = models.CharField(max_length=50)
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='ingredients')
 
@@ -75,7 +75,7 @@ class Nutrition(models.Model):
 
 class Step(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name="steps")
-    step_number = models.PositiveIntegerField()
+    step_number = models.PositiveIntegerField(db_index=True)
     instruction = models.TextField()
     image = models.BinaryField(blank=True, null=True)
 
