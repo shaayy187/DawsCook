@@ -4,31 +4,60 @@ import { useNavigate } from "react-router-dom";
 function SessionChecker({ setIsLoggedIn }) {
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const checkToken = () => {
-      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-      if (token) {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        const expiry = payload.exp;
-        const now = Math.floor(Date.now() / 1000);
+  const refreshToken = async () => {
+    const refresh = sessionStorage.getItem("refresh");
+    if (!refresh) return false;
 
-        if (expiry < now) {
-          localStorage.removeItem('token');
-          sessionStorage.removeItem('token');
+    const response = await fetch("http://localhost:8000/api/token/refresh/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refresh }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      sessionStorage.setItem("access", data.access);
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  useEffect(() => {
+    const checkToken = async () => {
+      const token = sessionStorage.getItem("access");
+
+      if (token) {
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          const expiry = payload.exp;
+          const now = Math.floor(Date.now() / 1000);
+
+          if (expiry < now) {
+            const refreshed = await refreshToken();
+            if (!refreshed) {
+              sessionStorage.removeItem("access");
+              sessionStorage.removeItem("refresh");
+              setIsLoggedIn(false);
+              navigate("/signin");
+              alert("Session expired. Please log in again.");
+            }
+          } else {
+            setIsLoggedIn(true);
+          }
+        } catch (error) {
+          console.error("Invalid token:", error);
+          sessionStorage.removeItem("access");
+          sessionStorage.removeItem("refresh");
           setIsLoggedIn(false);
-          navigate("/signin"); 
-          window.location.reload();
-          alert(" Session has expired, please log in.");
-        } else {
-          setIsLoggedIn(true);
         }
       } else {
         setIsLoggedIn(false);
       }
     };
 
-    const interval = setInterval(checkToken, 60 * 1000); 
-    checkToken(); 
+    const interval = setInterval(checkToken, 60 * 1000);
+    checkToken();
 
     return () => clearInterval(interval);
   }, [navigate, setIsLoggedIn]);
