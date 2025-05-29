@@ -56,8 +56,10 @@ class CategoryAdminView(APIView):
         manual_parameters=[
             openapi.Parameter('id', openapi.IN_PATH, description="Category ID", type=openapi.TYPE_INTEGER)
         ],
-        responses={200: CategorySerializer(), 404: "Not found"}
+        responses={200: CategorySerializer(), 400: "Validation error", 404: "Not found"}
     )
     def put(self, request, id):
+        serializer = CategorySerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
         updated = category_service.update_category(id, request.data)
         return Response(updated, status=status.HTTP_200_OK)

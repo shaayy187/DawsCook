@@ -11,8 +11,6 @@ def get_categories(category_id=None):
         return serializer.data
     else:
         category = category_repository.get_all_categories()
-        if not category:
-            raise NotFound("Categories not found")
         serializer=CategorySerializer(category, many=True)
         return serializer.data
 

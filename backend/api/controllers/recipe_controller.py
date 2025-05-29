@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import permission_classes
 from drf_yasg import openapi
@@ -9,15 +9,14 @@ from rest_framework.exceptions import NotFound
 from ..serializer import RecipeSerializer
 from ..services import recipe_service
 from ..models import Recipe
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListCreateAPIView
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter, SearchFilter
 
 @swagger_auto_schema(
     operation_description="Retrieve and create recipes with pagination, filtering and search."
 )
-class RecipeView(ListAPIView):
-    permission_classes = [AllowAny]
+class RecipeView(ListCreateAPIView):
 
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
@@ -25,6 +24,11 @@ class RecipeView(ListAPIView):
     filterset_fields = ['difficulty', 'category']
     ordering_fields = ['rating', 'recipe']
     search_fields = ['recipe', 'description']
+
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [IsAdminUser()] 
+        return [AllowAny()] 
 
 
 class RecipeDetailView(APIView):
@@ -56,5 +60,7 @@ class RecipeDetailView(APIView):
         }
     )   
     def patch(self, request, id):
+        if not request.data:
+            return Response({"detail": "No data provided."}, status=status.HTTP_400_BAD_REQUEST)
         updated_recipe = recipe_service.update_recipe(id, request.data)
         return Response(updated_recipe, status=status.HTTP_200_OK)
