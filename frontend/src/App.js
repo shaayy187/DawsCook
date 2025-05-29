@@ -52,8 +52,10 @@ function App() {
   };
 
   const handleLogout = () => {
-    sessionStorage.removeItem("token");
-    localStorage.removeItem("token");
+    sessionStorage.removeItem("access");
+    sessionStorage.removeItem("refresh");
+    localStorage.removeItem("access");
+    localStorage.removeItem("refresh");
     window.location.reload();
     setIsLoggedIn(false);
   };

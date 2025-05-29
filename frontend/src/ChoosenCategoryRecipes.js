@@ -17,7 +17,7 @@ const ChoosenCategoryRecipes = () => {
 
         fetch(`http://localhost:8000/api/recipes/`)
             .then((res) => res.json())
-            .then((data) => setRecipes(data.recipes))
+            .then((data) => setRecipes(data.results))
             .catch((error) => console.error("Error with fetching recipes for exact category", error));
 
         const token = sessionStorage.getItem("token");
