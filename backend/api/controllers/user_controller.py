@@ -34,6 +34,31 @@ class ChangePasswordView(APIView):
         else:
             return Response({"detail": result["message"]}, status=status.HTTP_400_BAD_REQUEST)
 
+class ChangeEmailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        operation_description="Change the authenticated user's email.",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=["new_email", "confirm_email"],
+            properties={
+                "new_email":     openapi.Schema(type=openapi.TYPE_STRING, format=openapi.FORMAT_EMAIL),
+                "confirm_email": openapi.Schema(type=openapi.TYPE_STRING, format=openapi.FORMAT_EMAIL),
+            },
+        ),
+        responses={
+            200: openapi.Response(description="Email changed successfully."),
+            400: openapi.Response(description="Validation error or mismatch.")
+        }
+    )
+    def post(self, request):
+        result = user_service.change_email(request.user, request.data)
+        if result["success"]:
+            return Response({"detail": result["message"]}, status=status.HTTP_200_OK)
+        else:
+            return Response({"detail": result["message"]}, status=status.HTTP_400_BAD_REQUEST)
+
 class Register(APIView):
     permission_classes = [AllowAny]
 

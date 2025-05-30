@@ -31,3 +31,18 @@ def change_password(user, data):
 
     user_repository.update_password(user, new_password)
     return {"success": True, "message": "Password updated successfully."}
+
+def change_email(user, data):
+    new_email = data.get("email")
+    confirm_email = data.get("confirm_email")
+
+    if not new_email or not confirm_email:
+        return {"success": False, "message": "Need to fill both fields for email."}
+    if new_email != confirm_email:
+        return {"success": False, "message": "Emails mismatch."}
+
+    try:
+        user_repository.update_email(user, new_email)
+        return {"success": True, "message": "Email updated successfully."}
+    except Exception as e:
+        return {"success": False, "message": str(e)}

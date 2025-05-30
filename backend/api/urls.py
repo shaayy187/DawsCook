@@ -1,6 +1,6 @@
 from django.urls import path
 from .controllers.recipe_controller import RecipeView, RecipeDetailView
-from .controllers.user_controller import Register, UserProfile, ChangePasswordView
+from .controllers.user_controller import Register, UserProfile, ChangePasswordView, ChangeEmailView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from .controllers.step_controller import StepDetailView
 from .controllers.category_controller import CategoryListView, CategoryDetailPublicView, CategoryAdminView
@@ -18,4 +18,5 @@ urlpatterns = [
     path('user/', UserProfile.as_view(), name='user-profile'),
     path('steps/<int:id>/', StepDetailView.as_view(), name='step-detail'),
     path('user/change-password/', ChangePasswordView.as_view(), name='change-password'),
+    path('user/change-email/', ChangeEmailView.as_view(), name='change-email'),
 ]
