@@ -314,7 +314,9 @@ label.privacyPolicy {
 .bottom-row {
   width: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap; 
 } 
 
 .profile-container {
@@ -975,14 +977,25 @@ h2 {
     width: 92%;
     padding: 32px;
     display: flex;
-    flex-direction: column;
-    align-items: flex-end; 
+    justify-content: space-between;
     gap: 10px;
+    height: 269px;
+}
+
+.email-settings-left{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.email-settings-right{
+  display: flex;
+  flex-direction: column;
 }
 
 .input-emails {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     gap: 15px;
     margin-top: 10px;
     justify-content: flex-end;
@@ -1005,7 +1018,7 @@ h2 {
     margin: 0;
     border: none;
     outline: none;
-    padding: 0.325em 0.9em;
+    padding: 10px 16px;
     z-index: 1;
     background-color: white;
 }
@@ -1034,6 +1047,10 @@ h2 {
 .email-settings-box button:hover {
     opacity: 0.95;
     transform: translateY(-1px);
+}
+
+.password-change-submit{
+  width: 29%;
 }
 
 @media screen and (max-width: 1024px) {
