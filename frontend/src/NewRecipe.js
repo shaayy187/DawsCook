@@ -52,8 +52,6 @@ async function createRecipe(recipeData) {
 
   if (!res.ok) {
     const err = await res.json();
-    console.error('[NewRecipe] createRecipe: pełen obiekt błędu =', JSON.stringify(err, null, 2));
-
     const messages = [];
     for (const [field, errs] of Object.entries(err)) {
       if (Array.isArray(errs)) {
