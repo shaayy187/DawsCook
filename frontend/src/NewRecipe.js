@@ -70,6 +70,7 @@ export default function NewRecipe() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [isAdminUser, setIsAdminUser] = useState(undefined);
+  const [validationError, setValidationError] = useState('');
 
   useEffect(() => {
     fetchCurrentUser()
@@ -137,6 +138,29 @@ export default function NewRecipe() {
     reader.readAsDataURL(file);
   };
 
+  const handleSubmit = () => {
+  setValidationError('');
+
+  if (!form.recipe.trim()) {
+    setValidationError('Title cant be null.');
+    return;
+  }
+  if (!form.difficulty.trim()) {
+    setValidationError('Difficulty cant be null');
+    return;
+  }
+  if (!form.category_id) {
+    setValidationError('Category cant be null');
+    return;
+  }
+  if (!form.description.trim()) {
+    setValidationError('Description cant be null');
+    return;
+  }
+
+  mutate(form);
+  };
+
   if (isAdminUser === undefined) {
     return <p className="loading">Checking permissions...</p>;
   }
@@ -152,6 +176,7 @@ export default function NewRecipe() {
     <div className="new-recipe-page">
       <h1 className="page-title">Create New Recipe</h1>
       {saveError && <p className="error">Error: {saveError.message}</p>}
+      {validationError && <p className="error">{validationError}</p>}
       <div className="cards-row">
         <div className="card">
           <h2 className="card-title">Basic Info</h2>
@@ -256,7 +281,7 @@ export default function NewRecipe() {
           <button
             type="button"
             className="submit-btn"
-            onClick={() => mutate(form)}
+            onClick={() => handleSubmit(form)}
             disabled={isSaving}
           >
             {isSaving ? 'Saving…' : 'Create Recipe'}
