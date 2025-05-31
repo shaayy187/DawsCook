@@ -90,7 +90,7 @@ const Profile = () => {
     const [isAuthorized, setIsAuthorized] = useState(false);
     const [userData, setUserData] = useState({});
     const [editData, setEditData] = useState({});
-    const [activeTab, setActiveTab] = useState(null);
+    const [activeTab, setActiveTab] = useState('general');
     const [passwordData, setPasswordData] = useState({ old_password: '', new_password: '', confirm_password: '' });
     const [emailData, setEmailData] = useState({ email: '', confirm_email: ''});
     const [showPasswordSettings, setShowPasswordSettings] = useState(false);
@@ -264,7 +264,7 @@ const Profile = () => {
                     <p>Account Settings</p>
                     <div
                         className={`general-settings ${activeTab === "general" ? "active-tab" : ""}`}
-                        onClick={() => setActiveTab("general")}
+                        onClick={() => {setActiveTab("general"); setShowPasswordSettings(''); setShowEmailSettings('')}}
                     >
                         General
                     </div>
