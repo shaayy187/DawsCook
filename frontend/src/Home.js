@@ -22,6 +22,7 @@ const Home = ({ recipes = []}) => {
   }, []);
 
   return (
+    <div className="app">
     <div className="home-container">
       <section className="categories">
         <h2>The secret ingredient is always <span>love</span>.</h2>
@@ -102,6 +103,7 @@ const Home = ({ recipes = []}) => {
               </Link>
             ))}
       </section>
+    </div>
     </div>
   );
 };
