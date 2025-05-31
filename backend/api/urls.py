@@ -4,6 +4,7 @@ from .controllers.user_controller import Register, UserProfile, ChangePasswordVi
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from .controllers.step_controller import StepDetailView
 from .controllers.category_controller import CategoryListView, CategoryDetailPublicView, CategoryAdminView
+from .controllers.allergy_controller import AllergyView
 
 urlpatterns = [
     path('recipes/', RecipeView.as_view(), name='recipe-list'),
@@ -19,4 +20,5 @@ urlpatterns = [
     path('steps/<int:id>/', StepDetailView.as_view(), name='step-detail'),
     path('user/change-password/', ChangePasswordView.as_view(), name='change-password'),
     path('user/change-email/', ChangeEmailView.as_view(), name='change-email'),
+    path('allergies/', AllergyView.as_view(), name='allergy'),
 ]
