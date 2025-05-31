@@ -40,7 +40,7 @@ const Home = ({ recipes = []}) => {
           ))}
         </div>
       </section>
-
+      <div className='line-before-featured-recipes'></div>
       <section className="latest-recipes">
         <h2>Latest recipes</h2>
         {recipes.length === 0 ? (
@@ -63,7 +63,7 @@ const Home = ({ recipes = []}) => {
           </div>
         )}
       </section>
-
+      <div className='line-before-featured-recipes'></div>
       <section className="featured-recipes">
         {recipes.length >= 3 &&
           [...recipes]

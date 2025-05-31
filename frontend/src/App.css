@@ -698,6 +698,13 @@ h2 {
   justify-content: center;
 }
 
+.line-before-featured-recipes{
+  width: 90%;
+  border-bottom: 2px solid #02a9bb;
+  display: flex;
+  margin: 20px auto;
+}
+
 .featured-recipes {
   margin-top: 40px;
   display: flex;
