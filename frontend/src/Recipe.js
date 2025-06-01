@@ -25,6 +25,7 @@ const RecipeDetails = () => {
   });
   const [userAllergies, setUserAllergies] = useState([]); 
   const [hasAlerted, setHasAlerted] = useState(false);
+  const [userRating, setUserRating] = useState(0);
 
   useEffect(() => {
     const token = sessionStorage.getItem("access");
@@ -43,7 +44,10 @@ const RecipeDetails = () => {
       }
       return response.json();
     })
-    .then((data) => setRecipe(data))
+    .then((data) => {
+      setRecipe(data);
+      setUserRating(data.my_rating || 0);
+    })
     .catch((err) => setError(err.message));
   }, [id, navigate]);
 
@@ -279,6 +283,35 @@ const RecipeDetails = () => {
   }
   };
 
+  const submitRating = (ratingValue) => {
+    const token = sessionStorage.getItem("access");
+        fetch(`http://localhost:8000/api/recipes/${id}/rate/`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ recipe: id, value: ratingValue })
+      })
+      .then(res => {
+        if (!res.ok) {
+          if (res.status === 401) {
+            navigate('/signin');
+          }
+          throw new Error("Failed to submit rating");
+        }
+        return res.json();
+      })
+      .then((updatedRecipe) => {
+        setRecipe(updatedRecipe);
+        setUserRating(updatedRecipe.my_rating || 0);
+      })
+      .catch((err) => {
+        console.error(err);
+        setError(err.message);
+      });
+  };
+
   if (error){
     return <p>{error}</p>;
   } 
@@ -308,7 +341,26 @@ const RecipeDetails = () => {
             <span> | </span>
             <span>{recipe.difficulty}</span>
             <span> | </span>
-            <span>Time: {Math.round(recipe.cooking_time / 60) || 1}h</span>
+            <span>Time: {Math.round((recipe.cooking_time || 0) / 60) || 1}h</span>
+          </div>
+          <div className="user-rating-container">
+            <p>Rate this recipe:</p>
+            <div className="stars-wrapper">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <span
+                  key={star}
+                  className="star"
+                  onClick={() => submitRating(star)}
+                  style={{
+                    cursor: 'pointer',
+                    fontSize: '24px',
+                    color: star <= userRating ? '#FFD700' : '#CCC'
+                  }}
+                >
+                  {star <= userRating ? '★' : '☆'}
+                </span>
+              ))}
+            </div>
           </div>
           {isAdmin && (
             <>
