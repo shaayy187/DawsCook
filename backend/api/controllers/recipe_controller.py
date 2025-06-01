@@ -4,9 +4,10 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import permission_classes
+from django.shortcuts import get_object_or_404
 from drf_yasg import openapi
 from rest_framework.exceptions import NotFound
-from ..serializer import RecipeSerializer
+from ..serializer import RecipeSerializer, RatingSerializer
 from ..services import recipe_service
 from ..models import Recipe
 from rest_framework.generics import ListCreateAPIView
@@ -64,3 +65,29 @@ class RecipeDetailView(APIView):
             return Response({"detail": "No data provided."}, status=status.HTTP_400_BAD_REQUEST)
         updated_recipe = recipe_service.update_recipe(id, request.data)
         return Response(updated_recipe, status=status.HTTP_200_OK)
+
+class RecipeRatingView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        operation_description="Submit or update your rating (1..5) for a given recipe. Returns full Recipe with updated avg_rating.",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=["value"],
+            properties={
+                "value": openapi.Schema(type=openapi.TYPE_INTEGER, description="Rating from 1 to 5")
+            },
+        ),
+        responses={
+            200: RecipeSerializer(),
+            400: "Invalid payload",
+            404: "Recipe not found"
+        }
+    )
+    def post(self, request, id):
+        serializer = RatingSerializer(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        recipe = Recipe.objects.get(pk=id)
+        out = RecipeSerializer(recipe, context={'request': request})
+        return Response(out.data, status=status.HTTP_200_OK)

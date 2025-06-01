@@ -1,6 +1,6 @@
 from django.urls import path
 from rest_framework.routers import DefaultRouter
-from .controllers.recipe_controller import RecipeView, RecipeDetailView
+from .controllers.recipe_controller import RecipeView, RecipeDetailView, RecipeRatingView
 from .controllers.user_controller import Register, UserProfile, ChangePasswordView, ChangeEmailView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from .controllers.step_controller import StepDetailView
@@ -13,6 +13,7 @@ from .controllers.user_allergy_info_controller import UserAllergyInfoListCreate,
 urlpatterns = [
     path('recipes/', RecipeView.as_view(), name='recipe-list'),
     path('recipes/<int:id>/', RecipeDetailView.as_view(), name='recipe-detail'),
+    path('recipes/<int:id>/rate/', RecipeRatingView.as_view(), name='recipe-rate'),
     path('register/', Register.as_view(), name='register'),
     path('login/', TokenObtainPairView.as_view(), name='login'), 
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),

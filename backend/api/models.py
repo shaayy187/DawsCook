@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, Group, Permission
+from django.utils import timezone
 # Create your models here.
 
 class Allergy(models.Model):
@@ -24,6 +25,8 @@ class Recipe(models.Model):
     image = models.BinaryField(blank=True, null=True)
     description = models.CharField(max_length=600, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='recipes', blank=True, null=True)
+    created = models.DateTimeField(default=timezone.now)
+    cooking_time = models.IntegerField(default=0, blank=True, null=True)
 
     def __str__(self):
         return self.recipe
@@ -60,6 +63,25 @@ class UserAllergyInfo(models.Model):
 
     def __str__(self):
         return f"{self.user.username} – {self.allergy.name}"
+
+class Rating(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='ratings'
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='ratings'
+    )
+    value = models.IntegerField()
+
+    class Meta:
+        unique_together = ('user', 'recipe')
+
+    def __str__(self):
+        return f"{self.user.username} → {self.recipe.recipe}: {self.value}"
 
 class SystemUser(AbstractUser):
     email = models.EmailField(unique=True)
