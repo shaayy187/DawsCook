@@ -58,6 +58,26 @@ class CategorySerializer(serializers.ModelSerializer):
         return instance
 
 
+class UserAllergyInfoSerializer(serializers.ModelSerializer):
+    allergy = serializers.StringRelatedField(read_only=True)
+
+    allergy_id = serializers.PrimaryKeyRelatedField(
+        queryset=Allergy.objects.all(),
+        source="allergy",
+        write_only=True
+    )
+
+    class Meta:
+        model = UserAllergyInfo
+        fields = [
+            "id",
+            "allergy",
+            "allergy_id",
+            "power",
+            "symptoms",
+            "treatment",
+        ]
+
 class UserSerializer(serializers.ModelSerializer):
     """
     Serializer do odczytu danych użytkownika systemowego.
@@ -72,10 +92,11 @@ class UserSerializer(serializers.ModelSerializer):
         many=True,
         write_only=True
     )
+    user_allergy_info = UserAllergyInfoSerializer(many=True, read_only=True)
 
     class Meta:
         model = SystemUser
-        fields = ['id', 'username', 'email', 'password', 'first_name', 'last_name','age','pronouns', 'is_superuser', 'allergies', 'allergy_ids', 'image', 'image_upload'] 
+        fields = ['id', 'username', 'email', 'password', 'first_name', 'last_name','age','pronouns', 'is_superuser', 'allergies', 'allergy_ids', "user_allergy_info", 'image', 'image_upload'] 
 
     def get_image(self, obj):
         if obj.image:

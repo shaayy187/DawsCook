@@ -1,4 +1,5 @@
 from django.urls import path
+from rest_framework.routers import DefaultRouter
 from .controllers.recipe_controller import RecipeView, RecipeDetailView
 from .controllers.user_controller import Register, UserProfile, ChangePasswordView, ChangeEmailView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
@@ -7,6 +8,7 @@ from .controllers.category_controller import CategoryListView, CategoryDetailPub
 from .controllers.allergy_controller import AllergyView
 from .controllers.ingredient_controller import IngredientAdminView
 from .controllers.nutrition_controller import NutritionAdminView
+from .controllers.user_allergy_info_controller import UserAllergyInfoListCreate, UserAllergyInfoDetail
 
 urlpatterns = [
     path('recipes/', RecipeView.as_view(), name='recipe-list'),
@@ -28,4 +30,6 @@ urlpatterns = [
     path('nutrition/<int:id>/', NutritionAdminView.as_view(), name='nutrition-detail'),
     path('ingredients/', IngredientAdminView.as_view(), name='ingredient-list-create'),
     path('ingredients/<int:id>/', IngredientAdminView.as_view(), name='ingredient-detail'),
+    path("user_allergies/", UserAllergyInfoListCreate.as_view(), name="user_allergy_info-list-create"),
+    path("user_allergies/<int:pk>/", UserAllergyInfoDetail.as_view(), name="user_allergy_info-detail"),
 ]

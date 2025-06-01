@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser, Group, Permission
 # Create your models here.
 
@@ -26,6 +27,39 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.recipe
+
+
+class UserAllergyInfo(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="user_allergy_info"
+    )
+    allergy = models.ForeignKey(
+        Allergy,
+        on_delete=models.CASCADE,
+        related_name="user_allergy_info"
+    )
+
+    power = models.CharField(
+        max_length=100,
+        blank=True,
+        help_text="Severity level of the allergy (e.g. 'mild', 'moderate', 'severe')."
+    )
+    symptoms = models.TextField(
+        blank=True,
+        help_text="Description of allergy symptoms."
+    )
+    treatment = models.TextField(
+        blank=True,
+        help_text="Recommended treatment or management."
+    )
+
+    class Meta:
+        unique_together = ("user", "allergy")
+
+    def __str__(self):
+        return f"{self.user.username} – {self.allergy.name}"
 
 class SystemUser(AbstractUser):
     email = models.EmailField(unique=True)
