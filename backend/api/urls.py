@@ -5,6 +5,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from .controllers.step_controller import StepDetailView
 from .controllers.category_controller import CategoryListView, CategoryDetailPublicView, CategoryAdminView
 from .controllers.allergy_controller import AllergyView
+from .controllers.ingredient_controller import IngredientAdminView
+from .controllers.nutrition_controller import NutritionAdminView
 
 urlpatterns = [
     path('recipes/', RecipeView.as_view(), name='recipe-list'),
@@ -18,7 +20,12 @@ urlpatterns = [
     path('category/admin/<int:id>/', CategoryAdminView.as_view(), name='category-update'),
     path('user/', UserProfile.as_view(), name='user-profile'),
     path('steps/<int:id>/', StepDetailView.as_view(), name='step-detail'),
+    path('steps/', StepDetailView.as_view(), name='step-list-create'),
     path('user/change-password/', ChangePasswordView.as_view(), name='change-password'),
     path('user/change-email/', ChangeEmailView.as_view(), name='change-email'),
     path('allergies/', AllergyView.as_view(), name='allergy'),
+    path('nutrition/', NutritionAdminView.as_view(), name='nutrition-list-create'),
+    path('nutrition/<int:id>/', NutritionAdminView.as_view(), name='nutrition-detail'),
+    path('ingredients/', IngredientAdminView.as_view(), name='ingredient-list-create'),
+    path('ingredients/<int:id>/', IngredientAdminView.as_view(), name='ingredient-detail'),
 ]
