@@ -424,8 +424,8 @@ const Profile = () => {
                     </div>
                 </div>
             </div>
-            <div className="bottom-row" style={{ display: "flex", justifyContent: "space-between", gap: "2rem" }}>
-                <div style={{ flex: 1 }}>
+            <div className="bottom-row">
+                <div style={{ flex: 1.05 }}>
                         {showPasswordSettings && (
                                 <PasswordSettings
                                     passwordData={passwordData}
