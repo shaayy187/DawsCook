@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './App.css';
+import Modal from './Window';
 
 const RecipeDetails = () => {
   const { id } = useParams(); 
@@ -10,6 +11,18 @@ const RecipeDetails = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [stepImages, setStepImages] = useState({});
+  const [showIngredientForm, setShowIngredientForm] = useState(false);
+  const [newIngredient, setNewIngredient] = useState({ name: "", quantity: "" });
+  const [showNutritionForm, setShowNutritionForm] = useState(false);
+  const [newNutrition, setNewNutrition] = useState({
+    recipe: id,
+    kcal: 0, fat: 0, saturates: 0, carbs: 0, sugars: 0,
+    fibre: 0, protein: 0, salt: 0
+  });
+  const [showStepForm, setShowStepForm] = useState(false);
+  const [newStep, setNewStep] = useState({
+    recipe: id, step_number: 1, instruction: ""
+  });
 
   useEffect(() => {
     const token = sessionStorage.getItem("access");
@@ -131,6 +144,117 @@ const RecipeDetails = () => {
       .catch(err => setError(err.message));
   };
 
+  const createIngredient = async (ingredient) => {
+  const token = sessionStorage.getItem("access");
+  const res = await fetch(`http://localhost:8000/api/ingredients/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(ingredient),
+  });
+  if (!res.ok) throw new Error("Failed to create ingredient");
+  return res.json();
+  };
+
+  const handleAddIngredient = () => {
+  createIngredient({ ...newIngredient, recipe: id })
+    .then(() => window.location.reload())
+    .catch((err) => alert(err.message));
+  };  
+
+  const createNutrition = async (nutrition) => {
+    const token = sessionStorage.getItem("access");
+    const res = await fetch(`http://localhost:8000/api/nutrition/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(nutrition),
+    });
+    if (!res.ok) throw new Error("Failed to create nutrition");
+    return res.json();
+  };
+  
+  const handleAddNutrition = () => {
+  createNutrition({ ...newNutrition, recipe: id })
+    .then(() => window.location.reload())
+    .catch((err) => alert(err.message));
+  };
+
+  const createStep = async (step) => {
+    const token = sessionStorage.getItem("access");
+    const res = await fetch(`http://localhost:8000/api/steps/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(step),
+    });
+    if (!res.ok) throw new Error("Failed to create step");
+    return res.json();
+  };
+
+  const handleAddStep = () => {
+  createStep({ ...newStep, recipe: id })
+    .then(() => window.location.reload())
+    .catch((err) => alert(err.message));
+  };
+
+  const deleteIngredient = async (id) => {
+    const token = sessionStorage.getItem("access");
+    const res = await fetch(`http://localhost:8000/api/ingredients/${id}/`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) throw new Error("Failed to delete ingredient");
+  };
+
+  const handleDeleteIngredient = (ingId) => {
+  if (window.confirm("Are you sure you want to delete this ingredient?")) {
+    deleteIngredient(ingId)
+      .then(() => window.location.reload())
+      .catch((err) => alert(err.message));
+  }
+  };
+
+  const deleteStep = async (id) => {
+    const token = sessionStorage.getItem("access");
+    const res = await fetch(`http://localhost:8000/api/steps/${id}/`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) throw new Error("Failed to delete step");
+  };
+
+  const handleDeleteStep = (stepId) => {
+  if (window.confirm("Are you sure you want to delete this step?")) {
+    deleteStep(stepId)
+      .then(() => window.location.reload())
+      .catch((err) => alert(err.message));
+  }
+  };
+
+  const deleteNutrition = async (id) => {
+    const token = sessionStorage.getItem("access");
+    const res = await fetch(`http://localhost:8000/api/nutrition/${id}/`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) throw new Error("Failed to delete nutrition");
+  };
+
+  const handleDeleteNutrition = (nutritionId) => {
+  if (window.confirm("Are you sure you want to delete nutrition?")) {
+    deleteNutrition(nutritionId)
+      .then(() => window.location.reload())
+      .catch((err) => alert(err.message));
+  }
+  };
+
   if (error){
     return <p>{error}</p>;
   } 
@@ -143,7 +267,6 @@ const RecipeDetails = () => {
     <div className="details-container">
       <h2>{recipe.recipe}</h2>
       <p className="date">Added: {new Date(recipe.created).toLocaleDateString()}</p>
-
       <div className="top-section">
         <div className="top-left">
           {recipe.image && (
@@ -163,7 +286,6 @@ const RecipeDetails = () => {
             <span> | </span>
             <span>Time: {Math.round(recipe.cooking_time / 60) || 1}h</span>
           </div>
-
           {isAdmin && (
             <>
               <input type="file" accept="image/*" onChange={handleImageChange} />
@@ -172,30 +294,55 @@ const RecipeDetails = () => {
           )}
         </div>
       </div>
-
       <div className="columns">
         <div className="column">
-          <h3>Ingredients</h3>
+          <h3>Ingredients {isAdmin && (
+            <button onClick={() => setShowIngredientForm(true)}>+</button>
+          )}
+          </h3>
           <ul>
             {recipe.ingredients?.map((ing, i) => (
-              <li key={i}>{ing.name} – {ing.quantity}</li>
+              <li key={i}>
+                {ing.name} – {ing.quantity}
+                {isAdmin && (
+                  <button onClick={() => handleDeleteIngredient(ing.id)}>−</button>
+                )}
+              </li>
             ))}
           </ul>
+         {showIngredientForm && (
+          <Modal title="Add Ingredient" onClose={() => setShowIngredientForm(false)}>
+            <input
+              type="text"
+              placeholder="Name"
+              value={newIngredient.name}
+              onChange={(e) => setNewIngredient({ ...newIngredient, name: e.target.value })}
+            />
+            <input
+              type="text"
+              placeholder="Quantity"
+              value={newIngredient.quantity}
+              onChange={(e) => setNewIngredient({ ...newIngredient, quantity: e.target.value })}
+            />
+            <button onClick={handleAddIngredient}>Save</button>
+          </Modal>
+        )}
         </div>
-
         <div className="column">
           <h3>Allergens</h3>
           <ul>
             {recipe.allergies?.length > 0 ? (
               recipe.allergies.map((a, i) => <li key={i}>{a.name}</li>)
             ) : (
-              <li>Brak</li>
+              <li>None</li>
             )}
           </ul>
         </div>
-
         <div className="column">
-          <h3>Nutrition</h3>
+          <h3>Nutrition {isAdmin && (
+            <button onClick={() => setShowNutritionForm(true)}>+</button>
+          )}
+          </h3>
           <ul>
             <li>kcal {recipe.nutrition?.kcal || 0}</li>
             <li>fat {recipe.nutrition?.fat || 0}g</li>
@@ -206,32 +353,80 @@ const RecipeDetails = () => {
             <li>protein {recipe.nutrition?.protein || 0}g</li>
             <li>salt {recipe.nutrition?.salt || 0}g</li>
           </ul>
-        </div>
-      </div>
-
-      <div className="steps-section">
-        <h3>Directions</h3>
-        {recipe.steps.map((step) => (
-          <div key={step.id}>
-            <p><strong>Step {step.step_number}</strong></p>
-            <p>{step.instruction}</p>
-            {step.image && (
-              <img src={`data:image/jpeg;base64,${step.image}`} alt={`Step ${step.step_number}`} />
-            )}
-
-            {isAdmin && (
-              <>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => handleStepImageChange(e, step.id)}
-                />
-                <button onClick={() => uploadStepImage(step.id)}>Upload Step Image</button>
-              </>
-            )}
+          {isAdmin && recipe.nutrition && (
+            <button onClick={() => handleDeleteNutrition(recipe.nutrition.id)}>Delete Nutrition</button>
+          )}
+          {showNutritionForm && (
+            <Modal title="Add Nutrition" onClose={() => setShowNutritionForm(false)}>
+             {Object.keys(newNutrition)
+                .filter(k => k !== "recipe")
+                .map((field) => (
+                  <div key={field} className="nutrition-input-group">
+                    <label htmlFor={field}>
+                      {field.charAt(0).toUpperCase() + field.slice(1)}:
+                    </label>
+                    <input
+                      id={field}
+                      type="number"
+                      min="0"
+                      step="0.1"
+                      value={newNutrition[field]}
+                      onChange={(e) =>
+                        setNewNutrition({
+                          ...newNutrition,
+                          [field]: parseFloat(e.target.value) || 0
+                        })
+                      }
+                    />
+                  </div>
+              ))}
+              <button onClick={handleAddNutrition}>Save</button>
+            </Modal>
+          )}
           </div>
-        ))}
-      </div>
+        </div>
+        <div className="steps-section">
+          <h3>Directions {isAdmin && (
+            <button onClick={() => setShowStepForm(true)}>+</button>
+          )}
+          </h3>
+          {recipe.steps.map((step) => (
+            <div key={step.id}>
+              <p><strong>Step {step.step_number}</strong></p>
+              <p>{step.instruction}</p>
+              {step.image && (
+                <img src={`data:image/jpeg;base64,${step.image}`} alt={`Step ${step.step_number}`} />
+              )}
+              {isAdmin && (
+                <>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleStepImageChange(e, step.id)}
+                  />
+                  <button onClick={() => uploadStepImage(step.id)}>Set step photo</button>
+                  <button onClick={() => handleDeleteStep(step.id)}>−</button>
+                </>
+              )}
+            </div>
+          ))}
+          {showStepForm && (
+            <Modal title="Add Step" onClose={() => setShowStepForm(false)}>
+              <input
+                type="number"
+                placeholder="Step Number"
+                value={newStep.step_number}
+                onChange={(e) => setNewStep({ ...newStep, step_number: e.target.value })}
+              />
+              <textarea
+                placeholder="Instruction"
+                value={newStep.instruction}
+                onChange={(e) => setNewStep({ ...newStep, instruction: e.target.value })}
+              />
+              <button onClick={handleAddStep}>Save</button>
+            </Modal>
+          )}
+        </div>
     </div>
   );
 };
