@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
 import AllergensSettings from "./Allergens";
+import { useNavigate } from "react-router-dom";
 
 const PasswordSettings = ({ passwordData, setPasswordData, handlePasswordChange }) => (
     <div className="password-settings-animation">
@@ -97,8 +98,8 @@ const Profile = () => {
     const [showPasswordSettings, setShowPasswordSettings] = useState(false);
     const [showEmailSettings, setShowEmailSettings] = useState(false);
     const [showAllergensSettings, setShowAllergensSettings] = useState(false);
-    const [allergens, setAllergens] = useState([]);
-    const [newAllergen, setNewAllergen] = useState("");
+    const [userAllergyInfo, setUserAllergyInfo] = useState([]);
+    const navigate = useNavigate();
 
 
     useEffect(() => {
@@ -131,6 +132,17 @@ const Profile = () => {
                     setPreview(`data:image/jpeg;base64,${data.image}`);
                 }
                 setIsAuthorized(true);
+
+                const resExtra = await fetch("http://localhost:8000/api/user_allergies/", {
+                    headers: { Authorization: `Bearer ${savedToken}` }
+                });
+                if (resExtra.status === 200) {
+                    const extraData = await resExtra.json();
+                    setUserAllergyInfo(extraData);
+                } else {
+                    setUserAllergyInfo([]);
+                }
+
             } catch (error) {
                 console.error("Fetch user error.", error);
                 window.location.replace("/signin");
@@ -240,110 +252,35 @@ const Profile = () => {
     };
 
     const handleEmailChange = async () => {
-    try {
-        const res = await fetch('http://localhost:8000/api/user/change-email/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`,
-            },
-            body: JSON.stringify(emailData),
-        });
-
-        if (!res.ok) throw new Error("Email update failed");
-
-        alert("Email updated successfully.");
-        setEmailData({ email: '' , confirm_email: ''});
-    } catch (error) {
-        console.error(error);
-        alert("Failed to update email.");
-    }
-    };
-
-    const fetchAllergens = async () => {
         try {
-            const res = await fetch('http://localhost:8000/api/user/', {
-            headers: { Authorization: `Bearer ${token}` },
-            });
-            if (!res.ok) throw new Error("Failed to fetch allergens");
-            const data = await res.json();
-            setAllergens(data.allergies || []);
-        } catch (error) {
-            console.error(error);
-            alert("Failed to load allergens.");
-        }
-    };
-
-   const handleAddAllergen = async () => {
-        try {
-            const allAllergensRes = await fetch('http://localhost:8000/api/allergies/', {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            if (!allAllergensRes.ok) throw new Error("Failed to fetch global allergens.");
-            const allAllergensData = await allAllergensRes.json();
-
-            const existingAllergen = allAllergensData.find(
-                (a) => a.name.toLowerCase() === newAllergen.toLowerCase()
-            );
-
-            if (!existingAllergen) {
-                alert("This allergen does not exist in the system. Contact the admin to add it.");
-                return;
-            }
-
-            const currentAllergenIds = allergens.map((a) => a.id);
-            if (currentAllergenIds.includes(existingAllergen.id)) {
-                alert("This allergen is already assigned to the user.");
-                return;
-            }
-
-            const updatedAllergenIds = [...currentAllergenIds, existingAllergen.id];
-
-            const res = await fetch('http://localhost:8000/api/user/', {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({ allergy_ids: updatedAllergenIds }),
-            });
-
-            if (!res.ok) throw new Error("Failed to add allergen.");
-
-            fetchAllergens();
-            setNewAllergen("");
-            alert("Allergen added successfully.");
-        } catch (error) {
-            console.error(error);
-            alert("Failed to add allergen.");
-        }
-    };
-
-   const handleDeleteAllergen = async (id) => {
-        const updatedAllergenIds = allergens
-            .filter(a => a.id !== id)
-            .map(a => a.id);
-
-        try {
-            const res = await fetch('http://localhost:8000/api/user/', {
-                method: 'PATCH',
+            const res = await fetch('http://localhost:8000/api/user/change-email/', {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
                 },
-                body: JSON.stringify({ allergy_ids: updatedAllergenIds }),
+                body: JSON.stringify(emailData),
             });
 
-            if (!res.ok) throw new Error("Failed to delete allergen");
-            fetchAllergens();
-            alert("Allergen removed.");
+            if (!res.ok) throw new Error("Email update failed");
+
+            alert("Email updated successfully.");
+            setEmailData({ email: '' , confirm_email: ''});
         } catch (error) {
             console.error(error);
-            alert("Failed to remove allergen.");
+            alert("Failed to update email.");
         }
     };
+
+    const handleLogout = () => {
+        sessionStorage.removeItem("access");
+        sessionStorage.removeItem("refresh");
+        localStorage.removeItem("access");
+        localStorage.removeItem("refresh");
+        setIsAuthorized(false);
+        navigate("/signin");
+        window.location.reload();
+  };
 
     if (!isAuthorized) return null;
 
@@ -371,15 +308,17 @@ const Profile = () => {
                         Email
                     </div>
                     <div
-                    className={`allergens-settings ${showAllergensSettings ? "active-tab" : ""}`}
-                    onClick={() => {
-                        setShowAllergensSettings((prev) => !prev);
-                        fetchAllergens();
-                    }}
+                        className={`allergens-settings ${showAllergensSettings ? "active-tab" : ""}`}
+                        onClick={() => setShowAllergensSettings((prev) => !prev)}
                     >
-                    Allergens
+                        Allergens
                     </div>
-                    <div className="sign-out">Sign Out</div>
+                    <div 
+                    className="sign-out"
+                    onClick={()=>handleLogout()}
+                    >
+                        Sign Out
+                    </div>
                 </div>
 
                 <div className="profile-container">
@@ -449,11 +388,9 @@ const Profile = () => {
             {showAllergensSettings && (
                 <div className="bottom-row" style={{ marginTop: "40px" }}>
                     <AllergensSettings
-                    allergens={allergens}
-                    newAllergen={newAllergen}
-                    setNewAllergen={setNewAllergen}
-                    handleAddAllergen={handleAddAllergen}
-                    handleDeleteAllergen={handleDeleteAllergen}
+                    userAllergyInfo={userAllergyInfo}
+                    setUserAllergyInfo={setUserAllergyInfo}
+                    token={token}
                     />
                 </div>
             )}

@@ -23,6 +23,8 @@ const RecipeDetails = () => {
   const [newStep, setNewStep] = useState({
     recipe: id, step_number: 1, instruction: ""
   });
+  const [userAllergies, setUserAllergies] = useState([]); 
+  const [hasAlerted, setHasAlerted] = useState(false);
 
   useEffect(() => {
     const token = sessionStorage.getItem("access");
@@ -56,9 +58,31 @@ const RecipeDetails = () => {
     .then(res => res.json())
     .then(data => {
       setIsAdmin(data.is_superuser);
+      setUserAllergies(data.user_allergy_info || []);
     })
-    .catch(() => setIsAdmin(false));
+    .catch(() => {
+      setIsAdmin(false);
+      setUserAllergies([]);
+    });
   }, []);
+
+  useEffect(() => {
+    if (!recipe || userAllergies.length === 0) return;
+    if (hasAlerted) return;
+
+    const recipeAllergyNames = (recipe.allergies || []).map(a => a.name);
+    const userAllergyNames   = userAllergies.map(u => u.allergy);
+    const commonNames = recipeAllergyNames.filter(name => userAllergyNames.includes(name));
+
+    if (commonNames.length > 0) {
+      alert(
+        "Attention! Recipe contains allergens which can affect you: " +
+        commonNames.join(", ")
+      );
+      setHasAlerted(true);
+    }
+  }, [recipe, userAllergies, hasAlerted]);
+
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -332,7 +356,17 @@ const RecipeDetails = () => {
           <h3>Allergens</h3>
           <ul>
             {recipe.allergies?.length > 0 ? (
-              recipe.allergies.map((a, i) => <li key={i}>{a.name}</li>)
+              recipe.allergies.map((a, i) => {
+                const isUserAllergic = userAllergies.some(uA => uA.allergy === a.name);
+                return (
+                  <li
+                    key={i}
+                    className={isUserAllergic ? "allergy-warning" : ""}
+                  >
+                    {a.name}
+                  </li>
+                );
+              })
             ) : (
               <li>None</li>
             )}

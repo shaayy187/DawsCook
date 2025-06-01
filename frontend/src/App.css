@@ -1306,98 +1306,338 @@ body {
 }
 
 .allergens-settings-box {
-  max-width: 800px;
-  margin: 40px auto;
-  padding: 20px;
-  background-color: #ffffff;
+  background-color: white;
   border-radius: 10px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin: 0 auto;
+  max-width: 1000px;
 }
 
 .allergens-settings-box h3 {
   text-align: center;
-  margin-bottom: 24px;
   font-size: 1.6rem;
-  color: #333333;
+  color: #333;
+  margin-bottom: 16px;
 }
 
 .table-container {
   width: 100%;
+  overflow-x: auto;
 }
 
 .allergens-table {
   width: 100%;
   border-collapse: collapse;
-  margin: 0 auto;
-  font-family: Arial, sans-serif;
+}
+
+.allergens-table th,
+.allergens-table td {
+  border-bottom: 1px solid #ccc;
+  padding: 8px 12px;
+  text-align: left;
 }
 
 .allergens-table th {
-  background-color: #f2f2f2;
-  color: #333333;
+  background-color: #0072ff;
   font-weight: 600;
-  padding: 12px 16px;
-  border-bottom: 2px solid #dddddd;
-  text-align: left;
-  font-size: 1rem;
-}
-
-.allergens-table td {
-  padding: 12px 16px;
-  border-bottom: 1px solid #eeeeee;
-  font-size: 0.95rem;
-  color: #555555;
+  color: #ffffff;
 }
 
 .allergens-table tbody tr:hover {
   background-color: #fafafa;
 }
 
-.delete-button {
-  background-color: #d32f2f;
-  color: #ffffff;
-  border: none;
-  border-radius: 6px;
-  padding: 6px 14px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: background-color 0.2s ease;
+.allergens-empty-msg {
+  margin-top: 1rem;
+  font-style: italic;
+  color: #666;
 }
-.delete-button:hover {
-  background-color: #b71c1c;
+
+.allergens-input-inline {
+  width: 100%;
+  padding: 4px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.allergens-btn-inline {
+  padding: 4px 8px;
+  margin-right: 6px;
+  cursor: pointer;
+  border: 1px solid #0072ff;
+  background-color: white;
+  color: #0072ff;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.allergens-btn-inline:last-child {
+  margin-right: 0;
+}
+
+.allergens-btn-inline:hover {
+  background-color: #0072ff;
+  color: white;
 }
 
 .add-container {
-  margin-top: 24px;
   display: flex;
-  gap: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-top: 20px;
 }
 
-.allergen-input {
-  flex: 1;
-  padding: 10px 14px;
-  border: 1px solid #cccccc;
-  border-radius: 6px;
-  font-size: 1rem;
-  outline: none;
-  transition: border-color 0.2s ease;
+.add-select {
+  min-width: 140px;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
-.allergen-input:focus {
-  border-color: #00c6ff;
+
+.add-input {
+  flex: 1 1 120px;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.add-input.symptoms-input,
+.add-input.treatment-input {
+  flex: 2 1 200px;
 }
 
 .add-button {
-  background-color: #00c6ff;
-  color: #ffffff;
+  background: linear-gradient(to right, #00c6ff, #0072ff);
+  color: white;
   border: none;
   border-radius: 6px;
-  padding: 10px 20px;
+  padding: 8px 16px;
   cursor: pointer;
-  font-size: 1rem;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s, transform 0.1s;
+  font-weight: bold;
 }
 .add-button:hover {
-  background-color: #0091c2;
+  background: linear-gradient(to right, #0072ff, #00c6ff);
+  transform: translateY(-1px);
+}
+
+.allergy-warning {
+  color: #c62828;
+  font-weight: bold;
+}
+
+.about-us-container h1{
+  margin-top: 30px;
+  text-align: center;
+}
+
+.quote{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.about-us-container {
+  max-width: 1600px;
+  margin: 0 auto;
+  font-family: 'Arial', sans-serif;
+  color: #333;
+  line-height: 1.5;
+  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.banner {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.banner-image {
+  margin-top:30px;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.banner-quote {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 0.85);
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  text-align: center;
+  max-width: 80%;
+}
+
+.banner-quote blockquote {
+  margin: 0;
+  font-size: 1.2rem;
+  font-style: italic;
+  color: #555;
+}
+
+.banner-quote cite {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #777;
+}
+
+.main-creator {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  background-color:#e9f1f1;
+  border-radius: 12px;
+  padding: 20px;
+  width: 900px;
+  margin: 0 auto;
+}
+
+.creator-text {
+  flex: 1 1 400px;
+}
+
+.creator-text h2 {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.creator-text p {
+  font-size: 1rem;
+  margin: 0;
+}
+
+.creator-image {
+  flex: 0 0 220px;
+  text-align: center;
+}
+
+.creator-image img {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid #ddd;
+}
+
+.line{
+  border-bottom: 2px solid #05b5ef;
+  width:100%;
+  padding: 10px;
+  margin-bottom: 30px;
+}
+
+.art-section {
+  margin-bottom: 2rem;
+  font-family:'Lobster';
+}
+
+.art-section h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.art-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.art-item {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.art-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.big-image-section {
+  margin-bottom: 2rem;
+}
+
+.big-image-section img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.co-creators {
+  margin-bottom: 2rem;
+  padding: 1rem 0;
+  background-color: #f9fafd;
+  border-radius: 8px;
+}
+
+.co-creators h2 {
+  text-align: center;
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+}
+
+.co-creators-grid {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.co-creator-item {
+  text-align: center;
+}
+
+.co-creator-avatar {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  background-color: #fff;
+}
+
+.co-creator-name {
+  display: block;
+  margin-top: 0.5rem;
+  font-weight: bold;
+  color: #444;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 768px) {
+  .main-creator {
+    flex-direction: column;
+    text-align: center;
+  }
+  .creator-image {
+    margin-top: 1rem;
+  }
+  .art-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+  .co-creators-grid {
+    gap: 1rem;
+  }
 }
 
 @media (max-width: 800px) {

@@ -46,7 +46,9 @@ const CategoryRecipesPage = () => {
               </Link>
             ))}
           </div>
+          <Link to={`/choosen-category/${category.id}`} key={category.id} className="category-navigate-link">
           <button className="see-more-btn">See more »</button>
+          </Link>
         </div>
       ))}
     </div>
