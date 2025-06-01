@@ -32,6 +32,7 @@ class SystemUser(AbstractUser):
     image = models.BinaryField(blank=True, null=True)
     age = models.IntegerField(blank=True, null=True)
     pronouns = models.CharField(blank=True, max_length=30)
+    allergies = models.ManyToManyField(Allergy, related_name='users', blank=True)
     groups = models.ManyToManyField( 
         Group,
         related_name="custom_user_set", 

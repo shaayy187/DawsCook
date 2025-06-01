@@ -65,9 +65,17 @@ class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     image = serializers.SerializerMethodField() # odczytuje obraz z bazy danych i koduje go w formacie Base64
     image_upload = serializers.CharField(write_only=True, required=False, allow_blank=True)  # przyjmuje obraz w formacie Base64 i przekształca go do formatu binarnego i wrzuca do bazy
+    allergies = AllergySerializer(many=True)
+    allergy_ids = serializers.PrimaryKeyRelatedField(
+        queryset=Allergy.objects.all(),
+        source='allergies',
+        many=True,
+        write_only=True
+    )
+
     class Meta:
         model = SystemUser
-        fields = ['id', 'username', 'email', 'password', 'first_name', 'last_name','age','pronouns', 'is_superuser', 'image', 'image_upload'] 
+        fields = ['id', 'username', 'email', 'password', 'first_name', 'last_name','age','pronouns', 'is_superuser', 'allergies', 'allergy_ids', 'image', 'image_upload'] 
 
     def get_image(self, obj):
         if obj.image:
@@ -77,10 +85,13 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         image_data = validated_data.pop('image_upload', None)
         password = validated_data.pop('password')
-
         user = SystemUser(
             username=validated_data.get('username'),
-            email=validated_data.get('email')
+            email=validated_data.get('email'),
+            first_name=validated_data.get('first_name', ''),
+            last_name=validated_data.get('last_name', ''),
+            age=validated_data.get('age', None),
+            pronouns=validated_data.get('pronouns', '')
         )
         user.set_password(password)
 
@@ -92,9 +103,12 @@ class UserSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         image_data = validated_data.pop('image_upload', None)
-
         if image_data is not None:
             instance.image = decode_base64(image_data) if image_data else None
+
+        if 'allergies' in validated_data:
+            allergens = validated_data.pop('allergies')
+            instance.allergies.set(allergens)
 
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
@@ -167,7 +181,7 @@ class StepSerializer(serializers.ModelSerializer):
         return instance
    
 class RecipeSerializer(serializers.ModelSerializer):
-    allergies = AllergySerializer(many=True, read_only=True)
+    allergies = AllergySerializer(many=True)
     allergy_ids = serializers.PrimaryKeyRelatedField(
         queryset=Allergy.objects.all(),
         source='allergies',
