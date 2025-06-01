@@ -333,6 +333,7 @@ label.privacyPolicy {
   flex-direction: column;
   align-items: center;
   width: 440px; 
+  height: 349px;
   padding: 32px; 
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -397,7 +398,7 @@ label.privacyPolicy {
   width: 440px; 
   padding: 38px; 
   border-radius: 16px;
-  height: fit-content;
+  height: 349px;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
 }
 
@@ -993,7 +994,7 @@ h2 {
     display: flex;
     justify-content: space-between;
     gap: 10px;
-    height: 269px;
+    height: 297px;
 }
 
 .email-settings-left{
@@ -1301,6 +1302,101 @@ body {
   padding: 6px;
   border: 1px solid #ccc;
   border-radius: 4px;
+}
+
+.allergens-settings-box {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.allergens-settings-box h3 {
+  text-align: center;
+  margin-bottom: 24px;
+  font-size: 1.6rem;
+  color: #333333;
+}
+
+.table-container {
+  width: 100%;
+}
+
+.allergens-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+}
+
+.allergens-table th {
+  background-color: #f2f2f2;
+  color: #333333;
+  font-weight: 600;
+  padding: 12px 16px;
+  border-bottom: 2px solid #dddddd;
+  text-align: left;
+  font-size: 1rem;
+}
+
+.allergens-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #eeeeee;
+  font-size: 0.95rem;
+  color: #555555;
+}
+
+.allergens-table tbody tr:hover {
+  background-color: #fafafa;
+}
+
+.delete-button {
+  background-color: #d32f2f;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 14px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s ease;
+}
+.delete-button:hover {
+  background-color: #b71c1c;
+}
+
+.add-container {
+  margin-top: 24px;
+  display: flex;
+  gap: 12px;
+}
+
+.allergen-input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid #cccccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+.allergen-input:focus {
+  border-color: #00c6ff;
+}
+
+.add-button {
+  background-color: #00c6ff;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s ease;
+}
+.add-button:hover {
+  background-color: #0091c2;
 }
 
 @media (max-width: 800px) {
