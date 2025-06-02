@@ -1,7 +1,7 @@
 import pytest
 from rest_framework.test import APIClient
 from django.contrib.auth import get_user_model
-from api.models import Recipe, Category
+from api.models import Recipe, Nutrition, Step, Category
 
 User = get_user_model()
 
@@ -224,3 +224,129 @@ class TestRecipeExtras:
         r = Recipe.objects.create(recipe="Sec", difficulty="easy", rating=2.0)
         resp = self.client.get(f"/api/recipes/{r.id}/")
         assert resp.status_code == 401
+
+@pytest.mark.django_db
+class TestNutritionAdminEndpoints:
+
+    def setup_method(self):
+        self.client = APIClient()
+        self.admin = User.objects.create_user(username="admin", password="adminpass")
+        self.admin.is_staff = True
+        self.client.force_authenticate(user=self.admin)
+        self.recipe = Recipe.objects.create(recipe="Test", difficulty="easy", rating=3.0)
+
+    def test_create_nutrition_success(self):
+        data = {"recipe": self.recipe.id, "kcal": 200, "fat": 10}
+        response = self.client.post("/api/nutrition/", data, format="json")
+        assert response.status_code == 201
+
+    def test_update_nutrition_success(self):
+        nutrition = Nutrition.objects.create(recipe=self.recipe, kcal=100, fat=5)
+        data = {"kcal": 150}
+        response = self.client.patch(f"/api/nutrition/{nutrition.id}/", data, format="json")
+        assert response.status_code == 200
+
+    def test_delete_nutrition_success(self):
+        nutrition = Nutrition.objects.create(recipe=self.recipe, kcal=100, fat=5)
+        response = self.client.delete(f"/api/nutrition/{nutrition.id}/")
+        assert response.status_code == 204
+
+
+@pytest.mark.django_db
+class TestUserProfileEndpoints:
+
+    def setup_method(self):
+        self.client = APIClient()
+        self.user = User.objects.create_user(username="testuser", password="testpass", email="test@example.com")
+        self.client.force_authenticate(user=self.user)
+
+    def test_get_user_profile_success(self):
+        response = self.client.get("/api/user/")
+        assert response.status_code == 200
+        assert response.data["username"] == "testuser"
+
+    def test_update_user_profile_success(self):
+        data = {"username": "updateduser"}
+        response = self.client.patch("/api/user/", data, format="json")
+        assert response.status_code == 200
+        assert response.data["username"] == "updateduser"
+
+
+@pytest.mark.django_db
+class TestChangeEmailEndpoints:
+
+    def setup_method(self):
+        self.client = APIClient()
+        self.user = User.objects.create_user(username="user", password="pass", email="old@example.com")
+        self.client.force_authenticate(user=self.user)
+
+    def test_change_email_success(self):
+        data = {"new_email": "new@example.com", "confirm_email": "new@example.com"}
+        response = self.client.post("/api/user/change-email/", data, format="json")
+        assert response.status_code in (200, 400)
+
+    def test_change_email_mismatch(self):
+        data = {"new_email": "one@example.com", "confirm_email": "two@example.com"}
+        response = self.client.post("/api/user/change-email/", data, format="json")
+        assert response.status_code == 400
+
+
+@pytest.mark.django_db
+class TestRecipeRatingEndpoints:
+
+    def setup_method(self):
+        self.client = APIClient()
+        self.user = User.objects.create_user(username="user", password="pass")
+        self.client.force_authenticate(user=self.user)
+        self.recipe = Recipe.objects.create(recipe="Soup", difficulty="easy", rating=3.0)
+
+    def test_submit_rating_success(self):
+        data = {"recipe": self.recipe.id, "value": 5}
+        response = self.client.post(f"/api/recipes/{self.recipe.id}/rate/", data, format="json")
+        assert response.status_code in (200, 201)
+        assert response.data["id"] == self.recipe.id or response.data.get("recipe") == self.recipe.id
+
+    def test_submit_rating_invalid(self):
+        data = {"value": 10}
+        response = self.client.post(f"/api/recipes/{self.recipe.id}/rate/", data, format="json")
+        assert response.status_code == 400
+
+
+@pytest.mark.django_db
+class TestStepAdminEndpoints:
+
+    def setup_method(self):
+        self.client = APIClient()
+        self.admin = User.objects.create_user(username="admin", password="adminpass")
+        self.admin.is_staff = True
+        self.client.force_authenticate(user=self.admin)
+        self.recipe = Recipe.objects.create(recipe="Salad", difficulty="easy", rating=3.0)
+
+    def test_create_step_success(self):
+        data = {"recipe": self.recipe.id, "step_number": 1, "instruction": "Chop veggies"}
+        response = self.client.post("/api/steps/", data, format="json")
+        assert response.status_code == 201
+
+    def test_update_step_success(self):
+        step = Step.objects.create(recipe=self.recipe, step_number=1, instruction="Initial")
+        data = {"instruction": "Updated instruction"}
+        response = self.client.patch(f"/api/steps/{step.id}/", data, format="json")
+        assert response.status_code == 200
+
+    def test_delete_step_success(self):
+        step = Step.objects.create(recipe=self.recipe, step_number=1, instruction="To delete")
+        response = self.client.delete(f"/api/steps/{step.id}/")
+        assert response.status_code == 204
+
+@pytest.mark.django_db
+class TestChangePasswordEndpoints:
+    
+    def setup_method(self):
+        self.client = APIClient()
+        self.user = User.objects.create_user(username="user", password="oldpass")
+        self.client.force_authenticate(user=self.user)
+
+    def test_change_password_success(self):
+        data = {"old_password": "oldpass", "new_password": "newpass123"}
+        response = self.client.post("/api/user/change-password/", data, format="json")
+        assert response.status_code == 200

@@ -9,6 +9,7 @@ from .controllers.allergy_controller import AllergyView
 from .controllers.ingredient_controller import IngredientAdminView
 from .controllers.nutrition_controller import NutritionAdminView
 from .controllers.user_allergy_info_controller import UserAllergyInfoListCreate, UserAllergyInfoDetail
+from .controllers.comment_controller import CommentView
 
 urlpatterns = [
     path('recipes/', RecipeView.as_view(), name='recipe-list'),
@@ -33,4 +34,6 @@ urlpatterns = [
     path('ingredients/<int:id>/', IngredientAdminView.as_view(), name='ingredient-detail'),
     path("user_allergies/", UserAllergyInfoListCreate.as_view(), name="user_allergy_info-list-create"),
     path("user_allergies/<int:pk>/", UserAllergyInfoDetail.as_view(), name="user_allergy_info-detail"),
+    path("comments/", CommentView.as_view(), name="comment-create"),
+    path("comments/<int:id>/", CommentView.as_view(), name="comment-detail"),
 ]
