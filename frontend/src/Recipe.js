@@ -26,6 +26,8 @@ const RecipeDetails = () => {
   const [userAllergies, setUserAllergies] = useState([]); 
   const [hasAlerted, setHasAlerted] = useState(false);
   const [userRating, setUserRating] = useState(0);
+  const [newCommentText, setNewCommentText] = useState("");
+  const [currentUsername, setCurrentUsername] = useState("");
 
   useEffect(() => {
     const token = sessionStorage.getItem("access");
@@ -63,6 +65,7 @@ const RecipeDetails = () => {
     .then(data => {
       setIsAdmin(data.is_superuser);
       setUserAllergies(data.user_allergy_info || []);
+      setCurrentUsername(data.username);
     })
     .catch(() => {
       setIsAdmin(false);
@@ -312,6 +315,45 @@ const RecipeDetails = () => {
       });
   };
 
+  const handleSubmitComment = () => {
+    if (!newCommentText.trim()) {
+      return;
+    }
+    const token = sessionStorage.getItem("access");
+    fetch("http://localhost:8000/api/comments/", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        recipe: parseInt(id, 10),
+        text: newCommentText.trim(),
+        parent: null
+      })
+    })
+      .then(res => {
+        if (!res.ok) {
+          if (res.status === 401) {
+            navigate('/signin');
+          }
+          throw new Error("Failed to submit comment");
+        }
+        return res.json();
+      })
+      .then((createdComment) => {
+        setRecipe(prev => ({
+          ...prev,
+          comments: [createdComment, ...prev.comments]
+        }));
+        setNewCommentText("");
+      })
+      .catch((err) => {
+        console.error(err);
+        setError(err.message);
+      });
+  };
+
   if (error){
     return <p>{error}</p>;
   } 
@@ -513,6 +555,63 @@ const RecipeDetails = () => {
             </Modal>
           )}
         </div>
+      <section className="comments-section">
+        <h3>Comments ({recipe.comments?.length || 0})</h3>
+        <div className="add-comment-box">
+          <textarea
+            rows={3}
+            className="comment-input"
+            placeholder="Add a comment…"
+            value={newCommentText}
+            onChange={e => setNewCommentText(e.target.value)}
+          />
+          <button
+            className="comment-submit"
+            onClick={handleSubmitComment}
+          >
+            Submit
+          </button>
+        </div>
+        <div className="comments-list">
+          {recipe.comments && recipe.comments.length > 0 ? (
+            [...recipe.comments]
+            .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+            .map(c => {
+              const commenterName = c.username || "Unknown";
+              const avatarLetter = commenterName.charAt(0).toUpperCase();
+              const avatarData = c.avatar;
+              return (
+                <div key={c.id} className="single-comment">
+                  <div className="comment-header">
+                    {avatarData ? (
+                      <img
+                        className="comment-avatar-img"
+                        src={`data:image/png;base64,${avatarData}`}
+                        alt={`${commenterName}’s avatar`}
+                      />
+                    ) : (
+                      <div className="comment-avatar-placeholder">
+                        {avatarLetter}
+                      </div>
+                    )}
+                    <strong className="comment-username">
+                      {commenterName}
+                    </strong>
+                    <span className="comment-date">
+                      {new Date(c.created_at).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <p className="comment-text">{c.text}</p>
+                </div>
+              );
+            })
+          ) : (
+            <p className="no-comments">
+              No comments yet. Be the first to comment!
+            </p>
+          )}
+        </div>
+      </section>
     </div>
   );
 };

@@ -158,6 +158,7 @@ export default function NewRecipe() {
     return;
   }
 
+  console.log("=== Payload do mutacji:", JSON.stringify(form, null, 2));
   mutate(form);
   };
 

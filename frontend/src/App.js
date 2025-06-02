@@ -15,6 +15,7 @@ import SessionChecker from './Session'
 import CategoryRecipesPage from './CategoryRecipesPage';
 import ChoosenCategoryRecipes from './ChoosenCategoryRecipes'
 import NewRecipe from './NewRecipe'
+import Footer from './Footer';
 
 const queryClient = new QueryClient();
 
@@ -118,10 +119,7 @@ function App() {
           <Route path="/categories" element={<CategoryRecipesPage />} />
           <Route path="/choosen-category/:id" element={<ChoosenCategoryRecipes/>}/>
         </Routes>
-
-        <footer className="footer">
-          <p>&copy; 2025 Daws'Cook. All rights reserved.</p>
-        </footer>
+        <Footer />
       </div>
     </BrowserRouter>
     </QueryClientProvider>
