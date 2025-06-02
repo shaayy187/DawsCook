@@ -8,7 +8,8 @@ edytowanie kroków przepisu ze zdjęciami (dla adminów), a także integrację z
                          ┌────────────────────────────┐
                          │        Frontend (React)    │
                          │                            │
-                         │  - React Router            │
+                         │  - React Router            |
+                         │  - React Query             |
                          │  - JWT Auth via Header     │
                          │  - Obsługa zdjęć base64    │
                          └────────────┬───────────────┘
