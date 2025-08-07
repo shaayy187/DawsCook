@@ -56,13 +56,6 @@ function App() {
     };
   }, []);
 
-  const fetchRecipes = () => {
-    fetch("http://localhost:8000/api/recipes/") 
-      .then(response => response.json())
-      .then(data => setRecipes(data.results))
-      .catch(error => console.error("Error:", error));
-  };
-
   const handleLogin = () => {
     setIsLoggedIn(true);
   };
@@ -84,7 +77,7 @@ function App() {
         <header className="header">
           <img src={logo} alt="Logo" className="logo" />
           <div id="home">
-            <Link to="/" onClick={fetchRecipes}>Daws'Cook</Link>
+            <Link to="/">Daws'Cook</Link>
           </div>
           <div className="navigation-container"> 
             <nav>

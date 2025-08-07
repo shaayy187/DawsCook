@@ -18,11 +18,8 @@ const CategoryRecipesPage = () => {
         .catch((error => console.error("Error witch fetching recipes for exact category",error)));
   }, []);
 
-  const getRecipesForCategory = (categoryId) => {
-    return recipes
-      .filter((r) => r.category === categoryId || r.category?.id === categoryId)
-      .slice(0, 4);
-  };
+  const getRecipesForCategory = (categoryId) =>
+    recipes.filter(r => r.category?.id === categoryId).slice(0, 4);
 
   return (
     <div className="category-page">

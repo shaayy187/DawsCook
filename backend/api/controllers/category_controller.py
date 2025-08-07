@@ -4,8 +4,6 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAdminUser
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from rest_framework.exceptions import NotFound
-
 from ..serializer import CategorySerializer
 from ..services import category_service
 
@@ -47,8 +45,8 @@ class CategoryAdminView(APIView):
     def post(self, request):
         serializer = CategorySerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        created = category_service.create_category(request.data)
+        return Response(created, status=status.HTTP_201_CREATED)
 
     @swagger_auto_schema(
         operation_description="Admin: Update a category by ID.",

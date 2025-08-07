@@ -29,38 +29,12 @@ class UserAllergyInfoListCreate(APIView):
         },
     )
     def post(self, request):
-        serializer = UserAllergyInfoSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        validated = serializer.validated_data
-        allergy_obj = validated.get("allergy")
-        power = validated.get("power", "")
-        symptoms = validated.get("symptoms", "")
-        treatment = validated.get("treatment", "")
-
-        try:
-            created = user_allergy_info_service.create_user_allergy_info(
-                user=request.user,
-                allergy_id=allergy_obj.id,
-                power=power,
-                symptoms=symptoms,
-                treatment=treatment
-            )
-        except ObjectDoesNotExist as exc:
-            return Response(
-                {"detail": str(exc)},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        out_serializer = UserAllergyInfoSerializer(created)
-        return Response(out_serializer.data, status=status.HTTP_201_CREATED)
+        new_step = user_allergy_info_service.create_user_allergy_info(request.user, request.data)
+        return Response(new_step, status=status.HTTP_201_CREATED)
 
 
 class UserAllergyInfoDetail(APIView):
     permission_classes = [permissions.IsAuthenticated]
-
-    def get_object(self, pk, user):
-        return user_allergy_info_service.list_user_allergy_info(user).filter(pk=pk).first()
 
     @swagger_auto_schema(
         operation_description="Retrieve a specific allergy information entry by its ID for the authenticated user.",
@@ -78,7 +52,7 @@ class UserAllergyInfoDetail(APIView):
         },
     )
     def get(self, request, pk):
-        instance = self.get_object(pk, request.user)
+        instance = user_allergy_info_service.list_user_allergy_info(request.user).filter(pk=pk).first()
         if not instance:
             raise NotFound("Not found.")
         serializer = UserAllergyInfoSerializer(instance)
@@ -102,29 +76,8 @@ class UserAllergyInfoDetail(APIView):
         },
     )
     def patch(self, request, pk):
-        instance = self.get_object(pk, request.user)
-        if not instance:
-            raise NotFound("Not found.")
-
-        serializer = UserAllergyInfoSerializer(instance, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-
-        updated_fields = {}
-        for field in ("power", "symptoms", "treatment"):
-            if field in serializer.validated_data:
-                updated_fields[field] = serializer.validated_data[field]
-
-        try:
-            updated_instance = user_allergy_info_service.update_user_allergy_info(
-                request.user,
-                pk,
-                updated_fields
-            )
-        except Exception as exc:
-            return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
-
-        out_serializer = UserAllergyInfoSerializer(updated_instance)
-        return Response(out_serializer.data)
+        updated_step = user_allergy_info_service.update_user_allergy_info(request.user, pk, request.data)
+        return Response(updated_step, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
         operation_description="Delete an allergy information entry by its ID for the authenticated user.",
@@ -142,13 +95,5 @@ class UserAllergyInfoDetail(APIView):
         },
     )
     def delete(self, request, pk):
-        instance = self.get_object(pk, request.user)
-        if not instance:
-            raise NotFound("Not found.")
-
-        try:
-            user_allergy_info_service.delete_user_allergy_info(request.user, pk)
-        except Exception as exc:
-            return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
-
+        user_allergy_info_service.delete_user_allergy_info(request.user, pk)
         return Response(status=status.HTTP_204_NO_CONTENT)

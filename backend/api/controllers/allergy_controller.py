@@ -3,8 +3,6 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework.decorators import permission_classes
-from drf_yasg import openapi
 from rest_framework.exceptions import NotFound
 from ..serializer import AllergySerializer
 from ..services import allergy_service

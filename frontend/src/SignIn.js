@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import './App.css';
 import { Routes, Route, Link } from "react-router-dom";
 import SignUp from './SignUp';
+
 const SignIn = ({onLogin}) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -14,14 +15,15 @@ const SignIn = ({onLogin}) => {
     setError(""); 
 
     if(username===""){
-      setError("Username can't be empty.");
+      setError("Please fill in the username.");
       return;
     }
 
     if(password===""){
-      setError("Password can't be empty.");
+      setError("Please fill in the password.");
       return;
     }
+
     fetch("http://localhost:8000/api/login/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -36,10 +38,13 @@ const SignIn = ({onLogin}) => {
           navigate("/");
           window.location.reload();
         } else {
-          setError("Invalid credentials.");
+          setError(data.error || "Invalid credentials.");
         }
       })
-      .catch(() => setError("An error occurred. Please try again."));
+      .catch(err => {
+        console.error("Error while loggin in: ", err);
+        setError(err);
+      });
   };
 
   return (
@@ -47,20 +52,20 @@ const SignIn = ({onLogin}) => {
       <h2>The secret ingredient is always <span>love</span> .</h2> 
       <div className="login-form">
       <h2>Sign In</h2>
-      <form onSubmit={handleSubmit}>
-      {error && <p className="error">{error}</p>}
-      <div className="username">Username</div>
-        <input
-          type="username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
+        <form onSubmit={handleSubmit}>
+        {error && <p className="error">{error}</p>}
+        <div className="username">Username</div>
+          <input
+            type="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
         <div className="pass">Password</div>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
         <button type="submit">SUBMIT</button>
       </form>
       </div>

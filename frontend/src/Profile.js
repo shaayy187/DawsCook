@@ -291,7 +291,7 @@ const Profile = () => {
                     <p>Account Settings</p>
                     <div
                         className={`general-settings ${activeTab === "general" ? "active-tab" : ""}`}
-                        onClick={() => {setActiveTab("general"); setShowPasswordSettings(''); setShowEmailSettings('')}}
+                        onClick={() => {setActiveTab("general"); setShowPasswordSettings(false); setShowEmailSettings(false); setShowAllergensSettings(false)}}
                     >
                         General
                     </div>

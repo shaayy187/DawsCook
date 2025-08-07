@@ -45,12 +45,12 @@ const Home = ({ recipes = [] }) => {
           <div className="category-list">
             {loading && <p>Loading categories...</p>}
             {error && <p className="error-message">{error}</p>}
-            {!loading && !error && categories.length === 0 && <p>No categories found.</p>}
+            {!loading && !error && categories.length === 0 && <p>No categories found. Under construction.</p>}
             {categories.map((category) => (
               <Link
                 to={`/choosen-category/${category.id}`}
-                key={category.id}
                 className="category-card"
+                key={category.id}
               >
                 <div className="category">
                   <img
@@ -73,7 +73,11 @@ const Home = ({ recipes = [] }) => {
           ) : (
             <div className="recipe-grid">
               {recipes.slice(-5).reverse().map((recipe) => (
-                <Link to={`/recipe/${recipe.id}`} key={recipe.id} className="recipe-card">
+                <Link 
+                  to={`/recipe/${recipe.id}`} 
+                  key={recipe.id} 
+                  className="recipe-card"
+                >
                   <img
                     src={`data:image/png;base64,${recipe.image}`}
                     alt={recipe.recipe}
@@ -90,7 +94,7 @@ const Home = ({ recipes = [] }) => {
                     </p>
                     {renderStars(recipe.rating)}
                     <span className="vote-count">
-                      {` ${recipe.ratings_count || 0} vote${(recipe.ratings_count || 0) !== 1 ? 's' : ''}`}
+                      {`${recipe.ratings_count || 0} vote${(recipe.ratings_count || 0) !== 1 ? 's' : ''}`}
                     </span>
                   </div>
                 </Link>
@@ -120,19 +124,15 @@ const Home = ({ recipes = [] }) => {
                     <div className="featured-content">
                       <h3>{recipe.recipe}</h3>
                       <p className="featured-date">
-                        {new Date(recipe.created).toLocaleDateString('en-GB', {
-                          day: '2-digit',
-                          month: 'long',
-                          year: 'numeric',
-                        })}
+                        {new Date(recipe.created).toLocaleDateString('en-GB')}
                       </p>
                       <p className="featured-description">{recipe.description}</p>
                       <div className="icons-line">
                         {renderStars(recipe.rating)}
-                        <span style={{ marginLeft: '0.5rem' }}>
+                        <span>
                           ({recipe.rating ? recipe.rating.toFixed(1) : '0.0'})
                         </span>
-                        <span style={{ marginLeft: '0.5rem', fontSize: '0.9rem', color: '#666' }}>
+                        <span style={{ fontSize: '0.9rem', color: '#666' }}>
                           {`${recipe.ratings_count || 0} vote${(recipe.ratings_count || 0) !== 1 ? 's' : ''}`}
                         </span>
                       </div>

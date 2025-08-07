@@ -16,18 +16,12 @@ def decode_base64(data):
         raise serializers.ValidationError({"image_upload": "Invalid image data."})
     
 class AllergySerializer(serializers.ModelSerializer):
-    """
-    Serializer dla alergenów.
-    """
     class Meta:
         model = Allergy
         fields = ['id','name']
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    """
-    Serializer do kategorii kulinarnych.
-    """
     image = serializers.SerializerMethodField() # odczytuje obraz z bazy danych i koduje go w formacie Base64
     image_upload = serializers.CharField(write_only=True, required=False)  # przyjmuje obraz w formacie Base64 i przekształca go do formatu binarnego i wrzuca do bazy
 
@@ -81,9 +75,6 @@ class UserAllergyInfoSerializer(serializers.ModelSerializer):
         ]
 
 class UserSerializer(serializers.ModelSerializer):
-    """
-    Serializer do odczytu danych użytkownika systemowego.
-    """
     password = serializers.CharField(write_only=True)
     image = serializers.SerializerMethodField() # odczytuje obraz z bazy danych i koduje go w formacie Base64
     image_upload = serializers.CharField(write_only=True, required=False, allow_blank=True)  # przyjmuje obraz w formacie Base64 i przekształca go do formatu binarnego i wrzuca do bazy
@@ -324,11 +315,6 @@ class RatingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rating
         fields = ['id', 'user', 'recipe', 'value']
-
-    def validate_value(self, value):
-        if value < 1 or value > 5:
-            raise serializers.ValidationError("Rating must be between 1 and 5.")
-        return value
 
     def create(self, validated_data):
         request = self.context.get('request')

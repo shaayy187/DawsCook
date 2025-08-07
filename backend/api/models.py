@@ -27,6 +27,7 @@ class Recipe(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='recipes', blank=True, null=True)
     created = models.DateTimeField(default=timezone.now)
     cooking_time = models.IntegerField(default=0, blank=True, null=True)
+    spoonacular_id = models.IntegerField(null=True, blank=True, unique=True)
 
     def __str__(self):
         return self.recipe

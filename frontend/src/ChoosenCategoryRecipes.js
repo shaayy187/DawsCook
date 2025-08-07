@@ -8,6 +8,7 @@ const ChoosenCategoryRecipes = () => {
     const [recipes, setRecipes] = useState([]);
     const [selectedImage, setSelectedImage] = useState(null);
     const [isAdmin, setIsAdmin] = useState(false);
+    const token = localStorage.getItem('access') || sessionStorage.getItem('access');
 
     useEffect(() => {
         fetch(`http://localhost:8000/api/category/${id}/`)
@@ -20,7 +21,6 @@ const ChoosenCategoryRecipes = () => {
             .then((data) => setRecipes(data.results))
             .catch((error) => console.error("Error with fetching recipes for exact category", error));
 
-        const token = localStorage.getItem("access") || sessionStorage.getItem("access");
         if (token) {
             fetch(`http://localhost:8000/api/user/`, {
                 headers: {
@@ -31,13 +31,10 @@ const ChoosenCategoryRecipes = () => {
                 .then(data => setIsAdmin(data.is_superuser))
                 .catch(() => setIsAdmin(false));
         }
-    }, [id]);
+    }, [id, token]);
 
-    const getRecipesForCategory = (categoryId) => {
-        return recipes
-            .filter((r) => r.category === categoryId || r.category?.id === categoryId)
-            .slice(0, 4);
-    };
+    const getRecipesForCategory = (categoryId) =>
+        recipes.filter(r => r.category?.id === categoryId).slice(0, 4);
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -61,8 +58,10 @@ const ChoosenCategoryRecipes = () => {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify({
+                name: category.name,
                 image_upload: selectedImage
             }),
         })
@@ -82,7 +81,6 @@ const ChoosenCategoryRecipes = () => {
             <p className="choosen-category-name">
                 <span className="decor">🍽</span> {category.name} <span className="decor">🍽</span>
             </p>
-
             {category.image && (
                 <img
                     className="choosen-category-photo"
@@ -90,14 +88,12 @@ const ChoosenCategoryRecipes = () => {
                     alt={category.name}
                 />
             )}
-
             {isAdmin && (
                 <div style={{ marginTop: "20px" }}>
                     <input type="file" accept="image/*" onChange={handleImageChange} />
                     <button onClick={handleImageUpload}>Update Image</button>
                 </div>
             )}
-
             <div className="exact-category-recipe-grid">
                 {getRecipesForCategory(category.id).map((recipe) => (
                     <Link to={`/recipe/${recipe.id}`} key={recipe.id} className="exact-category-recipe-link">

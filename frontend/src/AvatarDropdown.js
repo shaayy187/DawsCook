@@ -28,6 +28,7 @@ function AvatarDropdown({ isLoggedIn, handleLogout }) {
   const fetchUserImage = async () => {
     try {
       const token = localStorage.getItem("access") || sessionStorage.getItem("access");
+      
       if (!token) {
         console.error("No token - user not logged in.");
         return;
@@ -42,10 +43,7 @@ function AvatarDropdown({ isLoggedIn, handleLogout }) {
       });
   
       if (!response.ok) {
-        console.error(`Błąd odpowiedzi: ${response.status} ${response.statusText}`);
-        if (response.status === 401) {
-          console.error("No authorization - user not logged in.");
-        }
+        console.error(`Error: ${response.status} ${response.statusText}`);
         return;
       }
   
@@ -59,7 +57,6 @@ function AvatarDropdown({ isLoggedIn, handleLogout }) {
       console.error("Couldn't load the profile picture.", error);
     }
   };
-  
 
   return (
     <div className="avatar-dropdown" tabIndex="0">
@@ -75,7 +72,6 @@ function AvatarDropdown({ isLoggedIn, handleLogout }) {
           </svg>
         )}
       </div>
-
       {isLoggedIn && dropdownOpen && (
         <div className="dropdown-menu">
           <Link to="/profile" onClick={closeDropdown}>Profile</Link>

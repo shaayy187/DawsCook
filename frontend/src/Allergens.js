@@ -18,7 +18,6 @@ const AllergensSettings = ({
     setEditTreatment(row.treatment || "");
   };
 
-
   const cancelEdit = () => {
     setEditRowId(null);
     setEditPower("");

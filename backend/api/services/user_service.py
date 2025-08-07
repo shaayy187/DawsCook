@@ -5,7 +5,7 @@ from ..repositories import user_repository
 def register_user(data):
     serializer = UserSerializer(data=data)
     serializer.is_valid(raise_exception=True)
-    user = serializer.save()
+    serializer.save()
     send_user_registered(serializer.validated_data.get("username"), serializer.validated_data.get("email"))
     return {
         "success": True,

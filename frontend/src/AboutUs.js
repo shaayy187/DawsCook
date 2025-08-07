@@ -1,15 +1,11 @@
-import React from 'react';
 import './App.css';
 import bannerImg from './images/banner.jpg';
 import dawidPhoto from './images/logo.png';
-
 import art1 from './images/tort1.jpg';
 import art2 from './images/tort2.jpg';
 import art3 from './images/tort3.jpg';
 import art4 from './images/tort4.jpg';
-
 import bigFamilyCooking from './images/Family_Cooking_Together.jpg';
-
 import coCreator1 from './images/cutejunkie.jpg';
 import coCreator2 from './images/Caasper.jpg';
 import coCreator3 from './images/Adam.jpg';
@@ -74,7 +70,7 @@ const AboutUs = () => {
             <span className="co-creator-name">cutiejunkie</span>
           </div>
           <div className="co-creator-item">
-            <img src={coCreator2} alt="Coasper" className="co-creator-avatar" />
+            <img src={coCreator2} alt="Caasper" className="co-creator-avatar" />
             <span className="co-creator-name">Caasper</span>
           </div>
           <div className="co-creator-item">

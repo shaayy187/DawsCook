@@ -28,6 +28,10 @@ const RecipeDetails = () => {
   const [userRating, setUserRating] = useState(0);
   const [newCommentText, setNewCommentText] = useState("");
   const [currentUsername, setCurrentUsername] = useState("");
+  const [editCommentId, setEditCommentState] = useState(null);
+  const [editMessage, setEditMessage] = useState("");
+  const [isEditingDescription, setIsEditingDescription] = useState(false);
+  const [editedDescription, setEditedDescription] = useState("");
 
   useEffect(() => {
     const token = sessionStorage.getItem("access");
@@ -354,6 +358,66 @@ const RecipeDetails = () => {
       });
   };
 
+  const saveEditComment = () => {
+    const token = sessionStorage.getItem("access");
+  fetch(`http://localhost:8000/api/comments/${editCommentId}/`, {
+    method: "PATCH",
+    headers: {
+      "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ text: editMessage })
+  })
+    .then(res => {
+      if (!res.ok) {
+        throw new Error("Failed to update comment");
+      }
+      return res.json();
+    })
+    .then(updatedComment => {
+      setRecipe(prev => ({
+        ...prev,
+        comments: prev.comments.map(c => 
+          c.id === updatedComment.id ? updatedComment : c
+        )
+      }));
+      setEditCommentState(null);
+      setEditMessage("");
+    })
+    .catch(err => {
+      console.error(err);
+      setError(err.message);
+    });
+  }
+
+  const cancelEditing = () => {
+    setEditCommentState(null);
+  }
+
+  const handleSaveDescription = () => {
+    const token = sessionStorage.getItem("access");
+    fetch(`http://localhost:8000/api/recipes/${id}/`, {
+      method: "PATCH",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ description: editedDescription })
+    })
+      .then(res => {
+        if (!res.ok) throw new Error("Failed to update description.");
+        return res.json();
+      })
+      .then(updatedRecipe => {
+        setRecipe(updatedRecipe);
+        setIsEditingDescription(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setError("Update failed.");
+      });
+  };
+
   if (error){
     return <p>{error}</p>;
   } 
@@ -377,7 +441,30 @@ const RecipeDetails = () => {
           )}
         </div>
         <div className="top-right">
-          <p className="description">{recipe.description}</p>
+          {isEditingDescription ? (
+            <>
+              <textarea
+                className="description-edit-area"
+                value={editedDescription}
+                onChange={(e) => setEditedDescription(e.target.value)}
+                rows={4}
+              />
+              <button onClick={handleSaveDescription}>Save</button>
+              <button onClick={() => setIsEditingDescription(false)}>Cancel</button>
+            </>
+          ) : (
+            <>
+              <p className="description">{recipe.description}</p>
+              {isAdmin && (
+                <button onClick={() => {
+                  setEditedDescription(recipe.description);
+                  setIsEditingDescription(true);
+                }}>
+                  Edit Description
+                </button>
+              )}
+            </>
+          )}
           <div className="info-line">
             <span>⭐ {recipe.rating || 'No rating'}</span>
             <span> | </span>
@@ -415,7 +502,7 @@ const RecipeDetails = () => {
       <div className="columns">
         <div className="column">
           <h3>Ingredients {isAdmin && (
-            <button onClick={() => setShowIngredientForm(true)}>+</button>
+            <button onClick={() => setShowIngredientForm(true)} className="ingredient-add-button">+</button>
           )}
           </h3>
           <ul>
@@ -468,7 +555,7 @@ const RecipeDetails = () => {
         </div>
         <div className="column">
           <h3>Nutrition {isAdmin && (
-            <button onClick={() => setShowNutritionForm(true)}>+</button>
+            <button onClick={() => setShowNutritionForm(true)} className="nutrition-add-button">+</button>
           )}
           </h3>
           <ul>
@@ -515,7 +602,7 @@ const RecipeDetails = () => {
         </div>
         <div className="steps-section">
           <h3>Directions {isAdmin && (
-            <button onClick={() => setShowStepForm(true)}>+</button>
+            <button onClick={() => setShowStepForm(true)} className="step-create-button">+</button>
           )}
           </h3>
           {recipe.steps.map((step) => (
@@ -600,8 +687,48 @@ const RecipeDetails = () => {
                     <span className="comment-date">
                       {new Date(c.created_at).toLocaleDateString()}
                     </span>
+                    {c.username === currentUsername && editCommentId !== c.id && (
+                      <button 
+                        onClick={() => {
+                          setEditCommentState(c.id);
+                          setEditMessage(c.text);
+                        }} 
+                        className="comment-edit-button"
+                      >
+                        Edit
+                      </button>
+                    )}
+                    {editCommentId === c.id ? (
+                      <>
+                      <button 
+                        onClick={() => saveEditComment(editMessage)}
+                        className="comment-save-button"
+                      >
+                        Save
+                      </button>
+                      <button 
+                        onClick={() => cancelEditing()}
+                        className="comment-cancel-button"
+                      >
+                        Cancel
+                      </button>
+                      </>
+                    ) : (
+                      <></>
+                    )
+                    }
                   </div>
-                  <p className="comment-text">{c.text}</p>
+                  {editCommentId === c.id ? (
+                    <input 
+                      type="text"
+                      className="unstyled-edit"
+                      value={editMessage}
+                      onChange={e => setEditMessage(e.target.value)}
+                    >
+                    </input>
+                  ):(
+                    <p className="comment-text">{c.text}</p>
+                  )}
                 </div>
               );
             })

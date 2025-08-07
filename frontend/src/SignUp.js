@@ -48,7 +48,6 @@ const handleSubmit = (e) => {
   })
     .then((response) => response.json())
     .then((data) => {
-      console.log("Server response:", data);
       if (data.success) {
         setError("");
         setSuccessMessage(data.message);
@@ -56,7 +55,10 @@ const handleSubmit = (e) => {
         setError(data.error || "Error registering. Please try again.");
       }
     })
-    .catch(() => setError("An error occurred. Please try again."));
+    .catch(err => {
+        console.error("Error while loggin in: ", err);
+        setError(err);
+      });
 };
 
 
@@ -66,47 +68,47 @@ const handleSubmit = (e) => {
     <div className="register-form">
       <h2>Sign up</h2>
       <form onSubmit={handleSubmit}>
-      {error && <p className="error">{error}</p>}
-      {successmessage && <div className="success">{successmessage}</div>}
-      <div className="username">Username</div>
-        <input
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-         <div className="email">Email</div>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+        {error && <p className="error">{error}</p>}
+        {successmessage && <div className="success">{successmessage}</div>}
+        <div className="username">Username</div>
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+        <div className="email">Email</div>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
         <div className="password">Password</div>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-         <div className="confirm-password">Confirm password</div>
-        <input
-          type="password"
-          className="confirm-password"
-          value={confirmpassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-        />
-         <div id="privacy">
-                    <input
-                        type="checkbox"
-                        id="privacyPolicy"
-                        checked={privacyAccepted}
-                        onChange={(e) => setPrivacyAccepted(e.target.checked)}
-                    />
-                    <label htmlFor="privacyPolicy" className="privacyPolicy">
-                        Accept our {' '}
-                        <a href="https://www.w3schools.com" target="_blank" rel="noopener noreferrer">
-                            privacy policy.                  
-                        </a>
-                    </label>
-                </div>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        <div className="confirm-password">Confirm password</div>
+          <input
+            type="password"
+            className="confirm-password"
+            value={confirmpassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+        <div id="privacy">
+          <input
+            type="checkbox"
+            id="privacyPolicy"
+            checked={privacyAccepted}
+            onChange={(e) => setPrivacyAccepted(e.target.checked)}
+          />
+          <label htmlFor="privacyPolicy" className="privacyPolicy">
+            Accept our {' '}
+            <a href="https://www.w3schools.com" target="_blank" rel="noopener noreferrer">
+              privacy policy.                  
+            </a>
+          </label>
+        </div>
         <button type="submit">SUBMIT</button>
       </form>
       </div>
@@ -115,7 +117,7 @@ const handleSubmit = (e) => {
         <Routes>
           <Route path="/signin" element={<SignIn />} />
         </Routes>
-        </div>
+      </div>
     </div>
   );
 };
