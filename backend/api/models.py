@@ -34,30 +34,11 @@ class Recipe(models.Model):
 
 
 class UserAllergyInfo(models.Model):
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="user_allergy_info"
-    )
-    allergy = models.ForeignKey(
-        Allergy,
-        on_delete=models.CASCADE,
-        related_name="user_allergy_info"
-    )
-
-    power = models.CharField(
-        max_length=100,
-        blank=True,
-        help_text="Severity level of the allergy (e.g. 'mild', 'moderate', 'severe')."
-    )
-    symptoms = models.TextField(
-        blank=True,
-        help_text="Description of allergy symptoms."
-    )
-    treatment = models.TextField(
-        blank=True,
-        help_text="Recommended treatment or management."
-    )
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user_allergy_info")
+    allergy = models.ForeignKey(Allergy, on_delete=models.CASCADE, related_name="user_allergy_info")
+    power = models.CharField( max_length=100, blank=True)
+    symptoms = models.TextField(blank=True)
+    treatment = models.TextField(blank=True)
 
     class Meta:
         unique_together = ("user", "allergy")
@@ -66,16 +47,8 @@ class UserAllergyInfo(models.Model):
         return f"{self.user.username} – {self.allergy.name}"
 
 class Rating(models.Model):
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name='ratings'
-    )
-    recipe = models.ForeignKey(
-        Recipe,
-        on_delete=models.CASCADE,
-        related_name='ratings'
-    )
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='ratings')
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='ratings')
     value = models.IntegerField()
 
     class Meta:
@@ -90,16 +63,8 @@ class SystemUser(AbstractUser):
     age = models.IntegerField(blank=True, null=True)
     pronouns = models.CharField(blank=True, max_length=30)
     allergies = models.ManyToManyField(Allergy, related_name='users', blank=True)
-    groups = models.ManyToManyField( 
-        Group,
-        related_name="custom_user_set", 
-        blank=True,
-    )
-    user_permissions = models.ManyToManyField( 
-        Permission,
-        related_name="custom_user_permissions_set",  
-        blank=True,
-    )
+    groups = models.ManyToManyField(Group, related_name="custom_user_set", blank=True)
+    user_permissions = models.ManyToManyField(Permission, related_name="custom_user_permissions_set",  blank=True)
 
 class Comment(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name="comments")

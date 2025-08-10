@@ -59,6 +59,8 @@ class RecipeDetailView(APIView):
         }
     )   
     def patch(self, request, id):
+        if not request.user.is_superuser:
+            return Response({"detail": "Forbidden."}, status=status.HTTP_403_FORBIDDEN)
         if not request.data:
             return Response({"detail": "No data provided."}, status=status.HTTP_400_BAD_REQUEST)
         updated_recipe = recipe_service.update_recipe(id, request.data)

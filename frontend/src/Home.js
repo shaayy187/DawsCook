@@ -11,8 +11,10 @@ const Home = ({ recipes = [] }) => {
     fetch("http://localhost:8000/api/category/")
       .then((response) => response.json())
       .then((data) => {
-        setCategories(data);
+        const shuffled = [...data].sort(() => 0.5 - Math.random());
+        const selected = shuffled.slice(0, 6);
         setLoading(false);
+        setCategories(selected);
       })
       .catch((error) => {
         console.error("Couldn't download categories.", error);

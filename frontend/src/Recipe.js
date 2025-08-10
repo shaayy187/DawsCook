@@ -32,6 +32,64 @@ const RecipeDetails = () => {
   const [editMessage, setEditMessage] = useState("");
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [editedDescription, setEditedDescription] = useState("");
+  const [allAllergies, setAllAllergies] = useState([]);
+  const [selectedAllergyId, setSelectedAllergyId] = useState("");
+  const [showAllergyForm, setShowAllergyForm] = useState(false);
+  const [pendingAllergyIds, setPendingAllergyIds] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:8000/api/allergies/")
+      .then(r => r.json())
+      .then(setAllAllergies)
+      .catch(() => setAllAllergies([]));
+  }, []);
+
+  const currentAllergyIds = (recipe?.allergies || []).map(a => a.id);
+
+  const patchRecipeAllergies = (newIds) => {
+    const token = sessionStorage.getItem("access");
+    return fetch(`http://localhost:8000/api/recipes/${id}/`, {
+      method: "PATCH",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ allergy_ids: newIds })
+    })
+      .then(res => {
+        if (!res.ok) throw new Error("Failed to update recipe allergies");
+        return res.json();
+      })
+      .then(updated => {
+        setRecipe(updated);
+        return updated;
+      })
+      .catch(err => setError(err.message));
+  };
+
+  const openAllergyForm = () => {
+    setPendingAllergyIds(currentAllergyIds);
+    setSelectedAllergyId("");
+    setShowAllergyForm(true);
+  };
+
+  const addPendingAllergy = () => {
+    if (!selectedAllergyId) return;
+    const idNum = Number(selectedAllergyId);
+    setPendingAllergyIds(prev => Array.from(new Set([...prev, idNum])));
+    setSelectedAllergyId("");
+  };
+
+  const removePendingAllergy = (idToRemove) => {
+    setPendingAllergyIds(prev => prev.filter(id => id !== idToRemove));
+  };
+
+  const saveAllergies = () => {
+    patchRecipeAllergies(pendingAllergyIds)
+      .then(() => setShowAllergyForm(false))
+      .catch(err => setError(err.message));
+  };
+
 
   useEffect(() => {
     const token = sessionStorage.getItem("access");
@@ -534,24 +592,62 @@ const RecipeDetails = () => {
         )}
         </div>
         <div className="column">
-          <h3>Allergens</h3>
-          <ul>
-            {recipe.allergies?.length > 0 ? (
-              recipe.allergies.map((a, i) => {
-                const isUserAllergic = userAllergies.some(uA => uA.allergy === a.name);
-                return (
-                  <li
-                    key={i}
-                    className={isUserAllergic ? "allergy-warning" : ""}
-                  >
-                    {a.name}
-                  </li>
-                );
-              })
-            ) : (
-              <li>None</li>
+          <h3>
+            Allergens {isAdmin && (
+              <button onClick={openAllergyForm} className="allergy-add-button">+</button>
             )}
+          </h3>
+          <ul>
+            {recipe.allergies?.length ? (
+              recipe.allergies.map(a => {
+                const isUserAllergic = userAllergies.some(uA => uA.allergy === a.name);
+                return <li key={a.id} className={isUserAllergic ? "allergy-warning" : ""}>{a.name}</li>;
+              })
+            ) : <li>None</li>}
           </ul>
+          {isAdmin && showAllergyForm && (
+            <Modal title="Edit Allergens" onClose={() => setShowAllergyForm(false)}>
+              <div className="allergy-modal">
+                <div className="allergy-row">
+                  <select
+                    className="allergy-select"
+                    value={selectedAllergyId}
+                    onChange={(e) => setSelectedAllergyId(e.target.value)}
+                  >
+                    <option value="">-- select allergy --</option>
+                    {allAllergies
+                      .filter(a => !pendingAllergyIds.includes(a.id))
+                      .map(a => (
+                        <option key={a.id} value={a.id}>{a.name}</option>
+                      ))}
+                  </select>
+                  <button className="btn" onClick={addPendingAllergy}>Add</button>
+                </div>
+
+                {pendingAllergyIds.length > 0 && (
+                  <ul className="allergy-list">
+                    {pendingAllergyIds.map(idVal => {
+                      const a = allAllergies.find(x => x.id === idVal);
+                      if (!a) return null;
+                      return (
+                        <li key={idVal} className="allergy-list-item">
+                          <div className="allergy-text">
+                            {a.name}
+                          </div>
+                          <button className="btn btn-light" onClick={() => removePendingAllergy(idVal)}>−</button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+
+                <div className="allergy-actions">
+                  <button className="btn btn-primary" onClick={saveAllergies}>Save</button>
+                  <button className="btn" onClick={() => setShowAllergyForm(false)}>Close</button>
+                </div>
+              </div>
+            </Modal>
+          )}
         </div>
         <div className="column">
           <h3>Nutrition {isAdmin && (
