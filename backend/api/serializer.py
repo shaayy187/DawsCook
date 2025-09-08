@@ -169,7 +169,7 @@ class CommentSerializer(serializers.ModelSerializer):
 class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingredient
-        fields = ['id','recipe' ,'name', 'quantity']
+        fields = ['id', 'recipe', 'name', 'amount', 'unit', 'note', 'quantity']
 
 class NutritionSerializer(serializers.ModelSerializer):
     recipe = serializers.PrimaryKeyRelatedField(queryset=Recipe.objects.all())

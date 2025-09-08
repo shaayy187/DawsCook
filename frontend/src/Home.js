@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef} from 'react';
 import { Link } from 'react-router-dom';
 import './Home.css';
 
@@ -6,8 +6,12 @@ const Home = ({ recipes = [] }) => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const fetchCategories = useRef(false);
 
   useEffect(() => {
+    if (fetchCategories.current) return;
+    fetchCategories.current = true;
+
     fetch("http://localhost:8000/api/category/")
       .then((response) => response.json())
       .then((data) => {

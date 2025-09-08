@@ -78,12 +78,14 @@ class Comment(models.Model):
 
 class Ingredient(models.Model):
     name = models.CharField(max_length=100, db_index=True)
+    amount = models.FloatField(null=True, blank=True)
+    unit = models.CharField(max_length=20, blank=True)
+    note = models.CharField(max_length=120, blank=True)
     quantity = models.CharField(max_length=50)
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='ingredients')
 
     def __str__(self):
         return f"{self.quantity} {self.name}"
-
 
 class Nutrition(models.Model):
     recipe = models.OneToOneField(Recipe, on_delete=models.CASCADE, related_name='nutrition')

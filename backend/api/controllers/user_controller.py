@@ -5,9 +5,15 @@ from rest_framework.decorators import permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
+from rest_framework_simplejwt.tokens import RefreshToken
 from ..serializer import UserSerializer
 from ..services import user_service
+from django.conf import settings
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated]
@@ -99,3 +105,38 @@ class UserProfile(APIView):
     def patch(self, request):
         updated_user = user_service.update_user_profile(request.user, request.data)
         return Response(updated_user)
+    
+
+class GoogleAuthView(APIView):
+    permission_classes = [AllowAny]
+    authentication_classes = []
+
+    def post(self, request):
+        token = request.data.get("id_token") or request.data.get("credential")
+        if not token:
+            return Response({"detail": "Missing id_token"}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            info = id_token.verify_oauth2_token(
+                token, google_requests.Request(), settings.GOOGLE_CLIENT_ID
+            )
+            if not info.get("email_verified"):
+                return Response({"detail": "Email not verified"}, status=status.HTTP_400_BAD_REQUEST)
+            email = info.get("email")
+            if not email:
+                return Response({"detail": "No email in token"}, status=status.HTTP_400_BAD_REQUEST)
+
+            user, created = User.objects.get_or_create(
+                email=email, defaults={"username": email.split("@")[0]}
+            )
+            if created:
+                user.set_unusable_password()
+                user.save()
+
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                "access": str(refresh.access_token),
+                "refresh": str(refresh),
+                "is_new": created
+            }, status=status.HTTP_200_OK)
+        except Exception:
+            return Response({"detail": "Invalid Google token"}, status=status.HTTP_400_BAD_REQUEST)

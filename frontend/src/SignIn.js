@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import './App.css';
 import { Routes, Route, Link } from "react-router-dom";
@@ -9,6 +9,65 @@ const SignIn = ({onLogin}) => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const GOOGLE_CLIENT_ID = "497818986084-afhl3t4g51cj805un5dmm5ugcn84abnk.apps.googleusercontent.com";
+
+
+  function loadGoogleScript() {
+    if (window.__googleScriptLoaded) return Promise.resolve();
+    return new Promise((resolve, reject) => {
+      const s = document.createElement("script");
+      s.src = "https://accounts.google.com/gsi/client?hl=en";
+      s.async = true;
+      s.defer = true;
+      s.onload = () => { window.__googleScriptLoaded = true; resolve(); };
+      s.onerror = reject;
+      document.body.appendChild(s);
+    });
+  }
+
+  function GoogleSignInButton() {
+    const btnRef = useRef(null);
+
+    useEffect(() => {
+      let cancelled = false;
+      loadGoogleScript().then(() => {
+        if (cancelled) return;
+        window.google.accounts.id.initialize({
+          client_id: GOOGLE_CLIENT_ID,
+          callback: async (resp) => {
+            try {
+              const r = await fetch("http://localhost:8000/api/auth/google/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id_token: resp.credential }),
+              });
+              const data = await r.json();
+              if (!r.ok) throw new Error(data.detail || "Google auth failed");
+              localStorage.setItem("access", data.access);
+              localStorage.setItem("refresh", data.refresh);
+              sessionStorage.setItem("access", data.access);
+              sessionStorage.setItem("refresh", data.refresh);
+              window.location.href = "/";
+            } catch (e) {
+              console.error(e);
+              alert("Google sign-in failed.");
+            }
+          },
+        });
+        if (btnRef.current) {
+          window.google.accounts.id.renderButton(btnRef.current, {
+            theme: "outline",
+            size: "large",
+            text: "signin_with",
+            locale: "pl",
+          });
+        }
+      });
+      return () => { cancelled = true; };
+    }, []);
+
+    return <div ref={btnRef} />;
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -74,7 +133,13 @@ const SignIn = ({onLogin}) => {
         <Routes>
           <Route path="/signup" element={<SignUp />} />
         </Routes>
+      </div>
+      <div className="google-register-button">
+        <div style={{ color: "#888" }}>or</div>
+        <div className="google-button">
+          <GoogleSignInButton />
         </div>
+      </div>
     </div>
   );
 };
