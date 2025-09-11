@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './App.css';
 import Modal from './Window';
+import RecipeGallery from "./RecipeGallery";
 
 const RecipeDetails = () => {
   const { id } = useParams(); 
@@ -872,6 +873,7 @@ const RecipeDetails = () => {
             </Modal>
           )}
         </div>
+        <RecipeGallery recipeId={Number(id)} isAdmin={isAdmin} />
       <section className="comments-section">
         <h3>Comments ({recipe.comments?.length || 0})</h3>
         <div className="add-comment-box">

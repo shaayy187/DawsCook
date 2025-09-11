@@ -330,3 +330,39 @@ class RatingSerializer(serializers.ModelSerializer):
         recipe.rating = agg['avg'] if agg['avg'] is not None else 0
         recipe.save()
         return rating_obj
+    
+class GalleryImageSerializer(serializers.ModelSerializer):
+    recipe = serializers.PrimaryKeyRelatedField(queryset=Recipe.objects.all())
+    image = serializers.SerializerMethodField(read_only=True)
+    image_upload = serializers.CharField(write_only=True, required=False)
+    username = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = GalleryImage
+        fields = ["id", "recipe", "username", "caption", "created", "image", "image_upload", "content_type"]
+
+    def get_username(self, obj):
+        u = getattr(obj, "user", None)
+        return getattr(u, "username", None) if u else None
+    
+    def get_image(self, obj):
+        if obj.image:
+            return base64.b64encode(obj.image).decode('utf-8')
+        return None
+
+    def create(self, validated_data):
+        image_data = validated_data.pop('image_upload', None)
+        if image_data:
+            validated_data['image'] = decode_base64(image_data)
+        return super().create(validated_data)
+    
+    def update(self, instance, validated_data):
+        image_data = validated_data.pop('image_upload', None)
+        if image_data is not None:
+            instance.image = decode_base64(image_data)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.save()
+        return instance

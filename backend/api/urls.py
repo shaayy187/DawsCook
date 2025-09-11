@@ -12,6 +12,7 @@ from .controllers.user_allergy_info_controller import UserAllergyInfoListCreate,
 from .controllers.comment_controller import CommentView
 from .api__spoonacular_import import import_controller
 from .controllers.user_controller import GoogleAuthView
+from .controllers.image_gallery_controller import RecipeGalleryView, GalleryDetailView
 
 urlpatterns = [
     path('recipes/', RecipeView.as_view(), name='recipe-list'),
@@ -40,4 +41,6 @@ urlpatterns = [
     path("comments/<int:id>/", CommentView.as_view(), name="comment-detail"),
     path("import-recipes/", import_controller.import_recipes),
     path('auth/google/', GoogleAuthView.as_view(), name='auth-google'),
+    path('recipes/<int:id>/gallery/', RecipeGalleryView.as_view(), name='recipe-gallery'),
+    path('gallery/<int:id>/', GalleryDetailView.as_view(),  name='gallery-detail'),
 ]

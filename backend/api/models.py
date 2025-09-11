@@ -106,3 +106,15 @@ class Step(models.Model):
 
     class Meta:
         ordering = ['step_number']
+
+class GalleryImage(models.Model):
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name="gallery_images")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="gallery_images")
+    image = models.BinaryField()
+    content_type = models.CharField(max_length=64, default="image/jpeg")
+    caption = models.CharField(max_length=160, blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created"]
+        indexes = [models.Index(fields=["recipe", "created"])]
