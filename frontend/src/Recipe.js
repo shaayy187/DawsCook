@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import './App.css';
 import Modal from './Window';
 import RecipeGallery from "./RecipeGallery";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 const RecipeDetails = () => {
   const { id } = useParams(); 
@@ -39,6 +41,14 @@ const RecipeDetails = () => {
   const [showAllergyForm, setShowAllergyForm] = useState(false);
   const [pendingAllergyIds, setPendingAllergyIds] = useState([]);
   const [portionCalculator, calculatePortion] = useState(1);
+  const round2 = (n) => Math.round(n * 100) / 100;
+  const scaledQty = (ing, factor) => {
+  const base = Number(ing.amount ?? NaN);
+  if (!Number.isFinite(base)) {
+    return { qtyText: ing.quantity || "", unit: ing.unit || "" };
+  }
+  return { qtyText: String(round2(base * Number(factor || 1))), unit: ing.unit || "" };
+};
 
   useEffect(() => {
     fetch("http://localhost:8000/api/allergies/")
@@ -518,6 +528,33 @@ const RecipeDetails = () => {
     return rounded;
   };
 
+  const exportIngredientsPDF = () => {
+    if (!recipe) return;
+    const doc = new jsPDF();
+    const servingsText = `× ${portionCalculator || 1}`;
+    const title = `${recipe.recipe} — Shopping list (${servingsText})`;
+    doc.setFontSize(14);
+    doc.text(title, 14, 16);
+
+    const head = [["Item", "Qty", "Unit", "Note"]];
+    const body = (recipe.ingredients || []).map((ing) => {
+      const { qtyText, unit } = scaledQty(ing, portionCalculator);
+      const qty = qtyText || ing.quantity || "";
+      const u = unit || ing.unit || "";
+      return [ing.name, qty, u, ing.note || ""];
+    });
+
+    autoTable(doc, {
+      head,
+      body,
+      startY: 22,
+      styles: { fontSize: 10, cellPadding: 2 },
+      headStyles: { fillColor: [0, 150, 200] },
+    });
+
+    doc.save(`shopping_list_${recipe.id}.pdf`);
+  };
+
   if (error){
     return <p>{error}</p>;
   } 
@@ -619,9 +656,21 @@ const RecipeDetails = () => {
       </div>
       <div className="columns">
         <div className="column">
-          <h3>Ingredients {isAdmin && (
-            <button onClick={() => setShowIngredientForm(true)} className="ingredient-add-button">+</button>
-          )}
+          <h3 style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            Ingredients
+            {isAdmin && (
+              <button onClick={() => setShowIngredientForm(true)} className="ingredient-add-button">+</button>
+            )}
+            <button
+              onClick={exportIngredientsPDF}
+              className="pushable-xs"
+              style={{ marginLeft: "auto" }}
+              title="Export shopping list to PDF"
+            >
+              <span className="shadow-xs"></span>
+              <span className="edge-xs"></span>
+              <span className="front-xs">Export PDF</span>
+            </button>
           </h3>
           <div className="portion-input">
             <div className="portion-text">

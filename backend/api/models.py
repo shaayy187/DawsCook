@@ -118,3 +118,15 @@ class GalleryImage(models.Model):
     class Meta:
         ordering = ["-created"]
         indexes = [models.Index(fields=["recipe", "created"])]
+
+class IngredientSubstitute(models.Model):
+    ingredient = models.ForeignKey("Ingredient", on_delete=models.CASCADE, related_name="substitutes")
+    name = models.CharField(max_length=120)
+    ratio = models.FloatField(default=1.0)
+    note = models.CharField(max_length=200, blank=True)
+    replaces_allergy = models.ForeignKey("Allergy", null=True, blank=True, on_delete=models.SET_NULL)
+    priority = models.PositiveIntegerField(default=10)
+
+    def __str__(self):
+        return f"{self.name} for {self.ingredient.name}"
+

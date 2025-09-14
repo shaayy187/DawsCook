@@ -366,3 +366,8 @@ class GalleryImageSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
+    
+class IngredientSubstituteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = IngredientSubstitute
+        fields = ["id", "ingredient", "name", "ratio", "note", "replaces_allergy", "priority"]
