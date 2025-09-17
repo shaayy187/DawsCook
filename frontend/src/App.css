@@ -352,7 +352,7 @@ label.privacyPolicy {
   height: 120px;
   border-radius: 50%;
   background-color: #f0f0f0;
-  border: 2px solid #ccc;
+  border: 2px solid #4d94f2;
 }
 
 .avatar-remove div {
@@ -1807,13 +1807,13 @@ body {
 
 .footer-middle {
   display: flex;
-  gap: 40px;
+  gap: 50px;
 }
 
 .footer-links-column {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
 .footer-links-column h4 {

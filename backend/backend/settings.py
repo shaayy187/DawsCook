@@ -44,6 +44,21 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'drf_yasg',
     'django_filters',
+    "wagtail.contrib.forms",
+    "wagtail.contrib.redirects",
+    "wagtail.embeds",
+    "wagtail.sites",
+    "wagtail.users",
+    "wagtail.snippets",
+    "wagtail.documents",
+    "wagtail.images",
+    "wagtail.search",
+    "wagtail.admin",
+    "wagtail",
+    "taggit",
+    "modelcluster",
+    "wagtail_modeladmin",
+    "cms.apps.CmsConfig",
 ]
 
 MIDDLEWARE = [
@@ -55,6 +70,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 ]
 
 CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
@@ -176,3 +192,14 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+WAGTAIL_SITE_NAME = "Daws'Cook CMS"
+
+import os
+WAGTAILADMIN_BASE_URL = os.getenv("WAGTAILADMIN_BASE_URL", "http://localhost:8000/api/cms")
+
+STATIC_URL = "/static/"
+MEDIA_URL = "/media/"
+from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent.parent
+MEDIA_ROOT = BASE_DIR / "media"

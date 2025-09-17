@@ -1,4 +1,6 @@
-from django.urls import path
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 from rest_framework.routers import DefaultRouter
 from .controllers.recipe_controller import RecipeView, RecipeDetailView, RecipeRatingView
 from .controllers.user_controller import Register, UserProfile, ChangePasswordView, ChangeEmailView
@@ -14,6 +16,9 @@ from .api__spoonacular_import import import_controller
 from .controllers.user_controller import GoogleAuthView
 from .controllers.image_gallery_controller import RecipeGalleryView, GalleryDetailView
 from .controllers.ingredient_substitute_controller import RecipeSubstitutesView
+from wagtail.admin import urls as wagtailadmin_urls
+from wagtail.documents import urls as wagtaildocs_urls
+from wagtail import urls as wagtail_urls
 
 urlpatterns = [
     path('recipes/', RecipeView.as_view(), name='recipe-list'),
@@ -45,4 +50,10 @@ urlpatterns = [
     path('recipes/<int:id>/gallery/', RecipeGalleryView.as_view(), name='recipe-gallery'),
     path('gallery/<int:id>/', GalleryDetailView.as_view(),  name='gallery-detail'),
     path("recipes/<int:id>/substitutes/", RecipeSubstitutesView.as_view()),
+    path("cms/", include(wagtailadmin_urls)),
+    path("documents/", include(wagtaildocs_urls)),
+    path('', include(wagtail_urls)),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

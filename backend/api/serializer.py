@@ -76,7 +76,7 @@ class UserAllergyInfoSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
-    image = serializers.SerializerMethodField() # odczytuje obraz z bazy danych i koduje go w formacie Base64
+    avatar = serializers.SerializerMethodField() # odczytuje obraz z bazy danych i koduje go w formacie Base64
     image_upload = serializers.CharField(write_only=True, required=False, allow_blank=True)  # przyjmuje obraz w formacie Base64 i przekształca go do formatu binarnego i wrzuca do bazy
     allergies = AllergySerializer(many=True, required=False)
     allergy_ids = serializers.PrimaryKeyRelatedField(
@@ -90,11 +90,11 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SystemUser
-        fields = ['id', 'username', 'email', 'password', 'first_name', 'last_name','age','pronouns', 'is_superuser', 'allergies', 'allergy_ids', "user_allergy_info", 'image', 'image_upload'] 
+        fields = ['id', 'username', 'email', 'password', 'first_name', 'last_name','age','pronouns', 'is_superuser', 'allergies', 'allergy_ids', "user_allergy_info", 'avatar', 'image_upload'] 
 
-    def get_image(self, obj):
-        if obj.image:
-            return base64.b64encode(obj.image).decode('utf-8')
+    def get_avatar(self, obj):
+        if getattr(obj, "avatar", None):
+            return base64.b64encode(obj.avatar).decode("utf-8")
         return None
 
     def create(self, validated_data):
@@ -109,17 +109,15 @@ class UserSerializer(serializers.ModelSerializer):
             pronouns=validated_data.get('pronouns', '')
         )
         user.set_password(password)
-
         if image_data:
-            user.image = decode_base64(image_data)
-
+            user.avatar = decode_base64(image_data)
         user.save()
         return user
 
     def update(self, instance, validated_data):
         image_data = validated_data.pop('image_upload', None)
         if image_data is not None:
-            instance.image = decode_base64(image_data) if image_data else None
+            instance.avatar = decode_base64(image_data) if image_data else None
 
         if 'allergies' in validated_data:
             allergens = validated_data.pop('allergies')
@@ -153,8 +151,9 @@ class CommentSerializer(serializers.ModelSerializer):
 
     def get_avatar(self, obj):
         user = obj.user
-        if user.image:
-            return base64.b64encode(user.image).decode('utf-8')
+        avatar_bytes = getattr(user, "avatar", None)
+        if avatar_bytes:
+            return base64.b64encode(avatar_bytes).decode("utf-8")
         return None
 
     def get_replies(self, obj):

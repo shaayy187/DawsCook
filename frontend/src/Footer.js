@@ -55,25 +55,25 @@ const Footer = () => {
         <div className="footer-section footer-middle">
           <div className="footer-links-column">
             <h4>Meals</h4>
-            Breakfast
-            Dinner
-            Ingredients
-            Allergens
-            News
-            Features
+              <a href="/breakfast">Breakfast</a>
+              <a href="/dinner">Dinner</a>
+              <a href="/ingredients">Ingredients</a>
+              <a href="/allergens">Allergens</a>
+              <a href="/news">News</a>
+              <a href="/features">Features</a>
           </div>
           <div className="footer-links-column">
             <h4>Company</h4>
-            Contact us
-            About us
-            Support young chefs
-            Sponsored Content
+              <a href="/contact">Contact us</a>
+              <a href="/about">About us</a>
+              <a href="/support">Support young chefs</a>
+              <a href="/sponsored">Sponsored Content</a>
           </div>
           <div className="footer-links-column">
             <h4>Policy</h4>
-            Privacy policy
-            Terms of service
-            EU privacy
+              <a href="/privacy">Privacy policy</a>
+              <a href="/terms">Terms of service</a>
+              <a href="/eu-privacy">EU privacy</a>
           </div>
         </div>
         <div className="footer-section footer-right">

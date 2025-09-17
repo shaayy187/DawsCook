@@ -59,7 +59,7 @@ class Rating(models.Model):
 
 class SystemUser(AbstractUser):
     email = models.EmailField(unique=True)
-    image = models.BinaryField(blank=True, null=True)
+    avatar = models.BinaryField(blank=True, null=True)
     age = models.IntegerField(blank=True, null=True)
     pronouns = models.CharField(blank=True, max_length=30)
     allergies = models.ManyToManyField(Allergy, related_name='users', blank=True)

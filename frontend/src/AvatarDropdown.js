@@ -48,8 +48,8 @@ function AvatarDropdown({ isLoggedIn, handleLogout }) {
       }
   
       const data = await response.json();
-      if (data.image) {
-        setUserImage(`data:image/jpeg;base64,${data.image}`);
+      if (data.avatar) {
+        setUserImage(`data:image/jpeg;base64,${data.avatar}`);
       } else {
         setUserImage(null);
       }

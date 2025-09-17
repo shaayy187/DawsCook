@@ -128,8 +128,8 @@ const Profile = () => {
                     setUserData(data);
                     setEditData({});
                 }
-                if (data.image) {
-                    setPreview(`data:image/jpeg;base64,${data.image}`);
+                if (data.avatar) {
+                    setPreview(`data:image/jpeg;base64,${data.avatar}`);
                 }
                 setIsAuthorized(true);
 
