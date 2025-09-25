@@ -68,12 +68,12 @@ nav a:hover {
   border-radius: 10px;
 }
 
-.latest-recipes {
+.latest-recipes, .top-recipes {
   padding: 20px;
   flex-grow: 1; 
 }
 
-.latest-recipes a {
+.latest-recipes a, .top-recipes a {
   text-decoration: none;
   color: Black; 
 }
@@ -2546,6 +2546,171 @@ label.pushable-xs--light {
 .gallery-all-tile:hover {
   box-shadow: 0 6px 16px rgba(0,0,0,.15);
   transform: translateY(-2px);
+}
+
+.search {
+  position: relative;
+}
+
+.search-input {
+  height: 32px;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+}
+
+.search-input:focus {
+  border-color: #9ad9de;
+  box-shadow: 0 0 0 3px rgba(0, 198, 255, .2);
+}
+
+.search-loading {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  font-size: 14px;
+  pointer-events: none;
+}
+
+.search-results {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 8px;
+  z-index: 1000;
+  max-height: 320px;
+  overflow: auto;
+  box-shadow: 0 6px 18px rgba(0,0,0,.08);
+  list-style: none;
+  margin: 0;
+}
+
+.search-item {
+  list-style: none;
+  margin: 0;
+  padding: 6px 4px;
+  border-radius: 6px;
+}
+
+.search-link {
+  text-decoration: none;
+  color: #111;
+  display: block;
+}
+
+.search-item:hover .search-link {
+  background: #f5f7f7;
+  border-radius: 6px;
+}
+
+.search { 
+  position: relative; 
+}
+
+.search-input { 
+  height:32px;
+  padding:6px 10px;
+  border:1px solid #ccc;
+  border-radius:6px; 
+}
+
+.search-input:focus { 
+  border-color:#9ad9de; 
+  box-shadow:0 0 0 3px rgba(0,198,255,.2); 
+}
+
+.search-loading { 
+  position:absolute;
+  top:50%;
+  right:10px;
+  transform:translateY(-50%);
+  font-size:14px; 
+}
+
+.search-results { 
+  position:absolute;
+  top:calc(100% + 6px);
+  left:0;
+  right:0;
+  background:#fff;
+  border:1px solid #ddd;
+  border-radius:8px;
+  padding:8px;
+  z-index:1000;
+  max-height:320px;
+  overflow:auto;
+  list-style:none;
+  margin:0;
+  box-shadow:0 6px 18px rgba(0,0,0,.08); 
+}
+
+.search-item { 
+  margin:0;
+  padding:6px 4px;
+  border-radius:6px; 
+}
+
+.search-link { 
+  text-decoration:none;
+  color:#111;
+  display:block; 
+}
+
+.search-item:hover .search-link { 
+  background:#f5f7f7;
+  border-radius:6px; 
+}
+
+.search-filter-btn { 
+  height:32px;
+  padding:0 10px;
+  border:1px solid #b7dfe4;
+  background:#ebf4f1;
+  border-radius:6px;
+  cursor:pointer; 
+}
+
+.search-filters { 
+  position:absolute; 
+  top:calc(100% + 44px); 
+  left:0; 
+  background:#fff; 
+  border:1px solid #ddd; 
+  border-radius:10px; 
+  padding:10px; 
+  z-index:1000; 
+  min-width:280px; 
+  box-shadow:0 8px 20px rgba(0,0,0,.08); 
+}
+
+.filter-row { 
+  display:flex; 
+  align-items:center; 
+  gap:8px; 
+  margin-bottom:8px; 
+}
+
+.filter-checks { 
+  display:flex; 
+  flex-wrap:wrap; 
+  gap:8px; 
+  max-height:160px; 
+  overflow:auto; 
+}
+
+.filter-check { 
+  display:flex; 
+  align-items:center; 
+  gap:6px; 
+  padding:3px 6px; 
+  background:#f7fbfb; 
+  border-radius:6px; 
 }
 
 @media (max-width: 520px) {

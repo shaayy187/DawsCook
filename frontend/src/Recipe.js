@@ -414,6 +414,7 @@ const RecipeDetails = () => {
       .then((updatedRecipe) => {
         setRecipe(updatedRecipe);
         setUserRating(updatedRecipe.my_rating || 0);
+        window.location.reload();
       })
       .catch((err) => {
         console.error(err);

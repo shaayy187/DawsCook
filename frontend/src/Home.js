@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef} from 'react';
+import React, { useEffect, useState, useRef, useMemo} from 'react';
 import { Link } from 'react-router-dom';
 import './Home.css';
 
@@ -42,6 +42,16 @@ const Home = ({ recipes = [] }) => {
       </span>
     );
   };
+
+  const topRecipes = useMemo(() => {
+    const safeNum = (x) => (typeof x === 'number' && !Number.isNaN(x) ? x : 0);
+    return [...recipes]
+      .sort((a, b) =>
+        safeNum(b.ratings_count) - safeNum(a.ratings_count)
+        || safeNum(b.rating) - safeNum(a.rating)
+      )
+      .slice(0, 6);
+  }, [recipes]);
 
   return (
     <div className="app">
@@ -109,6 +119,44 @@ const Home = ({ recipes = [] }) => {
           )}
         </section>
 
+        <div className="line-before-featured-recipes"></div>
+        <section className="top-recipes">
+          <h2>TOP recipes</h2>
+          {topRecipes.length === 0 ? (
+            <p>Loading...</p>
+          ) : (
+            <div className="recipe-grid">
+              {topRecipes.map((recipe) => (
+                <Link 
+                  to={`/recipe/${recipe.id}`} 
+                  key={recipe.id} 
+                  className="recipe-card"
+                >
+                  <img
+                    src={`data:image/png;base64,${recipe.image}`}
+                    alt={recipe.recipe}
+                    className="recipe-thumb"
+                  />
+                  <div className="recipe-info">
+                    <h4>{recipe.recipe}</h4>
+                    <p>
+                      {recipe.description
+                        ? recipe.description.length > 40
+                          ? recipe.description.slice(0, 40) + '...'
+                          : recipe.description
+                        : ''}
+                    </p>
+                    {renderStars(recipe.rating)}
+                    <span className="vote-count">
+                      {`${recipe.ratings_count || 0} vote${(recipe.ratings_count || 0) !== 1 ? 's' : ''}`}
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </section>
+        
         <div className="line-before-featured-recipes"></div>
         <section className="featured-recipes">
           {recipes.length >= 3 &&

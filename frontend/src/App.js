@@ -17,6 +17,7 @@ import ChoosenCategoryRecipes from './ChoosenCategoryRecipes'
 import NewRecipe from './NewRecipe'
 import Footer from './Footer';
 import NotFound from "./NotFound";
+import SearchBox from "./Searchbox"
 
 const queryClient = new QueryClient();
 
@@ -59,6 +60,7 @@ function AppShell() {
     window.location.reload();
     setIsLoggedIn(false);
   };
+  
 
   return (
     <div className="app">
@@ -67,6 +69,7 @@ function AppShell() {
           <img src={logo} alt="Logo" className="logo" />
           <div id="home"><Link to="/">Daws'Cook</Link></div>
           <div className="navigation-container">
+            <SearchBox />
             <nav>
               {isAdmin && <Link to="/create-recipe">Create recipe</Link>}
               <Link to="/">Home</Link>
