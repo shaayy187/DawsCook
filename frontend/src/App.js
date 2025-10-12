@@ -18,6 +18,7 @@ import NewRecipe from './NewRecipe'
 import Footer from './Footer';
 import NotFound from "./NotFound";
 import SearchBox from "./Searchbox"
+import Favourites from "./Favourites";
 
 const queryClient = new QueryClient();
 
@@ -97,6 +98,7 @@ function AppShell() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/categories" element={<CategoryRecipesPage />} />
+        <Route path="/favourites" element={<Favourites />} />
         <Route path="/choosen-category/:id" element={<ChoosenCategoryRecipes/>}/>
         <Route path="/404" element={<NotFound />} />
         <Route path="*" element={<Navigate to="/404" replace />} />

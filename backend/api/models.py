@@ -81,7 +81,7 @@ class Ingredient(models.Model):
     amount = models.FloatField(null=True, blank=True)
     unit = models.CharField(max_length=20, blank=True)
     note = models.CharField(max_length=120, blank=True)
-    quantity = models.CharField(max_length=50)
+    quantity = models.CharField(max_length=50, blank=True)
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='ingredients')
 
     def __str__(self):
@@ -130,3 +130,16 @@ class IngredientSubstitute(models.Model):
     def __str__(self):
         return f"{self.name} for {self.ingredient.name}"
 
+class Favourites(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="favorites")
+    recipe = models.ForeignKey("Recipe", on_delete=models.CASCADE, related_name="favorited_by")
+
+    class Meta:
+        unique_together = ("user", "recipe")
+        indexes = [
+            models.Index(fields=["user", "recipe"]),
+            models.Index(fields=["recipe"]),
+        ]
+
+    def __str__(self):
+        return f"{self.user.username} ❤ {self.recipe_id}"

@@ -75,7 +75,7 @@ function AvatarDropdown({ isLoggedIn, handleLogout }) {
       {isLoggedIn && dropdownOpen && (
         <div className="dropdown-menu">
           <Link to="/profile" onClick={closeDropdown}>Profile</Link>
-          <Link to="/settings" onClick={closeDropdown}>Settings</Link>
+          <Link to="/favourites" onClick={closeDropdown}>Favourites</Link>
           <div onClick={() => { handleLogout(); closeDropdown(); }} className="dropdown-item">
             Log out
           </div>

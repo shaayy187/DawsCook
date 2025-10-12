@@ -234,6 +234,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     ingredients = IngredientSerializer(many=True, read_only=True)
     nutrition = NutritionSerializer(read_only=True)
     steps = StepSerializer(many=True, read_only=True)
+    is_favorite = serializers.SerializerMethodField(required=False)
 
     class Meta:
         model = Recipe
@@ -248,6 +249,7 @@ class RecipeSerializer(serializers.ModelSerializer):
             'my_rating',
             'avg_rating',
             'ratings_count',
+            'is_favorite',
             'comments',
             'category',
             'category_id',
@@ -305,6 +307,12 @@ class RecipeSerializer(serializers.ModelSerializer):
             setattr(instance, attr, value)
         instance.save()
         return instance
+    
+    def get_is_favorite(self, obj):
+        request = self.context.get('request')
+        if not request or request.user.is_anonymous:
+            return False
+        return obj.favorited_by.filter(user=request.user).exists()
 
 
 class RatingSerializer(serializers.ModelSerializer):
@@ -370,3 +378,10 @@ class IngredientSubstituteSerializer(serializers.ModelSerializer):
     class Meta:
         model = IngredientSubstitute
         fields = ["id", "ingredient", "name", "ratio", "note", "replaces_allergy", "priority"]
+
+class FavoriteSerializer(serializers.ModelSerializer):
+    recipe = RecipeSerializer(read_only=True)
+
+    class Meta:
+        model = Favourites
+        fields = ["id", "recipe"]

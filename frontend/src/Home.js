@@ -83,7 +83,7 @@ const Home = ({ recipes = [] }) => {
 
         <div className="line-before-featured-recipes"></div>
         <section className="latest-recipes">
-          <h2>Latest recipes</h2>
+          <h2 className="section__title">Latest recipes</h2>
           {recipes.length === 0 ? (
             <p>Loading...</p>
           ) : (
@@ -162,7 +162,7 @@ const Home = ({ recipes = [] }) => {
           {recipes.length >= 3 &&
             [...recipes]
               .sort(() => 0.5 - Math.random())
-              .slice(0, 3)
+              .slice(0, 5)
               .map((recipe) => (
                 <Link
                   to={`/recipe/${recipe.id}`}

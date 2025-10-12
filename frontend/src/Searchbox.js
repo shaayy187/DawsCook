@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import "./App.css";
 
@@ -16,12 +16,25 @@ export default function SearchBox({
   const [ingredient, setIngredient] = useState("");
 
   const wrapperRef = useRef(null);
+  const timerRef = useRef(null);
 
   useEffect(() => {
-    fetch(allergiesApi).then(r => r.json()).then(setAllergies).catch(() => setAllergies([]));
+    fetch(allergiesApi)
+      .then(r => r.json())
+      .then(setAllergies)
+      .catch(() => setAllergies([]));
   }, [allergiesApi]);
 
-  const fetchNow = async () => {
+  const buildUrl = useCallback((value) => {
+    const p = new URLSearchParams();
+    if (value?.trim()) p.set("q", value.trim());
+    if (ingredient.trim()) p.set("ingredient", ingredient.trim());
+    if (excludeAllergies.length) p.set("exclude_allergies", excludeAllergies.join(","));
+    p.set("limit","10");
+    return `${apiUrl}?${p.toString()}`;
+  }, [apiUrl, ingredient, excludeAllergies]);
+
+  const fetchNow = useCallback(async () => {
     if (!ingredient.trim() && !excludeAllergies.length) return;
     setLoading(true);
     try {
@@ -33,36 +46,24 @@ export default function SearchBox({
     } finally {
       setLoading(false);
     }
-  };
+  }, [buildUrl, ingredient, excludeAllergies]);
 
-  const buildUrl = (value) => {
-    const p = new URLSearchParams();
-    if (value?.trim()) p.set("q", value.trim());
-    if (ingredient.trim()) p.set("ingredient", ingredient.trim());
-    if (excludeAllergies.length) p.set("exclude_allergies", excludeAllergies.join(","));
-    p.set("limit","10");
-    return `${apiUrl}?${p.toString()}`;
-  };
-
-  const doSearch = useMemo(() => {
-    let t = null;
-    return (val) => {
-      clearTimeout(t);
-      t = setTimeout(async () => {
-        if (!val.trim() && !ingredient.trim()) { setResults([]); return; }
-        setLoading(true);
-        try {
-          const r = await fetch(buildUrl(val));
-          const data = await r.json();
-          setResults(data);
-        } catch {
-          setResults([]);
-        } finally {
-          setLoading(false);
-        }
-      }, 250);
-    };
-  }, [apiUrl, ingredient, excludeAllergies]);
+  const doSearch = useCallback((val) => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(async () => {
+      if (!val.trim() && !ingredient.trim()) { setResults([]); return; }
+      setLoading(true);
+      try {
+        const r = await fetch(buildUrl(val));
+        const data = await r.json();
+        setResults(data);
+      } catch {
+        setResults([]);
+      } finally {
+        setLoading(false);
+      }
+    }, 250);
+  }, [buildUrl, ingredient]);
 
   useEffect(() => {
     const onClickOutside = (e) => {
@@ -76,22 +77,18 @@ export default function SearchBox({
   }, []);
 
   useEffect(() => {
-    if (q || ingredient) doSearch(q || " ");
-  }, [excludeAllergies, ingredient]);
+    if (q) {
+      doSearch(q);
+    } else {
+      fetchNow();
+    }
+  }, [q, ingredient, excludeAllergies, doSearch, fetchNow]);
 
   const toggleAllergy = (id) => {
     setExcludeAllergies((prev) =>
       prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
     );
   };
-
-  useEffect(() => {
-    if (q) {
-      doSearch(q);
-    } else {
-      fetchNow();
-    }
-  }, [ingredient, excludeAllergies]);
 
   return (
     <div className="search" ref={wrapperRef}>
@@ -133,6 +130,7 @@ export default function SearchBox({
         <ul className="search-results">
           {results.map((r) => (
             <li key={r.id} className="search-item">
+                <img className="search-thumb" src={`data:image/jpeg;base64,${r.image}`} alt={r.recipe} />
               <Link
                 className="search-link"
                 to={`/recipe/${r.id}`}

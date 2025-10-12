@@ -5,6 +5,7 @@ import Modal from './Window';
 import RecipeGallery from "./RecipeGallery";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import FavoriteButton from './FavouriteButton';
 
 const RecipeDetails = () => {
   const { id } = useParams(); 
@@ -56,6 +57,7 @@ const RecipeDetails = () => {
       .then(setAllAllergies)
       .catch(() => setAllAllergies([]));
   }, []);
+  
 
   const currentAllergyIds = (recipe?.allergies || []).map(a => a.id);
 
@@ -612,6 +614,12 @@ const RecipeDetails = () => {
             <span>{recipe.difficulty}</span>
             <span> | </span>
             <span>Time: {Math.round((recipe.cooking_time || 0) / 60) || 1}h</span>
+            <FavoriteButton
+              recipeId={Number(recipe.id)}
+              isFavorite={!!recipe.is_favorite}
+              onChange={(next) => setRecipe(r => (r ? { ...r, is_favorite: next } : r))
+              }
+            />
           </div>
           <div className="user-rating-container">
             <p>Rate this recipe:</p>
