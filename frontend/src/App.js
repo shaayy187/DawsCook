@@ -10,7 +10,6 @@ import AboutUs from './AboutUs';
 import './App.css';
 import RecipeDetails from './Recipe';
 import Profile from './Profile';
-import Settings from './Settings';
 import SessionChecker from './Session'
 import CategoryRecipesPage from './CategoryRecipesPage';
 import ChoosenCategoryRecipes from './ChoosenCategoryRecipes'
@@ -31,12 +30,17 @@ function AppShell() {
   const is404 = location.pathname === "/404";
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/user/", {
-      headers: { Authorization: `Bearer ${token}` },
+
+    if (token) {
+      fetch("http://localhost:8000/api/user/", {
+        headers: { Authorization: `Bearer ${token}` },
     })
       .then(res => res.json())
       .then(data => setIsAdmin(!!data.is_superuser))
       .catch(() => setIsAdmin(false));
+    } else {
+    setIsAdmin(false);
+    }
 
     const link = document.createElement('link');
     link.href = 'https://fonts.googleapis.com/css2?family=Alex+Brush&display=swap';
@@ -61,7 +65,6 @@ function AppShell() {
     window.location.reload();
     setIsLoggedIn(false);
   };
-  
 
   return (
     <div className="app">
@@ -96,7 +99,6 @@ function AppShell() {
         <Route path="/" element={<Home recipes={recipes} />} />
         <Route path="/recipe/:id" element={<RecipeDetails />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/settings" element={<Settings />} />
         <Route path="/categories" element={<CategoryRecipesPage />} />
         <Route path="/favourites" element={<Favourites />} />
         <Route path="/choosen-category/:id" element={<ChoosenCategoryRecipes/>}/>

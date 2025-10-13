@@ -12,14 +12,26 @@ const CategoryRecipesPage = () => {
       .then((data) => setCategories(data))
       .catch((error) => console.error("Error with fetching categories", error));
 
-     fetch(`http://localhost:8000/api/recipes/`)
-        .then((res)=> res.json())
-        .then((data)=>setRecipes(data.results))
-        .catch((error => console.error("Error witch fetching recipes for exact category",error)));
+     (async () => {
+            let url = `http://localhost:8000/api/recipes/?page_size=10`;
+            const all = [];
+            while (url) {
+                const res = await fetch(url);
+                const data = await res.json();
+                if (Array.isArray(data)) {
+                all.push(...data);
+                url = null;
+                } else {
+                all.push(...(data.results || []));
+                url = data.next;
+                }
+                setRecipes(all.slice());
+            }
+            })();
   }, []);
 
   const getRecipesForCategory = (categoryId) =>
-    recipes.filter(r => r.category?.id === categoryId).slice(0, 4);
+    recipes.filter(r => r.category?.id === categoryId).slice(0, 6);
 
   return (
     <div className="category-page">
@@ -34,6 +46,7 @@ const CategoryRecipesPage = () => {
                   src={`data:image/png;base64,${recipe.image}`}
                   alt={recipe.recipe}
                   className="recipe-image"
+                  loading="lazy"
                 />
                 <p className="recipe-name">{recipe.recipe}</p>
                 <div className="stars">

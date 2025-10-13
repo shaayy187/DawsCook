@@ -18,6 +18,7 @@ from .controllers.image_gallery_controller import RecipeGalleryView, GalleryDeta
 from .controllers.ingredient_substitute_controller import RecipeSubstitutesView
 from .controllers.recipe_search_controller import RecipeSearchView
 from .controllers.favourites_controller import FavouriteListView
+from .controllers.recipe_suggest_llama_controller import RecipeSuggestLlamaView
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.documents import urls as wagtaildocs_urls
 from wagtail import urls as wagtail_urls
@@ -57,6 +58,7 @@ urlpatterns = [
     path("recipes/search/", RecipeSearchView.as_view(), name="recipe-search"),
     path("favorites/", FavouriteListView.as_view(), name="favorites"),
     path("favorites/<int:recipe_id>/", FavouriteListView.as_view(), name="favorites-delete"),
+    path("recipes/suggest/llama/", RecipeSuggestLlamaView.as_view(), name="recipe-suggest-llama"),
     path('', include(wagtail_urls)),
 ]
 

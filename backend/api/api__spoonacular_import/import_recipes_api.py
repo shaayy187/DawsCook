@@ -27,7 +27,7 @@ def strip_tags(html):
     return s.get_data()
 
 
-def fetch_spoonacular_recipes(count=5):
+def fetch_spoonacular_recipes(count=500):
     url = "https://api.spoonacular.com/recipes/random"
     params = {
         "number": count,
@@ -41,7 +41,7 @@ def fetch_spoonacular_recipes(count=5):
     return response.json().get("recipes", [])
 
 
-def import_spoonacular_recipes(count: int = 5):
+def import_spoonacular_recipes(count: int = 500):
     recipes = fetch_spoonacular_recipes(count)
 
     for r in recipes:

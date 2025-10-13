@@ -4,6 +4,7 @@ import './App.css';
 
 const ChoosenCategoryRecipes = () => {
     const { id } = useParams();
+    const categoryId = Number(id);
     const [category, setCategory] = useState({});
     const [recipes, setRecipes] = useState([]);
     const [selectedImage, setSelectedImage] = useState(null);
@@ -11,15 +12,27 @@ const ChoosenCategoryRecipes = () => {
     const token = localStorage.getItem('access') || sessionStorage.getItem('access');
 
     useEffect(() => {
-        fetch(`http://localhost:8000/api/category/${id}/`)
+        fetch(`http://localhost:8000/api/category/${categoryId}/`)
             .then((res) => res.json())
             .then((data) => setCategory(data))
             .catch((error) => console.error("Error with fetching exact category", error));
 
-        fetch(`http://localhost:8000/api/recipes/`)
-            .then((res) => res.json())
-            .then((data) => setRecipes(data.results))
-            .catch((error) => console.error("Error with fetching recipes for exact category", error));
+        (async () => {
+            let url = `http://localhost:8000/api/recipes/?category=${categoryId}&page_size=10`;
+            const all = [];
+            while (url) {
+                const res = await fetch(url);
+                const data = await res.json();
+                if (Array.isArray(data)) {
+                all.push(...data);
+                url = null;
+                } else {
+                all.push(...(data.results || []));
+                url = data.next;
+                }
+                setRecipes(all.slice());
+            }
+            })();
 
         if (token) {
             fetch(`http://localhost:8000/api/user/`, {
@@ -31,10 +44,10 @@ const ChoosenCategoryRecipes = () => {
                 .then(data => setIsAdmin(data.is_superuser))
                 .catch(() => setIsAdmin(false));
         }
-    }, [id, token]);
+    }, [categoryId, token]);
 
     const getRecipesForCategory = (categoryId) =>
-        recipes.filter(r => r.category?.id === categoryId).slice(0, 4);
+        recipes.filter(r => r.category?.id === categoryId);
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];

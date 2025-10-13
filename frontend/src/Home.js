@@ -1,12 +1,16 @@
 import React, { useEffect, useState, useRef, useMemo} from 'react';
 import { Link } from 'react-router-dom';
 import './Home.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faComments } from '@fortawesome/free-solid-svg-icons';
+import AIBubble from './AIBubble.js'
 
 const Home = ({ recipes = [] }) => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const fetchCategories = useRef(false);
+  const [showLlamaForm, setShowLlamaForm] = useState(false);
 
   useEffect(() => {
     if (fetchCategories.current) return;
@@ -53,6 +57,10 @@ const Home = ({ recipes = [] }) => {
       .slice(0, 6);
   }, [recipes]);
 
+  const launch_llama = () =>{
+    setShowLlamaForm(true);
+  };
+
   return (
     <div className="app">
       <div className="home-container">
@@ -98,6 +106,9 @@ const Home = ({ recipes = [] }) => {
                     src={`data:image/png;base64,${recipe.image}`}
                     alt={recipe.recipe}
                     className="recipe-thumb"
+                    loading="lazy"
+                    decoding="async"
+                    fetchPriority="low"
                   />
                   <div className="recipe-info">
                     <h4>{recipe.recipe}</h4>
@@ -136,6 +147,9 @@ const Home = ({ recipes = [] }) => {
                     src={`data:image/png;base64,${recipe.image}`}
                     alt={recipe.recipe}
                     className="recipe-thumb"
+                    loading="lazy"
+                    decoding="async"
+                    fetchPriority="low"
                   />
                   <div className="recipe-info">
                     <h4>{recipe.recipe}</h4>
@@ -173,7 +187,10 @@ const Home = ({ recipes = [] }) => {
                     <img
                       src={`data:image/png;base64,${recipe.image}`}
                       alt={recipe.recipe}
-                      className="featured-image"
+                      className="recipe-thumb"
+                      loading="lazy"
+                      decoding="async"
+                      fetchPriority="low"
                     />
                     <div className="featured-content">
                       <h3>{recipe.recipe}</h3>
@@ -195,6 +212,11 @@ const Home = ({ recipes = [] }) => {
                 </Link>
               ))}
         </section>
+        <FontAwesomeIcon icon={faComments} className="AI-icon" onClick={launch_llama}/>
+        <AIBubble
+          showLlamaForm={showLlamaForm}
+          setShowLlamaForm={setShowLlamaForm}
+        />
       </div>
     </div>
   );
