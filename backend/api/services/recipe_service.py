@@ -1,6 +1,8 @@
 from ..repositories import recipe_repository
 from ..serializer import RecipeSerializer
+from ..models import Recipe
 from rest_framework.exceptions import NotFound
+from django.shortcuts import get_object_or_404
 
 def get_recipes(recipe_id=None):
     if recipe_id:
@@ -29,3 +31,9 @@ def update_recipe(recipe_id, data):
     serializer.is_valid(raise_exception=True)
     updated_recipe = serializer.save()
     return RecipeSerializer(updated_recipe).data
+
+def get_or_404(recipe_id: int) -> Recipe:
+    return get_object_or_404(Recipe, pk=recipe_id)
+
+def get_with_ingredients(recipe_id: int) -> Recipe:
+    return get_object_or_404(Recipe.objects.prefetch_related("ingredients"), pk=recipe_id)

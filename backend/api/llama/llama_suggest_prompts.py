@@ -31,7 +31,7 @@ def parse_intent(text: str) -> dict:
         {"role": "system", "content": SYSTEM},
         {"role": "user", "content": USER_TPL.format(text=text[:300])},
     ]
-    raw = chat_ollama(messages).strip()
+    raw = chat_ollama(messages, temperature=0.15).strip()
     data = json.loads(raw)
     return {
             "keywords": list(map(str, data.get("keywords", [])))[:8],

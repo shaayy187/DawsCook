@@ -11,6 +11,7 @@ const SignUp = () => {
   const [confirmpassword, setConfirmPassword] = useState("");
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const GOOGLE_CLIENT_ID = "497818986084-afhl3t4g51cj805un5dmm5ugcn84abnk.apps.googleusercontent.com";
+  const [submitting, setSubmitting] = useState(false);
 
   const validateEmail = (email) => {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -73,51 +74,79 @@ const SignUp = () => {
     return <div ref={btnRef} />;
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(""); 
+    setError("");
     setSuccessMessage("");
 
-    if (!validateEmail(email)) {
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanUsername = username.trim();
+
+    if (!validateEmail(cleanEmail)) {
       setError("Invalid email address.");
       return;
     }
-
     if (password.length < 8) {
       setError("Password must be at least 8 characters long.");
       return;
     }
-
     if (password !== confirmpassword) {
       setError("Passwords do not match.");
       return;
     }
-
     if (!privacyAccepted) {
       setError("You must accept the privacy policy.");
       return;
     }
 
-    fetch("http://localhost:8000/api/register/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, email, password }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          setError("");
-          setSuccessMessage(data.message);
-        } else {
-          setError(data.error || "Error registering. Please try again.");
-        }
-      })
-      .catch(err => {
-          console.error("Error while loggin in: ", err);
-          setError(err);
-        });
-};
+    setSubmitting(true);
+    try {
+      const r = await fetch("http://localhost:8000/api/register/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: cleanUsername, email: cleanEmail, password }),
+      });
 
+      const data = await r.json().catch(() => ({}));
+
+      if (!r.ok) {
+        console.log("Register error payload:", data);
+
+        const collectStrings = (obj) => {
+          const out = [];
+          const walk = (v) => {
+            if (v == null) return;
+            if (typeof v === "string") out.push(v);
+            else if (Array.isArray(v)) v.forEach(walk);
+            else if (typeof v === "object") Object.values(v).forEach(walk);
+          };
+          walk(obj);
+          return out;
+        };
+
+        const msgs = collectStrings(data);
+        const joined = msgs.join(" ").trim();
+
+        if (data?.email ||/exist|already|unique/i.test(joined)) 
+        {
+          setError("An account with this email already exists.");
+        } else if (joined) {
+          setError(joined);
+        } else {
+          setError("Registration failed. Please try again.");
+        }
+        return;
+      }
+
+      setError("");
+      setSuccessMessage(data.message || "Registered successfully.");
+    } catch (err) {
+      console.error("Error while registering:", err);
+      setError("Network error. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div className="signup-form">

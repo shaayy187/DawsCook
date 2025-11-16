@@ -28,7 +28,14 @@ services:
       - DB_PASSWORD=newpassword
       - DB_HOST=postgres
       - LLM_HOST=http://ollama:11434
-      - LLM_MODEL=llama3.1
+      - LLM_MODEL=llama3.2:3b-instruct-q4_K_M
+      - EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
+      - EMAIL_HOST=smtp.gmail.com
+      - EMAIL_PORT=587
+      - EMAIL_USE_TLS=true
+      - EMAIL_HOST_USER=noreply.dawscook@gmail.com
+      - EMAIL_HOST_PASSWORD=yesxukugmpkkneui
+      - DEFAULT_FROM_EMAIL=noreply.dawscook@gmail.com
 
   postgres:
   #jaki obraz bazy danych (pobiera jakieś komendy ze stronki postgresa)
@@ -104,7 +111,7 @@ services:
       - EMAIL_HOST=smtp.gmail.com
       - EMAIL_PORT=587
       - EMAIL_HOST_USER=noreply.dawscook@gmail.com
-      - EMAIL_HOST_PASSWORD=yesx ukug mpkk neui
+      - EMAIL_HOST_PASSWORD=yesxukugmpkkneui
     restart: always
   ollama:
     image: ollama/ollama:latest

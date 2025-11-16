@@ -4,6 +4,10 @@ import base64
 from django.core.files.base import ContentFile
 from django.db.models import Avg, Count
 from django.utils import timezone
+from django.urls import reverse
+from rest_framework.validators import UniqueValidator
+from django.db import IntegrityError
+
 
 def decode_base64(data):
     if not data:
@@ -75,6 +79,12 @@ class UserAllergyInfoSerializer(serializers.ModelSerializer):
         ]
 
 class UserSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(
+        validators=[UniqueValidator(
+            queryset=SystemUser.objects.all(),
+            message="An account with this email already exists."
+        )]
+    )
     password = serializers.CharField(write_only=True)
     avatar = serializers.SerializerMethodField() # odczytuje obraz z bazy danych i koduje go w formacie Base64
     image_upload = serializers.CharField(write_only=True, required=False, allow_blank=True)  # przyjmuje obraz w formacie Base64 i przekształca go do formatu binarnego i wrzuca do bazy
@@ -313,7 +323,6 @@ class RecipeSerializer(serializers.ModelSerializer):
         if not request or request.user.is_anonymous:
             return False
         return obj.favorited_by.filter(user=request.user).exists()
-
 
 class RatingSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField(read_only=True)

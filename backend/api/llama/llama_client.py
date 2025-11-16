@@ -2,7 +2,7 @@ import os
 import requests
 
 LLM_HOST = os.getenv("LLM_HOST", "http://localhost:11434")
-LLM_MODEL = os.getenv("LLM_MODEL", "llama3.1")
+LLM_MODEL = os.getenv("LLM_MODEL", "llama3.2:3b-instruct")
 
 def chat_ollama(messages, temperature=0.2, timeout=1024):
         r = requests.post(
@@ -12,6 +12,7 @@ def chat_ollama(messages, temperature=0.2, timeout=1024):
                 "messages": messages,
                 "stream": False,
                 "options": {"temperature": temperature},
+                
             },
             timeout=timeout,
         )

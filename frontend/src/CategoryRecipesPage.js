@@ -8,30 +8,23 @@ const CategoryRecipesPage = () => {
 
   useEffect(() => {
     fetch('http://localhost:8000/api/category/')
-      .then((res) => res.json())
-      .then((data) => setCategories(data))
+      .then(res => res.json())
+      .then(data => setCategories(Array.isArray(data) ? data : []))
       .catch((error) => console.error("Error with fetching categories", error));
 
-     (async () => {
-            let url = `http://localhost:8000/api/recipes/?page_size=10`;
-            const all = [];
-            while (url) {
-                const res = await fetch(url);
-                const data = await res.json();
-                if (Array.isArray(data)) {
-                all.push(...data);
-                url = null;
-                } else {
-                all.push(...(data.results || []));
-                url = data.next;
-                }
-                setRecipes(all.slice());
-            }
-            })();
+    fetch('http://localhost:8000/api/recipes/')
+      .then(res => res.json())
+      .then(data => {
+        const list = Array.isArray(data) ? data : (data.results || []);
+        setRecipes(list);
+      })
+      .catch((error) => console.error("Error with fetching recipes", error));
   }, []);
 
   const getRecipesForCategory = (categoryId) =>
-    recipes.filter(r => r.category?.id === categoryId).slice(0, 6);
+    Array.isArray(recipes)
+      ? recipes.filter(r => r.category?.id === categoryId).slice(0, 6)
+      : [];
 
   return (
     <div className="category-page">
@@ -41,23 +34,25 @@ const CategoryRecipesPage = () => {
           <div className="recipe-row">
             {getRecipesForCategory(category.id).map((recipe) => (
               <Link to={`/recipe/${recipe.id}`} key={recipe.id} className="category-recipe-link">
-              <div key={recipe.id} className="recipe-tile">
-                <img
-                  src={`data:image/png;base64,${recipe.image}`}
-                  alt={recipe.recipe}
-                  className="recipe-image"
-                  loading="lazy"
-                />
-                <p className="recipe-name">{recipe.recipe}</p>
-                <div className="stars">
-                  {'⭐'.repeat(Math.round(recipe.rating || 0))} ({recipe.rating || 0})
+                <div className="recipe-tile">
+                  <img
+                    src={`data:image/png;base64,${recipe.image}`}
+                    alt={recipe.recipe}
+                    className="recipe-image"
+                    loading="lazy"
+                    decoding="async"
+                    fetchPriority="low"
+                  />
+                  <p className="recipe-name">{recipe.recipe}</p>
+                  <div className="stars">
+                    {'⭐'.repeat(Math.round(recipe.rating || 0))} ({recipe.rating || 0})
+                  </div>
                 </div>
-              </div>
               </Link>
             ))}
           </div>
-          <Link to={`/choosen-category/${category.id}`} key={category.id} className="category-navigate-link">
-          <button className="see-more-btn">See more »</button>
+          <Link to={`/choosen-category/${category.id}`} className="category-navigate-link">
+            <button className="see-more-btn">See more »</button>
           </Link>
         </div>
       ))}

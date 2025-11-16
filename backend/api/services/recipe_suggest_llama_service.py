@@ -1,17 +1,18 @@
 import random, time
 from dataclasses import dataclass
-from typing import List, Optional
-from api.llama.llama_prompts import parse_intent
+from api.llama.llama_suggest_prompts import parse_intent
 from api.repositories.recipe_repository import search_by_params, filter_by_max_time
 from api.services.recipe_search_service import RecipeSearchParams
-from api.models import Recipe
+
+import logging
+logger = logging.getLogger(__name__)
 
 @dataclass(frozen=True) 
 class SuggestConfig: 
     limit_candidates: int = 40 
     top_window: int = 10 
     picks: int = 3 
-    min_trigram: float = 0.12 
+    min_trigram: float = 0.25 
     search_type: str = "websearch"
 
 
@@ -26,14 +27,8 @@ class RecipeSuggestService:
         "excited":    {"keywords": ["tacos","wings","bbq","street","sharing","nachos"],                              "max_time": None},
     }
 
-    MOOD_RETRY = {
-        "sad":   ["mac","cheese","pasta","soup","chocolate","cake"],
-        "happy": ["salad","grilled","tacos","pizza"],
-        "tired": ["quick","easy","egg","sandwich","pasta"],
-        "stressed": ["soup","broth","noodle"],
-        "sick":  ["chicken","noodle","soup"],
-        "angry": ["spicy","chili","curry"],
-    }
+    
+    TRIGGERS_FAST = ["fast", "quick", "speedy", "express", "rapid"]
 
     def __init__(self, config: SuggestConfig):
         self.config = config or SuggestConfig()
@@ -57,14 +52,27 @@ class RecipeSuggestService:
                     hinted_time = int(v["max_time"])
         return self._dedup(extra), hinted_time
 
-    def _build_query(self, mood_text):
+    def _build_query(self, mood_text: str):
         intent = parse_intent(mood_text)
-        llama_terms = (intent.get("keywords") or []) + (intent.get("style") or [])
+        logger.info("LLM intent: %s", intent)
+
+        llama_keywords = intent.get("keywords") or []
+        llama_style    = intent.get("style") or []
+        llama_terms    = self._dedup(llama_keywords + llama_style)
+        llama_time     = intent.get("max_time", None)
+
+        text_lc = (mood_text or "").lower()
+        has_fast_signal = any(w in text_lc for w in self.TRIGGERS_FAST) or \
+                          any(s.lower() in ("quick", "fast", "easy") for s in llama_style)
+
+        if llama_time is None and has_fast_signal:
+            llama_time = 20
+
+        if llama_terms or (llama_time is not None):
+            return " ".join(llama_terms), (int(llama_time) if llama_time is not None else None)
+
         mood_terms, mood_time = self._mood_terms(mood_text)
-        terms = self._dedup([*llama_terms, *mood_terms])
-        q = " ".join(terms)
-        max_time = intent.get("max_time") if intent.get("max_time") is not None else mood_time
-        return q, (int(max_time) if max_time else None)
+        return " ".join(mood_terms), (int(mood_time) if mood_time is not None else None)
 
     def _search(self, q, max_time):
         params = RecipeSearchParams(
@@ -89,35 +97,22 @@ class RecipeSuggestService:
             return []
 
         q, max_time = self._build_query(mood)
-        recipes = self._search(q, max_time) if q else []
+        recipes = self._search(q or "", max_time)
 
         if not recipes:
-            txt = mood.lower()
-            retry_terms = []
-            for k, terms in self.MOOD_RETRY.items():
-                if k in txt:
-                    retry_terms.extend(terms)
-            retry_terms = self._dedup(retry_terms)
-            if retry_terms:
-                q2 = " ".join(retry_terms)
-                recipes = self._search(q2, max_time)
+            mood_terms, mood_time = self._mood_terms(mood)
+            recipes = self._search(" ".join(mood_terms), mood_time if mood_time is not None else max_time)
 
         if not recipes:
             from api.models import Recipe
             recipes = list(Recipe.objects.order_by("-rating")[: self.limit_candidates])
+            if not recipes:
+                return []
 
-        if not recipes:
-            return []
-
-        recipes.sort(
-            key=lambda r: (getattr(r, "rating", 0) or 0) + random.random() * 0.3,
-            reverse=True
-        )
+        recipes.sort(key=lambda r: (getattr(r, "rating", 0) or 0) + random.random() * 0.3, reverse=True)
         top = recipes[: self.top_window]
         if not top:
             return []
-        import time as _t
-        random.seed(_t.time())
         k = min(self.picks, len(top))
         return random.sample(top, k=k)
 

@@ -28,8 +28,24 @@ function AppShell() {
   const token = localStorage.getItem("access") || sessionStorage.getItem("access");
   const location = useLocation();
   const is404 = location.pathname === "/404";
+  const [todaysHolidays, setTodaysHolidays] = useState({ date: "", holidays: [], sources: [] });
+  const [holidaysLoading, setHolidaysLoading] = useState(true);
 
   useEffect(() => {
+
+    fetch("http://localhost:8000/api/food-holiday/today/", { headers: { "Accept": "application/json" } })
+      .then((r) => r.json())
+      .then((data) => {
+        setTodaysHolidays({
+          date: data?.date || "",
+          holidays: Array.isArray(data?.holidays) ? data.holidays : [],
+          sources: Array.isArray(data?.sources) ? data.sources : [],
+        });
+      })
+      .catch(() => {
+        setTodaysHolidays({ date: "", holidays: [], sources: [] });
+      })
+      .finally(() => setHolidaysLoading(false));
 
     if (token) {
       fetch("http://localhost:8000/api/user/", {
@@ -72,6 +88,12 @@ function AppShell() {
         <header className="header">
           <img src={logo} alt="Logo" className="logo" />
           <div id="home"><Link to="/">Daws'Cook</Link></div>
+            <div className="food-holidays">
+              <strong>Today’s culinary holidays:</strong>{" "}
+              {holidaysLoading
+                ? "Loading..."
+                : (todaysHolidays.holidays?.length ? todaysHolidays.holidays.join(", ") : "none")}
+            </div>
           <div className="navigation-container">
             <SearchBox />
             <nav>

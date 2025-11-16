@@ -1,7 +1,6 @@
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from rest_framework.routers import DefaultRouter
 from .controllers.recipe_controller import RecipeView, RecipeDetailView, RecipeRatingView
 from .controllers.user_controller import Register, UserProfile, ChangePasswordView, ChangeEmailView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
@@ -11,6 +10,7 @@ from .controllers.allergy_controller import AllergyView
 from .controllers.ingredient_controller import IngredientAdminView
 from .controllers.nutrition_controller import NutritionAdminView
 from .controllers.user_allergy_info_controller import UserAllergyInfoListCreate, UserAllergyInfoDetail
+from .controllers.ingredients_email_controller import EmailIngredientsController
 from .controllers.comment_controller import CommentView
 from .api__spoonacular_import import import_controller
 from .controllers.user_controller import GoogleAuthView
@@ -19,6 +19,7 @@ from .controllers.ingredient_substitute_controller import RecipeSubstitutesView
 from .controllers.recipe_search_controller import RecipeSearchView
 from .controllers.favourites_controller import FavouriteListView
 from .controllers.recipe_suggest_llama_controller import RecipeSuggestLlamaView
+from .controllers.food_holiday_controller import FoodHolidayTodayView
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.documents import urls as wagtaildocs_urls
 from wagtail import urls as wagtail_urls
@@ -59,6 +60,8 @@ urlpatterns = [
     path("favorites/", FavouriteListView.as_view(), name="favorites"),
     path("favorites/<int:recipe_id>/", FavouriteListView.as_view(), name="favorites-delete"),
     path("recipes/suggest/llama/", RecipeSuggestLlamaView.as_view(), name="recipe-suggest-llama"),
+    path("food-holiday/today/", FoodHolidayTodayView.as_view(), name="food-holiday-today"),
+    path("recipes/<int:id>/email_ingredients/", EmailIngredientsController.as_view(), name="email-ingredients"),
     path('', include(wagtail_urls)),
 ]
 

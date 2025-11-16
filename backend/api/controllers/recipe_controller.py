@@ -12,22 +12,21 @@ from rest_framework.generics import ListCreateAPIView
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter, SearchFilter
 
-@swagger_auto_schema(
-    operation_description="Retrieve and create recipes with pagination, filtering and search."
-)
-class RecipeView(ListCreateAPIView):
 
+class RecipeView(ListCreateAPIView):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
+    permission_classes = [AllowAny]
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
     filterset_fields = ['difficulty', 'category']
     ordering_fields = ['rating', 'recipe']
     search_fields = ['recipe', 'description']
 
+
     def get_permissions(self):
         if self.request.method == 'POST':
-            return [IsAdminUser()] 
-        return [AllowAny()] 
+            return [IsAdminUser()]
+        return [AllowAny()]
 
 
 class RecipeDetailView(APIView):

@@ -6,6 +6,7 @@ import RecipeGallery from "./RecipeGallery";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import FavoriteButton from './FavouriteButton';
+import EmailIngredientsButton from "./EmailIngredientsButton";
 
 const RecipeDetails = () => {
   const { id } = useParams(); 
@@ -377,6 +378,16 @@ const RecipeDetails = () => {
     .catch((err) => alert(err.message));
   };
 
+  const formatCookingTime = (value) => {
+    const secs = Number(value || 0);
+    const totalMinutes = secs > 1000 ? Math.round(secs / 60) : Math.round(secs);
+
+    if (totalMinutes < 60) return `${totalMinutes} min`;
+    const h = Math.floor(totalMinutes / 60);
+    const m = totalMinutes % 60;
+    return m ? `${h}h ${m}m` : `${h}h`;
+  };
+
   const deleteStep = async (id) => {
     const token = sessionStorage.getItem("access");
     const res = await fetch(`http://localhost:8000/api/steps/${id}/`, {
@@ -613,7 +624,7 @@ const RecipeDetails = () => {
             <span> | </span>
             <span>{recipe.difficulty}</span>
             <span> | </span>
-            <span>Time: {Math.round((recipe.cooking_time || 0) / 60) || 1}h</span>
+            <span>Time: {formatCookingTime(recipe.cooking_time)}</span>
             <FavoriteButton
               recipeId={Number(recipe.id)}
               isFavorite={!!recipe.is_favorite}
@@ -680,6 +691,10 @@ const RecipeDetails = () => {
               <span className="edge-xs"></span>
               <span className="front-xs">Export PDF</span>
             </button>
+            <EmailIngredientsButton
+              recipeId={Number(id)}
+              portion={Number(portionCalculator || 1)}
+            />
           </h3>
           <div className="portion-input">
             <div className="portion-text">
